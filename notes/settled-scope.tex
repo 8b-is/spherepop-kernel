@@ -1,0 +1,125 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1.15in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{observation}[theorem]{Observation}
+
+\newcommand{\red}{\rightarrow}
+\newcommand{\pa}{\Rightarrow}
+\newcommand{\Sc}{\mathsf{Sc}}
+\newcommand{\Abs}{\mathsf{Abs}}
+\newcommand{\scn}[1]{\mathsf{sc}_{#1}}
+\newcommand{\br}[2]{\langle #1\rangle_{#2}}
+
+\title{Stable Side Conditions and the Confluence of the Scope Constructor}
+\author{Flyxion\\ Independent Researcher}
+\date{October 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent The scope constructor $\Sc$ of the circle calculus moves a term into a bracket, and with it the term acquires a smaller set of permitted contractions. Taken unconditionally the rule destroys confluence whenever a label restricts the root permission. This note shows that if both boundary rules apply only to arguments that are settled, meaning that no step of any kind is available inside them, then the whole system is confluent for every permission structure, by a parallel-reduction argument in which the side conditions are stable under every step. The restriction used so far in the executable reducer, which admits an argument that is merely normal and insensitive, does not admit that argument: the same parallel step has no diamond for it, because a pending boundary step inside an insensitive argument can create a contraction redex that blocks the outer rule. Local confluence of the full relation still holds for that rule on every case searched, so its status is open and not refuted. The mathematical content is a single lemma, a stability property of settled terms, and the computational evidence is organised around the one pattern at which the alternative fails.
+\end{abstract}
+
+\section{Setting}
+
+Terms are atoms, constants $I,B,C,K,W,S$, scope constructors $\scn{l}$, applications, and brackets $\br{t}{l}$. Every label $l$ carries a permission $\pi(l)$, a subset of the gated constants, and the chain of a position is the list of brackets entered on the way down from the root. The effective permission $m$ of a position is the root permission intersected with $\pi(l)$ for every label on its chain. A contraction headed by a gated constant is permitted at a position exactly when the constant lies in $m$, and a contraction headed by an ungated constant is permitted everywhere. The two boundary rules are
+\[
+\Abs:\ \br{u}{l}\,v \ \red\ \br{u\,v}{l},
+\qquad
+\Sc:\ \scn{l}\,u \ \red\ \br{u}{l},
+\]
+each with a side condition on the argument. Write $R$ for the contractions and $B$ for the two boundary rules; $\red$ is their union. A position has exactly one candidate rule, since a contraction needs a constant at the head of the spine while $\Abs$ and $\Sc$ need a bracket or a scope constructor as the function child.
+
+\begin{definition}
+A term $v$ is \emph{settled at} $m$ if it contains no permitted contraction at its own effective permission, which is $m$ at the top and the intersection with $\pi(l)$ inside a bracket labelled $l$, and no application whose function child is a bracket or a scope constructor.
+\end{definition}
+
+The modes considered are $\Abs_s$, which fires only when the argument is settled at the effective permission of the redex, and $\Sc_{\mathrm{set}}$, which does the same. The mode used by the executable reducer so far, $\Sc_{\mathrm{safe}}$, fires when the argument is normal for $R$ at $m$ and is either settled or \emph{insensitive}, meaning that it contains no gated constant.
+
+\section{Settled terms are frozen}
+
+\begin{lemma}[monotonicity]\label{lem:mono}
+If $v$ is settled at $m$ and $m'\subseteq m$, then $v$ is settled at $m'$.
+\end{lemma}
+\begin{proof}
+A contraction is permitted at $m'$ only if it is permitted at $m$, because permission depends on membership of the head in the mask and masks only shrink. The second clause of the definition does not mention the mask. Induct on the term, using $\pi(l)\cap m'\subseteq\pi(l)\cap m$ for brackets.
+\end{proof}
+
+\begin{lemma}[frozen]\label{lem:frozen}
+If $v$ is settled at $m$, then no redex of any rule occurs at any position of $v$, at $m$ or at any smaller permission.
+\end{lemma}
+\begin{proof}
+A redex is either a permitted contraction or an application with a bracket or scope constructor as function child. Both are excluded at every node by the definition and by Lemma~\ref{lem:mono}.
+\end{proof}
+
+The consequence is that settled arguments are inert and cannot be altered from outside either, since a step elsewhere in the term touches only disjoint positions. A step can copy or discard a settled argument as a whole, and a boundary step can move it across a bracket, and in all of these it keeps the property. Chains of positions that hold unsettled material are never changed: a contraction rearranges its arguments at the chain of its own root, $\Abs$ leaves the body of the bracket where it was and carries only the argument inwards, and $\Sc$ carries only its argument. The only material that ever changes chain is material that the side conditions have already required to be settled.
+
+\section{Parallel reduction and the theorem}
+
+Define $t\pa u$ at a chain with permission $m$ by the usual rules. A leaf reduces to itself. An application $f\,x$ reduces to $f'\,x'$ whenever $f\pa f'$ and $x\pa x'$. A bracket reduces to a bracket of a reduct of its body, at the smaller permission. In addition, if the node is a redex of $t$ at $m$, then it may be contracted after reducing its arguments: a contraction $\rho$ with arguments $\vec a\pa\vec a'$ gives $\rho(\vec a')$; $\Sc$ on $\scn{l}\,a$ gives $\br{a'}{l}$ for $a\pa a'$ at the inner permission; and $\Abs$ on $\br{b}{l}\,v$ gives $\br{b'\,v'}{l}$ for $b\pa b'$ and $v\pa v'$ at the inner permission. Every side condition is evaluated on $t$. Then $\red\subseteq\pa\subseteq\red^{*}$: the first inclusion takes identity on all arguments, and the second performs the argument reductions in place before the contraction, which is legitimate because they take place at the same positions and chains in $t$.
+
+Let $t^\circ$ be the complete development of $t$: contract every redex of $t$, working from the arguments outwards. A settled argument develops to itself by Lemma~\ref{lem:frozen}, and $t\pa t^\circ$.
+
+\begin{lemma}[substitution]\label{lem:subst}
+If $a_i\pa a_i'$ for each argument of a contraction $\rho$, then $\rho(\vec a)\pa\rho(\vec a')$.
+\end{lemma}
+\begin{proof}
+Each right-hand side is built from its arguments by application alone, so the claim follows from reflexivity and the congruence rule for applications.
+\end{proof}
+
+\begin{lemma}[Takahashi property]\label{lem:tak}
+If $t\pa u$ then $u\pa t^\circ$.
+\end{lemma}
+\begin{proof}
+By induction on the derivation of $t\pa u$, at a fixed chain.
+
+If the root of $t$ is not a redex, $t^\circ=f^\circ x^\circ$ or the bracket of $b^\circ$, and $u$ is the corresponding congruence, so the claim is the induction hypothesis together with congruence.
+
+Suppose the root of $t$ is a redex but $u$ was obtained by reducing children only. If the redex is a contraction $h\,a_1\cdots a_k$, the partial applications $h\,a_1\cdots a_j$ with $j<k$ are not redexes, so $u=h\,a_1'\cdots a_k'$. It has the same head and arity at the same chain, so it is again a permitted contraction, and by the induction hypothesis and Lemma~\ref{lem:subst} it reduces to $\rho(\vec a^{\,\circ})=t^\circ$. If the redex is $\Sc$ on $\scn{l}\,a$, then $a$ is settled, so $a'=a$ by Lemma~\ref{lem:frozen}, and $u=\scn{l}\,a$ is again a redex with the same argument at the same chain; contracting it gives $\br{a}{l}=t^\circ$. If the redex is $\Abs$ on $\br{b}{l}\,v$, then $u=\br{b'}{l}\,v$ with $v$ unchanged and settled at the same chain, so $u$ is again an $\Abs$ redex, and contracting it after the induction hypothesis $b'\pa b^\circ$ gives $\br{b^\circ\,v}{l}=t^\circ$.
+
+Suppose finally that $u$ arises by contracting the root. For a contraction the claim is the induction hypothesis on the arguments and Lemma~\ref{lem:subst}. For $\Sc$, $u=\br{a}{l}=t^\circ$. For $\Abs$, $u=\br{b'\,v}{l}$ and $t^\circ=\br{b^\circ\,v}{l}$, and $b'\pa b^\circ$ at the inner permission by the induction hypothesis.
+\end{proof}
+
+\begin{theorem}\label{thm:main}
+For every permission structure and every gated set, the system consisting of the contractions, $\Abs_s$ and $\Sc_{\mathrm{set}}$ has the diamond property for $\pa$, and $\red$ is therefore confluent. This holds for terms that do not terminate.
+\end{theorem}
+\begin{proof}
+If $t\pa u$ and $t\pa v$, then $u\pa t^\circ$ and $v\pa t^\circ$ by Lemma~\ref{lem:tak}. Since $\red\subseteq\pa\subseteq\red^{*}$, the transitive closures coincide, and the strip lemma gives confluence of $\red$.
+\end{proof}
+
+The argument is that of an orthogonal system with one addition. The left-hand sides of the rules have different heads, a constant, a bracket and a scope constructor, so no two of them overlap at a root and an inner redex occupies a variable position of an outer one. The only interaction between rules is therefore through the side conditions, and those inspect the argument and nothing else. When the argument is frozen, every step of the system either leaves the side condition unchanged or removes the redex that carries it, which is exactly the stability that the Takahashi property needs. Arguments that are merely normal fail this test, as the minimal terms for the unrestricted rules show.
+
+\section{Where the safe form breaks}
+
+Consider $\scn{x}\,(\br{I}{x}\,a)$ with an ungated $I$. The argument is normal and insensitive, so $\Sc_{\mathrm{safe}}$ may fire at once, giving $\br{\br{I}{x}\,a}{x}$. The argument also contains a pending $\Abs$, whose firing gives $\br{I\,a}{x}$ and thereby creates the contraction redex $I\,a$ at the root of the bracket body. After that step the outer $\Sc$ is blocked, because its argument is no longer normal. The two branches rejoin at $\br{\br{a}{x}}{x}$. The branch that fired $\Sc$ first continues with $\Abs$ inside the bracket and then the contraction; the branch that fired $\Abs$ first needs the contraction and then $\Sc$. They do not rejoin in a single parallel round, since the second branch needs the contraction before $\Sc$ may fire, and the first needs $\Abs$ before that contraction is available. The diamond for $\pa$ therefore fails, and no relaxation that evaluates the side condition on the reduct repairs it, because the missing step is a redex created by the other branch. A direct attempt to add the created contraction to the parallel step overshoots, since it contracts redexes that the other side cannot follow; the instance is $\br{I\,I}{x}\,a$.
+
+The same pattern occurs for $\Abs$ when the absorbed argument is allowed to be insensitive but unsettled and brackets nest: $\br{a}{x}\,(\br{I}{x}\,a)$ has no parallel diamond under $\Abs_u$, and it does under $\Abs_s$.
+
+Two features of the failure matter for what to conclude. First, it is a failure of one proof method and not a counterexample. Local confluence of the full relation, with joins searched to depth eight in both directions, holds for every peak found under $\Abs_u$ with $\Sc_{\mathrm{safe}}$, in particular for the peak above, and the exhaustive search for distinct normal forms found nothing in the cases it completed. Second, the failure is attributable. It disappears as soon as the insensitive clause is removed from $\Sc$, and it does not require any particular absorption mode: it is already present with $\Abs_s$. The insensitive clause lets an unsettled argument through, and an unsettled argument can still move.
+
+\section{Computational record}
+
+The definitions were implemented in the reducer and checked against the statements above. The diamond for $\pa$ was tested on every term with the stated number of leaves and brackets over the symbols $a,K,C,W,I,\scn{x}$ (and $\scn{y}$ with two labels), under every assignment of subsets of $\{W,K,C\}$ to the labels with full root permission, for every pair of parallel successors of every term. Terms such as $W\,W\,W$ are included, so non-terminating terms are covered. No search was cut off by a cap in the runs reported.
+
+With $\Abs_s$ and $\Sc_{\mathrm{set}}$, the diamond held on all 410{,}960 terms of at most four leaves and two brackets with one label (6{,}664{,}432 pairs), on all 1{,}366{,}969 terms of at most five leaves and one bracket (31{,}696{,}480 pairs), and on all 368{,}430 terms of at most three leaves and three brackets with two labels (28{,}639{,}888 pairs). With $\Abs$ off and $\Sc_{\mathrm{set}}$ it held on the same sets (2{,}979{,}568, 20{,}851{,}984 and 7{,}657{,}808 pairs). These numbers support the theorem and do not replace its proof; the proof is the previous section.
+
+The check was given two positive controls and one mutation. It reports failures for the unrestricted $\Sc$ of the essay at the minimal term $\scn{x}\,(K\,a\,a)$. It reports failures for $\Sc_{\mathrm{safe}}$ and for $\Abs_u$ at the patterns above, with $1272$ failing pairs for $\Sc_{\mathrm{safe}}$ and $\Abs_s$ at four leaves and one bracket. And when the settled condition of $\Sc$ was weakened by hand to plain normality, the search at four leaves and two brackets reported $37{,}440$ failing pairs,. A weakening of the parallel step itself, by dropping nested reduction of arguments, was found not to disturb the diamond, which is consistent with theory and shows that the check is sensitive to the side conditions and not to that part of the construction.
+
+For the modes the theorem does not cover, local confluence of the full relation held in every case checked: for $\Abs_u$ with $\Sc_{\mathrm{safe}}$ there were 81{,}616 peaks between contractions, 309{,}024 between boundary steps and 433{,}944 mixed peaks at four leaves and two brackets with one label, all joined, none undetermined. Boundary steps alone are not confluent, since a boundary step may have to wait for a contraction, and the first version of this check reported that as failure; the joins use both kinds of step.
+
+\section{Consequences}
+
+The restriction that has to change before the scope constructor is a defensible default for a host is the insensitive clause. With $\Abs_s$ and $\Sc_{\mathrm{set}}$ the confluence claim has a proof and a search that agrees with it, and the cost is that $\scn{l}\,u$ waits until every boundary step inside $u$ has run, so a scope whose argument holds a boundary step that can never fire stays inert. That is the same behaviour that a blocked $\Abs$ already has. With $\Sc_{\mathrm{safe}}$ confluence is supported by search and by local confluence and has no proof, and the one natural proof method is known to fail at an identified pattern.
+
+The theorem does not cover $\Abs_u$, which is the default of the reducer outside the host setting, and the failure above does not contradict the essay's theorem for that mode, whose proof has not been re-derived here and may use a different route. It does show that the single-round parallel step cannot be the route for nested brackets. What would settle the remaining modes is either a different commutation argument that tolerates a created redex in the argument, or a measure on the pending boundary steps of an insensitive argument that makes the created contraction part of the same development. Neither is attempted here.
+
+\end{document}
