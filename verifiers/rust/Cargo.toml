@@ -1,0 +1,9 @@
+[package]
+name = "spherepop-verifier-rs"
+version = "0.1.0"
+edition = "2021"
+description = "Independent zero-dependency Rust verifier for SpherePOP term digests, rewrite rules, and trace hash chains (SPEC.md §2, §4, §8)"
+license = "MIT"
+
+[lib]
+path = "src/lib.rs"

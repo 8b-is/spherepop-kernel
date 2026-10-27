@@ -1,0 +1,159 @@
+package encode
+
+import (
+	"bytes"
+	"sync"
+	"testing"
+)
+
+func TestXORFoldMatchesScalarAndStreamAcrossLengths(t *testing.T) {
+	buf := make([]byte, 1088)
+	var x uint64 = 0x9E3779B97F4A7C15
+	for i := range buf {
+		x = x*6364136223846793005 + 1442695040888963407
+		buf[i] = byte(x >> 33)
+	}
+	for n := 0; n <= len(buf); n++ {
+		got := XORFold(buf[:n])
+		want := XORFoldScalar(buf[:n])
+		if got != want {
+			t.Fatalf("len=%d: XORFold=%#x want=%#x", n, got, want)
+		}
+		streamFold, total, err := StreamXORFold(bytes.NewReader(buf[:n]))
+		if err != nil {
+			t.Fatalf("len=%d: StreamXORFold err=%v", n, err)
+		}
+		if total != int64(n) || streamFold != want {
+			t.Fatalf("len=%d: StreamXORFold=(%#x,%d) want=(%#x,%d)", n, streamFold, total, want, n)
+		}
+	}
+}
+
+func TestSealAndCheckFrame32BAt0x62Gate(t *testing.T) {
+	raw := bytes.Repeat([]byte{0x62}, 3761)
+	packed := bytes.Repeat([]byte{0x33}, 3314)
+	raw[0] = 0x74
+	packed[0] = 0x5c
+
+	frame := SealFrame32B(raw, packed, Gate0x62)
+	if frame[24] != Gate0x62 {
+		t.Fatalf("gate byte = %#x, want %#x", frame[24], Gate0x62)
+	}
+	if frame[25] != FrameABIV1 {
+		t.Fatalf("abi byte = %#x, want %#x", frame[25], FrameABIV1)
+	}
+	if !CheckFrame32B(frame, raw, packed, Gate0x62) {
+		t.Fatal("CheckFrame32B rejected valid 32B frame")
+	}
+
+	spiked := frame
+	spiked[31] ^= 0x01
+	if CheckFrame32B(spiked, raw, packed, Gate0x62) {
+		t.Fatal("CheckFrame32B accepted frame with flipped seal bit")
+	}
+}
+
+func TestGate0x62StateConcurrentCAS(t *testing.T) {
+	g := NewGate0x62State(0x2d7b7a560c457f7f)
+	var wg sync.WaitGroup
+	winners := make(chan int, 16)
+	for i := 0; i < 16; i++ {
+		wg.Add(1)
+		go func(id int) {
+			defer wg.Done()
+			if g.AdvanceCAS(0x2d7b7a560c457f7f, 0xcf197ec401952c21, TritPos) {
+				winners <- id
+			}
+		}(i)
+	}
+	wg.Wait()
+	close(winners)
+
+	count := 0
+	for range winners {
+		count++
+	}
+	if count != 1 {
+		t.Fatalf("AdvanceCAS winners = %d, want 1", count)
+	}
+	if g.Fold() != 0xcf197ec401952c21 || g.State() != TritPos {
+		t.Fatalf("Gate0x62State = (%#x, %d), want (0xcf197ec401952c21, +1)", g.Fold(), g.State())
+	}
+}
+
+func TestBFP64RoundTripAndKleeneGates(t *testing.T) {
+	trits := make([]Trit, 197)
+	for i := range trits {
+		switch i % 3 {
+		case 0:
+			trits[i] = TritNeg
+		case 1:
+			trits[i] = TritZero
+		case 2:
+			trits[i] = TritPos
+		}
+	}
+	pos, neg, err := PackBFP64(trits)
+	if err != nil {
+		t.Fatalf("PackBFP64: %v", err)
+	}
+	got, err := UnpackBFP64(pos, neg, len(trits))
+	if err != nil {
+		t.Fatalf("UnpackBFP64: %v", err)
+	}
+	for i := range trits {
+		if got[i] != trits[i] {
+			t.Fatalf("trit[%d] = %d, want %d", i, got[i], trits[i])
+		}
+	}
+
+	// Verify +AND=1 and ~NAND=-1 on all-positive 64-trit bitplane words.
+	const allOnes = ^uint64(0)
+	andPos, andNeg := BFP64AndKleene(allOnes, 0, allOnes, 0)
+	if andPos != allOnes || andNeg != 0 {
+		t.Fatalf("BFP64AndKleene(+1,+1) = (%#x,%#x), want (allOnes,0)", andPos, andNeg)
+	}
+	nandPos, nandNeg := BFP64NandKleene(allOnes, 0, allOnes, 0)
+	if nandPos != 0 || nandNeg != allOnes {
+		t.Fatalf("BFP64NandKleene(+1,+1) = (%#x,%#x), want (0,allOnes)", nandPos, nandNeg)
+	}
+
+	pos[0] |= neg[0]
+	if _, err := UnpackBFP64(pos, neg, len(trits)); err == nil {
+		t.Fatal("UnpackBFP64 accepted overlapping bitplanes")
+	}
+}
+
+func TestCheckRationalDensityAndIsqrtU64(t *testing.T) {
+	d1, err := CheckRationalDensity(3761, 3314)
+	if err != nil {
+		t.Fatalf("3761/3314: %v", err)
+	}
+	if d1.Num != 3761 || d1.Den != 3314 || d1.State != TritPos {
+		t.Fatalf("got %+v, want 3761/3314 TritPos", d1)
+	}
+
+	d2, err := CheckRationalDensity(123, 115)
+	if err != nil {
+		t.Fatalf("123/115: %v", err)
+	}
+	if d2.Num != 123 || d2.Den != 115 || d2.State != TritPos {
+		t.Fatalf("got %+v, want 123/115 TritPos", d2)
+	}
+
+	for _, tc := range []struct {
+		n    uint64
+		want uint64
+	}{
+		{0, 0},
+		{1, 1},
+		{15, 3},
+		{16, 4},
+		{3761 * 3761, 3761},
+		{1<<62 - 1, (1 << 31) - 1},
+	} {
+		if got := IsqrtU64(tc.n); got != tc.want {
+			t.Fatalf("IsqrtU64(%d) = %d, want %d", tc.n, got, tc.want)
+		}
+	}
+}

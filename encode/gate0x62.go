@@ -1,0 +1,361 @@
+package encode
+
+import (
+	"encoding/binary"
+	"errors"
+	"io"
+	"math/bits"
+	"sync"
+	"sync/atomic"
+)
+
+const (
+	// Gate0x62 is the default gate byte for 32-byte frame seals.
+	Gate0x62 uint8 = 0x62
+
+	// FrameABIV1 identifies version 1 of the 32-byte frame layout.
+	FrameABIV1 uint8 = 0x01
+)
+
+var streamBufPool = sync.Pool{
+	New: func() any {
+		buf := make([]byte, 4096)
+		return &buf
+	},
+}
+
+// XORFoldScalar computes the 64-bit little-endian XOR fold one word at a time.
+func XORFoldScalar(data []byte) uint64 {
+	var acc uint64
+	i := 0
+	for ; i+8 <= len(data); i += 8 {
+		acc ^= binary.LittleEndian.Uint64(data[i : i+8])
+	}
+	for ; i < len(data); i++ {
+		acc ^= uint64(data[i])
+	}
+	return acc
+}
+
+// XORFold computes the 64-bit little-endian XOR fold in 32-byte (4-word) steps.
+// It agrees bit-for-bit with XORFoldScalar and the Zig xorFold implementation.
+func XORFold(data []byte) uint64 {
+	var acc uint64
+	i := 0
+	for ; i+32 <= len(data); i += 32 {
+		w0 := binary.LittleEndian.Uint64(data[i : i+8])
+		w1 := binary.LittleEndian.Uint64(data[i+8 : i+16])
+		w2 := binary.LittleEndian.Uint64(data[i+16 : i+24])
+		w3 := binary.LittleEndian.Uint64(data[i+24 : i+32])
+		acc ^= (w0 ^ w1) ^ (w2 ^ w3)
+	}
+	for ; i+8 <= len(data); i += 8 {
+		acc ^= binary.LittleEndian.Uint64(data[i : i+8])
+	}
+	for ; i < len(data); i++ {
+		acc ^= uint64(data[i])
+	}
+	return acc
+}
+
+// StreamXORFold folds an io.Reader in 8-byte aligned chunks using a pooled
+// 4096-byte buffer so repeated streaming calls do not allocate on the heap.
+func StreamXORFold(r io.Reader) (fold uint64, totalBytes int64, err error) {
+	bp := streamBufPool.Get().(*[]byte)
+	buf := *bp
+	defer streamBufPool.Put(bp)
+
+	var tail [8]byte
+	tailLen := 0
+
+	for {
+		n, rerr := r.Read(buf)
+		if n > 0 {
+			totalBytes += int64(n)
+			chunk := buf[:n]
+			if tailLen > 0 {
+				need := 8 - tailLen
+				if len(chunk) >= need {
+					copy(tail[tailLen:8], chunk[:need])
+					fold ^= binary.LittleEndian.Uint64(tail[:])
+					chunk = chunk[need:]
+					tailLen = 0
+				} else {
+					copy(tail[tailLen:], chunk)
+					tailLen += len(chunk)
+					chunk = nil
+				}
+			}
+			aligned := len(chunk) &^ 7
+			if aligned > 0 {
+				fold ^= XORFold(chunk[:aligned])
+			}
+			rem := chunk[aligned:]
+			if len(rem) > 0 {
+				copy(tail[:], rem)
+				tailLen = len(rem)
+			}
+		}
+		if rerr == io.EOF {
+			break
+		}
+		if rerr != nil {
+			return 0, totalBytes, rerr
+		}
+	}
+	for i := 0; i < tailLen; i++ {
+		fold ^= uint64(tail[i])
+	}
+	return fold, totalBytes, nil
+}
+
+// ByteDiff returns the number of differing byte positions across the shared
+// prefix of a and b.
+func ByteDiff(a, b []byte) uint64 {
+	n := len(a)
+	if len(b) < n {
+		n = len(b)
+	}
+	var count uint64
+	for i := 0; i < n; i++ {
+		if a[i] != b[i] {
+			count++
+		}
+	}
+	return count
+}
+
+// Popcount returns the total number of set bits in data using 64-bit POPCNT.
+func Popcount(data []byte) uint64 {
+	var count uint64
+	i := 0
+	for ; i+8 <= len(data); i += 8 {
+		count += uint64(bits.OnesCount64(binary.LittleEndian.Uint64(data[i : i+8])))
+	}
+	for ; i < len(data); i++ {
+		count += uint64(bits.OnesCount8(data[i]))
+	}
+	return count
+}
+
+// SealFrame32B constructs a 32-byte frame seal over raw and packed slices at
+// the given gate byte.
+//
+// Wire layout (32 bytes, little-endian):
+//   [0..8]   uint64  XORFold(raw)
+//   [8..16]  uint64  XORFold(packed)
+//   [16..20] uint32  uint32(len(raw))
+//   [20..24] uint32  uint32(len(packed))
+//   [24]     uint8   gate
+//   [25]     uint8   FrameABIV1
+//   [26..32] 6B      low 48 bits of XORFold(frame[0:26])
+func SealFrame32B(raw, packed []byte, gate uint8) [32]byte {
+	var frame [32]byte
+	binary.LittleEndian.PutUint64(frame[0:8], XORFold(raw))
+	binary.LittleEndian.PutUint64(frame[8:16], XORFold(packed))
+	binary.LittleEndian.PutUint32(frame[16:20], uint32(len(raw)))
+	binary.LittleEndian.PutUint32(frame[20:24], uint32(len(packed)))
+	frame[24] = gate
+	frame[25] = FrameABIV1
+	var tail [8]byte
+	binary.LittleEndian.PutUint64(tail[:], XORFold(frame[0:26]))
+	copy(frame[26:32], tail[0:6])
+	return frame
+}
+
+// CheckFrame32B checks whether frame matches SealFrame32B(raw, packed, gate)
+// using a bitwise accumulator over all 32 bytes.
+func CheckFrame32B(frame [32]byte, raw, packed []byte, gate uint8) bool {
+	if frame[24] != gate || frame[25] != FrameABIV1 {
+		return false
+	}
+	expected := SealFrame32B(raw, packed, gate)
+	var diff uint8
+	for i := 0; i < 32; i++ {
+		diff |= frame[i] ^ expected[i]
+	}
+	return diff == 0
+}
+
+// Gate0x62State holds an 8-byte aligned atomic fold and ternary gate state
+// separated across 64-byte cache lines to prevent false sharing under
+// concurrent updates.
+type Gate0x62State struct {
+	_      [64]byte
+	fold   atomic.Uint64
+	_      [56]byte
+	state  atomic.Int32
+	status atomic.Uint32
+	_      [56]byte
+}
+
+// NewGate0x62State initializes a Gate0x62State with the given initial fold.
+func NewGate0x62State(initialFold uint64) *Gate0x62State {
+	g := &Gate0x62State{}
+	g.fold.Store(initialFold)
+	g.state.Store(int32(TritZero))
+	g.status.Store(uint32(Gate0x62))
+	return g
+}
+
+// AdvanceCAS atomically advances the gate fold from expectedFold to nextFold
+// and records nextState only if the current fold equals expectedFold.
+func (g *Gate0x62State) AdvanceCAS(expectedFold, nextFold uint64, nextState Trit) bool {
+	if !g.fold.CompareAndSwap(expectedFold, nextFold) {
+		return false
+	}
+	g.state.Store(int32(nextState))
+	return true
+}
+
+// Fold returns the current 64-bit fold value.
+func (g *Gate0x62State) Fold() uint64 {
+	return g.fold.Load()
+}
+
+// State returns the current balanced ternary state.
+func (g *Gate0x62State) State() Trit {
+	return Trit(g.state.Load())
+}
+
+// PackBFP64 packs balanced trits into separate positive and negative 64-bit
+// bitplanes (BFP-64 layout, 64 trits per uint64 word).
+func PackBFP64(trits []Trit) (posPlane []uint64, negPlane []uint64, err error) {
+	words := (len(trits) + 63) / 64
+	posPlane = make([]uint64, words)
+	negPlane = make([]uint64, words)
+	for i, t := range trits {
+		w := i >> 6
+		b := uint(i & 63)
+		switch t {
+		case TritPos:
+			posPlane[w] |= 1 << b
+		case TritNeg:
+			negPlane[w] |= 1 << b
+		case TritZero:
+		default:
+			return nil, nil, errors.New("encode: invalid trit value in PackBFP64")
+		}
+	}
+	return posPlane, negPlane, nil
+}
+
+// UnpackBFP64 reconstructs n balanced trits from BFP-64 bitplanes. It rejects
+// words where the positive and negative bitplanes overlap at the same bit.
+func UnpackBFP64(posPlane, negPlane []uint64, n int) ([]Trit, error) {
+	if n < 0 {
+		return nil, errors.New("encode: negative trit count")
+	}
+	words := (n + 63) / 64
+	if len(posPlane) < words || len(negPlane) < words {
+		return nil, errors.New("encode: bitplane slice shorter than requested trit count")
+	}
+	for w := 0; w < words; w++ {
+		if posPlane[w]&negPlane[w] != 0 {
+			return nil, errors.New("encode: overlapping positive and negative bitplanes")
+		}
+	}
+	out := make([]Trit, n)
+	for i := 0; i < n; i++ {
+		w := i >> 6
+		mask := uint64(1) << uint(i&63)
+		if posPlane[w]&mask != 0 {
+			out[i] = TritPos
+		} else if negPlane[w]&mask != 0 {
+			out[i] = TritNeg
+		} else {
+			out[i] = TritZero
+		}
+	}
+	return out, nil
+}
+
+// BFP64AndKleene computes the 64-lane Kleene three-valued AND (min) across two
+// BFP-64 bitplane words: the output is +1 when both inputs are +1, -1 when
+// either input is -1, and 0 otherwise.
+func BFP64AndKleene(posA, negA, posB, negB uint64) (posOut, negOut uint64) {
+	posOut = posA & posB
+	negOut = negA | negB
+	posOut &^= negOut
+	return posOut, negOut
+}
+
+// BFP64NandKleene computes the 64-lane Kleene three-valued NAND (negation of
+// Kleene AND) across two BFP-64 bitplane words by swapping the resulting
+// positive and negative bitplanes.
+func BFP64NandKleene(posA, negA, posB, negB uint64) (posOut, negOut uint64) {
+	p, n := BFP64AndKleene(posA, negA, posB, negB)
+	return n, p
+}
+
+// IsqrtU64 returns the integer floor square root of n using integer arithmetic
+// with no floating-point conversion.
+func IsqrtU64(n uint64) uint64 {
+	if n < 2 {
+		return n
+	}
+	shift := uint((bits.Len64(n) - 1) &^ 1)
+	var res uint64
+	for {
+		cand := res + (1 << shift)
+		res >>= 1
+		if n >= cand {
+			n -= cand
+			res += 1 << shift
+		}
+		if shift == 0 {
+			break
+		}
+		shift -= 2
+	}
+	return res
+}
+
+// RationalDensity represents a reduced rational ratio p/q together with its
+// balanced ternary signal classification. Fields are ordered from 8-byte to
+// 1-byte alignment to avoid internal struct padding.
+type RationalDensity struct {
+	Num   int64
+	Den   int64
+	State Trit
+}
+
+func gcdInt64(a, b int64) int64 {
+	if a < 0 {
+		a = -a
+	}
+	if b < 0 {
+		b = -b
+	}
+	for b != 0 {
+		a, b = b, a%b
+	}
+	if a == 0 {
+		return 1
+	}
+	return a
+}
+
+// CheckRationalDensity reduces num/den by their greatest common divisor and
+// classifies the ratio into a balanced Trit: TritPos when num > den > 0
+// (positive compression gain), TritZero when num == den, and TritNeg when
+// num < den (expansion).
+func CheckRationalDensity(num, den int64) (RationalDensity, error) {
+	if den <= 0 || num < 0 {
+		return RationalDensity{}, errors.New("encode: density ratio requires num >= 0 and den > 0")
+	}
+	g := gcdInt64(num, den)
+	rNum := num / g
+	rDen := den / g
+	state := TritZero
+	if rNum > rDen {
+		state = TritPos
+	} else if rNum < rDen {
+		state = TritNeg
+	}
+	return RationalDensity{
+		Num:   rNum,
+		Den:   rDen,
+		State: state,
+	}, nil
+}
