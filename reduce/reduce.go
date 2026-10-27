@@ -45,20 +45,21 @@ func (c *Config) Reduce(t *term.Term, strat Strategy, fuel uint64) (Result, erro
 	}
 	s := newSession(c)
 	s.strategy = strat
+	s.firstOnly = true
 	res := Result{Term: t}
 	for {
-		var next Redex
-		var found bool
-		s.visit = func(r Redex) bool { next, found = r, true; return true }
-		s.walk(res.Term, c.Root, "")
-		if !found {
+		s.found = false
+		s.pathBuf = s.pathArr[:0]
+		s.walk(res.Term, c.Root)
+		if !s.found {
 			return res, nil
 		}
 		if res.Steps >= fuel {
 			res.Exhausted = true
 			return res, nil
 		}
-		out, err := c.Apply(res.Term, next.Path, next.Rule)
+		next := s.first
+		out, err := c.applyWithSession(s, res.Term, next.Path, next.Rule)
 		if err != nil {
 			return res, fmt.Errorf("reduce: internal error applying %s at %q: %w", next.Rule, next.Path, err)
 		}

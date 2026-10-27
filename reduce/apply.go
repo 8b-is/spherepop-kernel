@@ -31,6 +31,10 @@ func (c *Config) maskAt(t *term.Term, p term.Path) (PermSet, *term.Term, error) 
 // on what a step means. The reducer calls it to move, and the trace checker
 // calls it to verify, so a step is valid exactly when Apply accepts it.
 func (c *Config) Apply(t *term.Term, p term.Path, id RuleID) (*term.Term, error) {
+	return c.applyWithSession(newSession(c), t, p, id)
+}
+
+func (c *Config) applyWithSession(s *session, t *term.Term, p term.Path, id RuleID) (*term.Term, error) {
 	rule, ok := Lookup(id)
 	if !ok {
 		return nil, fmt.Errorf("%w: %q", ErrUnknownRule, id)
@@ -45,7 +49,7 @@ func (c *Config) Apply(t *term.Term, p term.Path, id RuleID) (*term.Term, error)
 		if n.Kind() != term.KindApp || n.Fun().Kind() != term.KindScope {
 			return nil, fmt.Errorf("%w: %s at %q", ErrRuleMismatch, id, string(p))
 		}
-		if !newSession(c).scopes(n.Arg(), mask) {
+		if !s.scopes(n.Arg(), mask) {
 			return nil, fmt.Errorf("%w: scope mode %s, argument %s", ErrAbsorptionBlock, c.scMode(), n.Arg())
 		}
 		r = term.Bracket(n.Fun().Label(), n.Arg())
@@ -53,7 +57,6 @@ func (c *Config) Apply(t *term.Term, p term.Path, id RuleID) (*term.Term, error)
 		if n.Kind() != term.KindApp || n.Fun().Kind() != term.KindBracket {
 			return nil, fmt.Errorf("%w: %s at %q", ErrRuleMismatch, id, string(p))
 		}
-		s := newSession(c)
 		if !s.absorbs(n.Arg(), mask) {
 			return nil, fmt.Errorf("%w: mode %s, argument %s", ErrAbsorptionBlock, c.Absorb, n.Arg())
 		}

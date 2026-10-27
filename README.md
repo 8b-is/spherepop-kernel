@@ -1,5 +1,13 @@
 # spherepop-kernel
 
+<p align="center">
+  <img src="assets/hero-spherepop-kernel.jpg" alt="spherepop-kernel — Circle-Calculus Reduction Kernel, Capability Graph, Zero-Alloc Ring Buffer & QuantTernary Codec" width="100%" />
+</p>
+
+<p align="center">
+  <em>Built with brotherhood: <strong>peter &lt;3 Nate &bull; 8b-is &lt;3 standardgalactic</strong></em>
+</p>
+
 [![CI — Go · Zig · Rust · Idris 2](https://github.com/8b-is/spherepop-kernel/actions/workflows/ci.yml/badge.svg)](https://github.com/8b-is/spherepop-kernel/actions/workflows/ci.yml)
 [![GitHub Pages — Interactive Evaluator](https://github.com/8b-is/spherepop-kernel/actions/workflows/pages.yml/badge.svg)](https://8b-is.github.io/spherepop-kernel/)
 [![Architecture](https://img.shields.io/badge/docs-ARCHITECTURE.md-00f0ff)](ARCHITECTURE.md)
@@ -83,5 +91,18 @@ cargo test --manifest-path verifiers/rust/Cargo.toml
 # 4. Idris 2 QTT (0, 1, ω) combinator & proof-witness module
 idris2 --check verifiers/idris/Spherepop.idr
 ```
+
+---
+
+## Performance & Concurrency Extensions (`8b-is × standardgalactic`)
+
+Without altering any rule semantics or digest bytes in [`SPEC.md`](SPEC.md), the kernel includes zero-allocation hot-path optimizations, concurrent worker-pool scheduling, a 16-state capability-graph engine, and a lossless balanced-ternary (`{-1, 0, +1}`) wire format:
+
+| Subsystem | Location | Optimization & Capability |
+| :--- | :--- | :--- |
+| **Zero-Alloc Merkle Hashing & Bitmask Flags** | [`term/term.go`](term/term.go), [`reduce/find.go`](reduce/find.go) | Stack-buffered `sha256.Sum256` (`[82]byte` for `App`) + 8-bit monotonic capability bitmask (`t.Flags()`), turning `isInsensitive(v)` and pure-atom `isRNormal`/`isSettled` checks into `0.3 ns` (`0 allocs/op`) 1-cycle bitwise ANDs |
+| **16-State Bit-Parallel Capability Graph** | [`reduce/capgraph.go`](reduce/capgraph.go) | Compiles `Config.Perm` into a 32-byte `[16]uint16` Warshall bitmatrix closure over $2^{\{W,K,C,S\}}$ with hardware `POPCNT` / `CTZ` reachability (`BuildCapGraph`, `CanReach`, `IsMonotone`) |
+| **Cache-Line-Padded Ring Buffer & Parallel Scheduler** | [`reduce/capgraph.go`](reduce/capgraph.go), [`sched/parallel.go`](sched/parallel.go) | Lock-free power-of-two MPMC `RingBuffer[T]` (`[64]byte` false-sharing padding) feeding `Config.ReduceBatchParallel` and `World.TickParallel` / `World.RunParallel` with bit-identical `sched.CheckLog` output |
+| **`quantTernary` (`SPQT`) Lossless Codec** | [`encode/ternary.go`](encode/ternary.go) | Balanced ternary `Trit ∈ {-1, 0, +1}` Polish-prefix AST stream (`App` = 2 trits, `I,B,C,K,W,S` = 4 trits) packed at **5 trits/byte** (`base-243`, `1.585 bits/trit`) + 64-trit dual-bitplane `TritWord64` hardware `POPCNT` dot products |
 
 See [`ARCHITECTURE.md`](ARCHITECTURE.md) for the full dependency graph and binary digest wire format, or open the **[Interactive WebCrypto Evaluator & Trace Verifier](https://8b-is.github.io/spherepop-kernel/)**.

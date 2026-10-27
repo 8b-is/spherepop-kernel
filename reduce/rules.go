@@ -69,19 +69,44 @@ func Rules() []Rule {
 
 // Lookup returns the rule with the given identifier.
 func Lookup(id RuleID) (Rule, bool) {
-	for _, r := range table {
-		if r.ID == id {
-			return r, true
-		}
+	switch id {
+	case RuleI:
+		return table[0], true
+	case RuleB:
+		return table[1], true
+	case RuleC:
+		return table[2], true
+	case RuleK:
+		return table[3], true
+	case RuleW:
+		return table[4], true
+	case RuleS:
+		return table[5], true
+	case RuleAbs:
+		return table[6], true
+	case RuleSc:
+		return table[7], true
 	}
 	return Rule{}, false
 }
 
 func ruleForHead(name string) (Rule, bool) {
-	for _, r := range table {
-		if r.Kind == Contraction && r.Head == name {
-			return r, true
-		}
+	if len(name) != 1 {
+		return Rule{}, false
+	}
+	switch name[0] {
+	case 'I':
+		return table[0], true
+	case 'B':
+		return table[1], true
+	case 'C':
+		return table[2], true
+	case 'K':
+		return table[3], true
+	case 'W':
+		return table[4], true
+	case 'S':
+		return table[5], true
 	}
 	return Rule{}, false
 }

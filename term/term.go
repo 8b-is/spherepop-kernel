@@ -66,11 +66,54 @@ func ParseDigest(s string) (Digest, error) {
 // domain separates term digests from every other digest in the system.
 const domain = "spherepop-term/1"
 
+// domainPrefix is the pre-encoded uvarint(16) + "spherepop-term/1" prefix,
+// avoiding per-node varint formatting and heap allocations on the hot path.
+var domainPrefix = [17]byte{
+	16,
+	's', 'p', 'h', 'e', 'r', 'e', 'p', 'o', 'p', '-', 't', 'e', 'r', 'm', '/', '1',
+}
+
+// Capability & structural bit-flags cached on every Term node in O(1) during
+// construction. Bits 0..3 match reduce.PermW..PermS so insensitivity checks
+// collapse to a single bitwise AND with zero tree walks or map allocations.
+const (
+	FlagW       uint8 = 1 << 0
+	FlagK       uint8 = 1 << 1
+	FlagC       uint8 = 1 << 2
+	FlagS       uint8 = 1 << 3
+	FlagI       uint8 = 1 << 4
+	FlagB       uint8 = 1 << 5
+	FlagBracket uint8 = 1 << 6
+	FlagScope   uint8 = 1 << 7
+)
+
+func constFlag(name string) uint8 {
+	if len(name) != 1 {
+		return 0
+	}
+	switch name[0] {
+	case 'W':
+		return FlagW
+	case 'K':
+		return FlagK
+	case 'C':
+		return FlagC
+	case 'S':
+		return FlagS
+	case 'I':
+		return FlagI
+	case 'B':
+		return FlagB
+	}
+	return 0
+}
+
 // Term is an immutable node. Values are created only by the constructors in
 // this package and are shared freely; two terms are equal exactly when their
 // digests are equal. The zero value and a nil pointer are not valid terms.
 type Term struct {
 	kind   Kind
+	flags  uint8  // bitwise OR of Flag* across all nodes in the subterm
 	name   string // atom or constant name, or the label of a scope or bracket
 	left   *Term  // function child of an application, or body of a bracket
 	right  *Term  // argument child of an application
@@ -78,6 +121,9 @@ type Term struct {
 	size   int // number of application circles, saturating
 	leaves int // number of leaves, saturating
 }
+
+// Flags returns the O(1) structural capability bitmask of t.
+func (t *Term) Flags() uint8 { return t.flags }
 
 func satAdd(a, b int) int {
 	if a > math.MaxInt-b {
@@ -94,11 +140,28 @@ func writeString(h hash.Hash, s string) {
 }
 
 func leaf(kind Kind, name string) *Term {
+	var flags uint8
+	switch kind {
+	case KindConst:
+		flags = constFlag(name)
+	case KindScope:
+		flags = FlagScope
+	}
+	t := &Term{kind: kind, flags: flags, name: name, leaves: 1}
+	// Stack-allocated zero-alloc fast path for common short identifiers (<= 100 bytes).
+	if len(name) <= 100 {
+		var buf [128]byte
+		copy(buf[:17], domainPrefix[:])
+		buf[17] = byte(kind)
+		n := binary.PutUvarint(buf[18:], uint64(len(name)))
+		copy(buf[18+n:], name)
+		t.digest = sha256.Sum256(buf[:18+n+len(name)])
+		return t
+	}
 	h := sha256.New()
-	writeString(h, domain)
+	h.Write(domainPrefix[:])
 	h.Write([]byte{byte(kind)})
 	writeString(h, name)
-	t := &Term{kind: kind, name: name, leaves: 1}
 	h.Sum(t.digest[:0])
 	return t
 }
@@ -113,22 +176,23 @@ func Const(name string) *Term { return leaf(KindConst, name) }
 // Scope returns the scope constructor sc_label.
 func Scope(label string) *Term { return leaf(KindScope, label) }
 
-// App returns the application circle f x.
+// App returns the application circle f x using a stack-allocated 82-byte buffer
+// for zero-allocation SHA-256 Merkle hashing.
 func App(f, x *Term) *Term {
-	h := sha256.New()
-	writeString(h, domain)
-	h.Write([]byte{byte(KindApp)})
-	h.Write(f.digest[:])
-	h.Write(x.digest[:])
-	t := &Term{
+	var buf [17 + 1 + 32 + 32]byte
+	copy(buf[:17], domainPrefix[:])
+	buf[17] = byte(KindApp)
+	copy(buf[18:50], f.digest[:])
+	copy(buf[50:82], x.digest[:])
+	return &Term{
 		kind:   KindApp,
+		flags:  f.flags | x.flags,
 		left:   f,
 		right:  x,
+		digest: sha256.Sum256(buf[:]),
 		size:   satAdd(satAdd(f.size, x.size), 1),
 		leaves: satAdd(f.leaves, x.leaves),
 	}
-	h.Sum(t.digest[:0])
-	return t
 }
 
 // Apply returns f a1 a2 ... an, associating to the left.
@@ -141,18 +205,30 @@ func Apply(f *Term, args ...*Term) *Term {
 
 // Bracket returns the bracket <body>_label.
 func Bracket(label string, body *Term) *Term {
-	h := sha256.New()
-	writeString(h, domain)
-	h.Write([]byte{byte(KindBracket)})
-	writeString(h, label)
-	h.Write(body.digest[:])
 	t := &Term{
 		kind:   KindBracket,
+		flags:  body.flags | FlagBracket,
 		name:   label,
 		left:   body,
 		size:   body.size,
 		leaves: body.leaves,
 	}
+	if len(label) <= 64 {
+		var buf [17 + 1 + 10 + 64 + 32]byte
+		copy(buf[:17], domainPrefix[:])
+		buf[17] = byte(KindBracket)
+		n := binary.PutUvarint(buf[18:], uint64(len(label)))
+		copy(buf[18+n:], label)
+		pos := 18 + n + len(label)
+		copy(buf[pos:pos+32], body.digest[:])
+		t.digest = sha256.Sum256(buf[:pos+32])
+		return t
+	}
+	h := sha256.New()
+	h.Write(domainPrefix[:])
+	h.Write([]byte{byte(KindBracket)})
+	writeString(h, label)
+	h.Write(body.digest[:])
 	h.Sum(t.digest[:0])
 	return t
 }

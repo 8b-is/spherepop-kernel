@@ -30,10 +30,18 @@ var permNames = []struct {
 // permBit returns the bit for a constant name, and false for constants that
 // are outside the alphabet (I and B, which are never gated).
 func permBit(name string) (PermSet, bool) {
-	for _, p := range permNames {
-		if p.name == name {
-			return p.bit, true
-		}
+	if len(name) != 1 {
+		return 0, false
+	}
+	switch name[0] {
+	case 'W':
+		return PermW, true
+	case 'K':
+		return PermK, true
+	case 'C':
+		return PermC, true
+	case 'S':
+		return PermS, true
 	}
 	return 0, false
 }
