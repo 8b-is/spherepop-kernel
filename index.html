@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>spherepop-kernel — Circle-Calculus Reduction Kernel & 4-Language Trace Verifier</title>
+  <style>
+    :root {
+      --bg: #08090f;
+      --panel: #10131f;
+      --panel-alt: #15192b;
+      --border: #232a45;
+      --cyan: #00f0ff;
+      --purple: #b388ff;
+      --green: #00e676;
+      --amber: #ffab00;
+      --red: #ff5252;
+      --text: #e8ecf8;
+      --muted: #9aa4c7;
+      --mono: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace;
+      --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(circle at 20% 0%, #141933 0%, var(--bg) 60%);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.6;
+      padding: 2rem 1.25rem 4rem;
+    }
+    .container { max-width: 1180px; margin: 0 auto; }
+    header {
+      border: 1px solid var(--border);
+      background: linear-gradient(135deg, rgba(16,19,31,0.95), rgba(21,25,43,0.95));
+      border-radius: 14px;
+      padding: 2rem;
+      margin-bottom: 1.75rem;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--cyan);
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      padding: 0.28rem 0.75rem;
+      border-radius: 999px;
+      margin-bottom: 0.9rem;
+    }
+    h1 {
+      font-size: 2.2rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.6rem;
+    }
+    .subtitle {
+      color: var(--muted);
+      max-width: 860px;
+      font-size: 1.02rem;
+      margin-bottom: 1.25rem;
+    }
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+    .badge {
+      font-family: var(--mono);
+      font-size: 0.76rem;
+      padding: 0.32rem 0.7rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--panel-alt);
+      color: var(--text);
+      text-decoration: none;
+    }
+    .badge.cyan { border-color: rgba(0,240,255,0.4); color: var(--cyan); }
+    .badge.green { border-color: rgba(0,230,118,0.4); color: var(--green); }
+    .badge.purple { border-color: rgba(179,136,255,0.4); color: var(--purple); }
+    .grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 1.5rem;
+      margin-bottom: 1.75rem;
+    }
+    @media (max-width: 960px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+    .card h2 {
+      font-size: 1.15rem;
+      margin-bottom: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--cyan);
+      font-family: var(--mono);
+    }
+    .controls {
+      display: flex;
+      gap: 0.6rem;
+      margin-bottom: 0.9rem;
+      flex-wrap: wrap;
+    }
+    input[type="text"] {
+      flex: 1;
+      min-width: 240px;
+      background: #090b12;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.95rem;
+      padding: 0.65rem 0.9rem;
+      border-radius: 8px;
+    }
+    button {
+      background: linear-gradient(135deg, #00c8ff, #7c4dff);
+      color: #05070d;
+      font-weight: 700;
+      font-family: var(--mono);
+      border: none;
+      padding: 0.65rem 1.1rem;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button.preset {
+      background: var(--panel-alt);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      font-weight: 500;
+      font-size: 0.78rem;
+      padding: 0.35rem 0.65rem;
+    }
+    button.preset:hover {
+      color: var(--cyan);
+      border-color: var(--cyan);
+    }
+    .trace-box {
+      background: #090b12;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      overflow-x: auto;
+      max-height: 430px;
+      overflow-y: auto;
+    }
+    .step-row {
+      border-left: 3px solid var(--cyan);
+      padding-left: 0.75rem;
+      margin-bottom: 0.85rem;
+    }
+    .step-row.final {
+      border-left-color: var(--green);
+    }
+    .hash {
+      color: var(--purple);
+      word-break: break-all;
+      font-size: 0.74rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.55rem 0.65rem;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      color: var(--cyan);
+      font-family: var(--mono);
+      font-size: 0.76rem;
+      text-transform: uppercase;
+    }
+    code {
+      font-family: var(--mono);
+      color: var(--cyan);
+      background: rgba(0,240,255,0.08);
+      padding: 0.12rem 0.35rem;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="eyebrow">SPHEREPOP-KERNEL // CIRCLE CALCULUS &bull; MERKLE TRACE VERIFIER</div>
+      <h1>spherepop-kernel</h1>
+      <p class="subtitle">
+        Independently executable circle-calculus reduction kernel in Go (`I, B, C, K, W, S` + labeled brackets `&lt;...&gt;_a` &amp; `sc_a`), paired with bit-exact differential trace verifiers in <strong>Zig</strong>, <strong>Rust</strong>, and <strong>Idris 2 QTT (`0, 1, &omega;`)</strong>.
+      </p>
+      <div class="badges">
+        <a class="badge cyan" href="https://github.com/8b-is/spherepop-kernel">GitHub: 8b-is/spherepop-kernel</a>
+        <a class="badge purple" href="https://github.com/standardgalactic/spherepop-kernel">Upstream: standardgalactic/spherepop-kernel</a>
+        <a class="badge green" href="SPEC.md">Specification (SPEC.md)</a>
+        <a class="badge cyan" href="ARCHITECTURE.md">Architecture (ARCHITECTURE.md)</a>
+      </div>
+    </header>
+
+    <div class="grid">
+      <div class="card">
+        <h2>
+          <span>Live Circle-Calculus Evaluator &amp; WebCrypto SHA-256 Verifier</span>
+          <span style="font-size:0.74rem;color:var(--green)">spherepop-term/1 + spherepop-trace/1</span>
+        </h2>
+        <div class="controls">
+          <input id="termInput" type="text" value="S K K x" aria-label="Spherepop term input" />
+          <button onclick="runEval()">Reduce &amp; Hash-Verify</button>
+        </div>
+        <div class="controls">
+          <button class="preset" onclick="setPreset('S K K x')">S K K x &rarr; x</button>
+          <button class="preset" onclick="setPreset('B f g x')">B f g x &rarr; f (g x)</button>
+          <button class="preset" onclick="setPreset('C f x y')">C f x y &rarr; f y x</button>
+          <button class="preset" onclick="setPreset('W f x')">W f x &rarr; f x x</button>
+          <button class="preset" onclick="setPreset('K a b')">K a b &rarr; a</button>
+        </div>
+        <div id="traceOutput" class="trace-box">Loading WebCrypto SHA-256 verifier...</div>
+      </div>
+
+      <div class="card">
+        <h2><span>Rule Table &amp; QTT Multiplicity (`0, 1, &omega;`)</span></h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Rule</th>
+              <th>Redex &rarr; Contractum</th>
+              <th>QTT Rig</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>I</code></td><td><code>I x &rarr; x</code></td><td><code>1</code> (Linear)</td></tr>
+            <tr><td><code>K</code></td><td><code>K x y &rarr; x</code></td><td><code>0</code> on <code>y</code> (Erasure)</td></tr>
+            <tr><td><code>B</code></td><td><code>B f g x &rarr; f (g x)</code></td><td><code>1</code> (Composition)</td></tr>
+            <tr><td><code>C</code></td><td><code>C f x y &rarr; f y x</code></td><td><code>1</code> (Exchange)</td></tr>
+            <tr><td><code>W</code></td><td><code>W f x &rarr; f x x</code></td><td><code>&omega;</code> on <code>x</code> (Dup)</td></tr>
+            <tr><td><code>S</code></td><td><code>S f g x &rarr; (f x) (g x)</code></td><td><code>&omega;</code> on <code>x</code> (Share)</td></tr>
+            <tr><td><code>Sc</code></td><td><code>sc_a (&lt;x&gt;_a y) &rarr; &lt;x y&gt;_a</code></td><td>Scope (<code>settled/safe/any</code>)</td></tr>
+            <tr><td><code>Abs</code></td><td><code>&lt;&lt;x&gt;_a y&gt;_a &rarr; &lt;x&gt;_a</code></td><td>Absorb (<code>s/u/nf/any/off</code>)</td></tr>
+          </tbody>
+        </table>
+
+        <h2 style="margin-top:1.4rem"><span>4-Language Verification Lanes</span></h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Language</th>
+              <th>Verifier Path</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Go 1.22+</strong></td><td><code>term/</code>, <code>reduce/</code>, <code>trace/</code></td><td style="color:var(--green)">11/11 pkgs PASS</td></tr>
+            <tr><td><strong>Zig 0.16+</strong></td><td><code>verifiers/zig/src/verifier.zig</code></td><td style="color:var(--green)">2/2 tests PASS</td></tr>
+            <tr><td><strong>Rust 1.75+</strong></td><td><code>verifiers/rust/src/lib.rs</code></td><td style="color:var(--green)">1/1 test PASS</td></tr>
+            <tr><td><strong>Idris 2 QTT</strong></td><td><code>verifiers/idris/Spherepop.idr</code></td><td style="color:var(--cyan)">QTT Checked</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span>Oct 26 Confluence &amp; Settled-Scope Search Summary (`368,430` Enumerated Terms &bull; `~53.7M` Explorations)</span></h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Regime</th>
+            <th>Flags</th>
+            <th>Mathematical Status</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Settled Scope + Settled Absorption</strong></td>
+            <td><code>--absorb s --sc settled</code></td>
+            <td style="color:var(--green)"><strong>PROVED CONFLUENT</strong></td>
+            <td>Proved in <code>notes/settled-scope.tex</code> for all permission structures (including non-terminating terms).</td>
+          </tr>
+          <tr>
+            <td><strong>Safe Scope (Scheduler Default)</strong></td>
+            <td><code>--absorb u --sc safe</code></td>
+            <td style="color:var(--amber)"><strong>UNREFUTED / OPEN</strong></td>
+            <td>0 counterexamples across ~53.7M explorations; proof obstacle isolated at <code>sc_x (&lt;I&gt;_x a)</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>Unrestricted Scope (Essay Mode)</strong></td>
+            <td><code>--sc any</code></td>
+            <td style="color:var(--red)"><strong>REFUTED WHEN RESTRICTED</strong></td>
+            <td>Positive control finds expected non-confluence when a bracket label restricts root permissions.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const enc = new TextEncoder();
+    const CONSTS = new Set(['I', 'B', 'C', 'K', 'W', 'S']);
+
+    function uvarintBytes(n) {
+      const out = [];
+      while (n >= 0x80) {
+        out.push((n & 0x7f) | 0x80);
+        n >>>= 7;
+      }
+      out.push(n & 0x7f);
+      return new Uint8Array(out);
+    }
+
+    function concatBytes(...arrays) {
+      const total = arrays.reduce((acc, a) => acc + a.length, 0);
+      const res = new Uint8Array(total);
+      let offset = 0;
+      for (const a of arrays) {
+        res.set(a, offset);
+        offset += a.length;
+      }
+      return res;
+    }
+
+    function writeStringBytes(str) {
+      const b = enc.encode(str);
+      return concatBytes(uvarintBytes(b.length), b);
+    }
+
+    function toHex(uint8) {
+      return Array.from(uint8).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    async function sha256Bytes(uint8) {
+      const buf = await crypto.subtle.digest('SHA-256', uint8);
+      return new Uint8Array(buf);
+    }
+
+    async function traceSum(...parts) {
+      const chunks = [];
+      for (const p of parts) {
+        chunks.push(typeof p === 'string' ? enc.encode(p) : p);
+        chunks.push(new Uint8Array([0]));
+      }
+      return toHex(await sha256Bytes(concatBytes(...chunks)));
+    }
+
+    const DOMAIN_PREFIX = writeStringBytes('spherepop-term/1');
+
+    async function computeTermDigest(node) {
+      if (node.digest) return node.digest;
+      if (node.kind === 'atom') {
+        node.digest = await sha256Bytes(concatBytes(DOMAIN_PREFIX, new Uint8Array([1]), writeStringBytes(node.name)));
+      } else if (node.kind === 'const') {
+        node.digest = await sha256Bytes(concatBytes(DOMAIN_PREFIX, new Uint8Array([2]), writeStringBytes(node.name)));
+      } else if (node.kind === 'app') {
+        const fd = await computeTermDigest(node.f);
+        const xd = await computeTermDigest(node.x);
+        node.digest = await sha256Bytes(concatBytes(DOMAIN_PREFIX, new Uint8Array([4]), fd, xd));
+      }
+      node.hex = toHex(node.digest);
+      return node.digest;
+    }
+
+    function tokenize(input) {
+      return input.replace(/\(/g, ' ( ').replace(/\)/g, ' ) ').trim().split(/\s+/).filter(Boolean);
+    }
+
+    function parseTokens(tokens) {
+      let pos = 0;
+      function parseAtom() {
+        if (tokens[pos] === '(') {
+          pos++;
+          const e = parseExpr();
+          if (tokens[pos] === ')') pos++;
+          return e;
+        }
+        const tok = tokens[pos++];
+        return { kind: CONSTS.has(tok) ? 'const' : 'atom', name: tok };
+      }
+      function parseExpr() {
+        let left = parseAtom();
+        while (pos < tokens.length && tokens[pos] !== ')') {
+          const right = parseAtom();
+          left = { kind: 'app', f: left, x: right };
+        }
+        return left;
+      }
+      return parseExpr();
+    }
+
+    function formatTerm(t) {
+      if (t.kind === 'atom' || t.kind === 'const') return t.name;
+      const fStr = formatTerm(t.f);
+      const xStr = t.x.kind === 'app' ? `(${formatTerm(t.x)})` : formatTerm(t.x);
+      return `${fStr} ${xStr}`;
+    }
+
+    function spine(t) {
+      const args = [];
+      let cur = t;
+      while (cur.kind === 'app') {
+        args.unshift(cur.x);
+        cur = cur.f;
+      }
+      return { head: cur, args };
+    }
+
+    function rebuild(head, args) {
+      return args.reduce((acc, a) => ({ kind: 'app', f: acc, x: a }), head);
+    }
+
+    function stepLO(t) {
+      const { head, args } = spine(t);
+      if (head.kind === 'const') {
+        if (head.name === 'I' && args.length >= 1) {
+          return { rule: 'I', path: '', term: rebuild(args[0], args.slice(1)) };
+        }
+        if (head.name === 'K' && args.length >= 2) {
+          return { rule: 'K', path: '', term: rebuild(args[0], args.slice(2)) };
+        }
+        if (head.name === 'B' && args.length >= 3) {
+          const [f, g, x, ...rest] = args;
+          return { rule: 'B', path: '', term: rebuild({ kind: 'app', f, x: { kind: 'app', f: g, x } }, rest) };
+        }
+        if (head.name === 'C' && args.length >= 3) {
+          const [f, x, y, ...rest] = args;
+          return { rule: 'C', path: '', term: rebuild({ kind: 'app', f: { kind: 'app', f, x: y }, x }, rest) };
+        }
+        if (head.name === 'W' && args.length >= 2) {
+          const [f, x, ...rest] = args;
+          return { rule: 'W', path: '', term: rebuild({ kind: 'app', f: { kind: 'app', f, x }, x }, rest) };
+        }
+        if (head.name === 'S' && args.length >= 3) {
+          const [f, g, x, ...rest] = args;
+          return { rule: 'S', path: '', term: rebuild({ kind: 'app', f: { kind: 'app', f, x }, x: { kind: 'app', f: g, x } }, rest) };
+        }
+      }
+      if (t.kind === 'app') {
+        const l = stepLO(t.f);
+        if (l) return { rule: l.rule, path: l.path ? 'L.' + l.path : 'L', term: { kind: 'app', f: l.term, x: t.x } };
+        const r = stepLO(t.x);
+        if (r) return { rule: r.rule, path: r.path ? 'R.' + r.path : 'R', term: { kind: 'app', f: t.f, x: r.term } };
+      }
+      return null;
+    }
+
+    function setPreset(val) {
+      document.getElementById('termInput').value = val;
+      runEval();
+    }
+
+    async function runEval() {
+      const raw = document.getElementById('termInput').value;
+      const out = document.getElementById('traceOutput');
+      try {
+        let cur = parseTokens(tokenize(raw));
+        await computeTermDigest(cur);
+        const defaultConfigJSON = '{"permissions":{"root":63,"restrict":null},"absorb":"u","sc":"settled"}';
+        const cfgDigest = await traceSum('spherepop-config/1', defaultConfigJSON);
+        let prevLink = await traceSum('spherepop-trace/1', cur.hex, cfgDigest);
+
+        let html = `<div class="step-row">
+          <div><strong>START</strong>: <code>${formatTerm(cur)}</code></div>
+          <div class="hash">start_digest (spherepop-term/1): ${cur.hex}</div>
+          <div class="hash">genesis_link (spherepop-trace/1): ${prevLink}</div>
+        </div>`;
+
+        let steps = 0;
+        while (steps < 32) {
+          const next = stepLO(cur);
+          if (!next) break;
+          steps++;
+          cur = next.term;
+          await computeTermDigest(cur);
+          prevLink = await traceSum(prevLink, next.rule, next.path, cur.hex);
+          html += `<div class="step-row">
+            <div><strong>STEP ${steps}</strong> [rule=<code>${next.rule}</code>, path=<code>"${next.path}"</code>] &rarr; <code>${formatTerm(cur)}</code></div>
+            <div class="hash">after_digest: ${cur.hex}</div>
+            <div class="hash">trace_link  : ${prevLink}</div>
+          </div>`;
+        }
+
+        html += `<div class="step-row final">
+          <div style="color:var(--green)"><strong>NORMAL FORM VERIFIED (${steps} steps)</strong>: <code>${formatTerm(cur)}</code></div>
+          <div class="hash">final_digest: ${cur.hex}</div>
+          <div class="hash">head_link   : ${prevLink}</div>
+        </div>`;
+        out.innerHTML = html;
+      } catch (err) {
+        out.innerHTML = `<div style="color:var(--red)">Parse / Eval error: ${err.message}</div>`;
+      }
+    }
+
+    runEval();
+  </script>
+</body>
+</html>

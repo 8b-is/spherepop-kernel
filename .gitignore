@@ -1,0 +1,18 @@
+# Compiled binaries & build artifacts
+/spherepop
+*.exe
+*.out
+
+# Zig build cache
+.zig-cache/
+zig-out/
+
+# Rust build artifacts
+verifiers/rust/target/
+verifiers/rust/Cargo.lock
+
+# Idris 2 build artifacts
+verifiers/idris/build/
+*.ibc
+*.ttc
+*.ttm

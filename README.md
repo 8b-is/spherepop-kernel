@@ -1,5 +1,10 @@
 # spherepop-kernel
 
+[![CI — Go · Zig · Rust · Idris 2](https://github.com/8b-is/spherepop-kernel/actions/workflows/ci.yml/badge.svg)](https://github.com/8b-is/spherepop-kernel/actions/workflows/ci.yml)
+[![GitHub Pages — Interactive Evaluator](https://github.com/8b-is/spherepop-kernel/actions/workflows/pages.yml/badge.svg)](https://8b-is.github.io/spherepop-kernel/)
+[![Architecture](https://img.shields.io/badge/docs-ARCHITECTURE.md-00f0ff)](ARCHITECTURE.md)
+[![Spec](https://img.shields.io/badge/spec-SPEC.md-b388ff)](SPEC.md)
+
 An independently executable reduction language in Go, built to be hosted inside a game but never to depend on one. The kernel reduces terms of the circle calculus: SK-style combinators extended with brackets and a scope constructor, where the permission to contract a term depends on the chain of brackets around it. Everything runs from the command line with no engine, graphics or network.
 
 The design rests on keeping three things apart. A term is a structural object, a reduction step is an application of an explicit rule that a checker can verify on its own, and a host such as a game entity is only one place a reduction can run. Matching final hashes proves nothing about validity, so every run can emit a trace that an independent check replays step by step against the rule table. Computation, evidence and acceptance are separate objects with separate code.
@@ -58,3 +63,25 @@ Suspension points inside a round, atomic transactions, a command-line entry for 
 ## Specification
 
 `SPEC.md` defines the term syntax and digests, the rules, permissions, absorption and scope modes, strategies, fuel, trace and log formats, the effects boundary and the frame loop. Where the specification and the code disagree, that is a bug in one of them.
+
+---
+
+## Multi-Language Independent Verifiers (`Go · Zig · Rust · Idris 2`)
+
+To fulfill the independent-verifier requirement in [`SPEC.md`](SPEC.md), [`verifiers/`](verifiers/) provides bit-exact independent implementations of the `spherepop-term/1` Merkle digests, `spherepop-config/1` hashes, `spherepop-trace/1` hash chains, and Quantitative Type Theory (`0, 1, ω`) rewrite witnesses:
+
+```bash
+# 1. Go reference kernel & conformance vectors
+go test ./...
+
+# 2. Zig independent digest & trace-chain verifier
+zig test verifiers/zig/src/verifier.zig
+
+# 3. Rust zero-dependency digest & trace-chain verifier
+cargo test --manifest-path verifiers/rust/Cargo.toml
+
+# 4. Idris 2 QTT (0, 1, ω) combinator & proof-witness module
+idris2 --check verifiers/idris/Spherepop.idr
+```
+
+See [`ARCHITECTURE.md`](ARCHITECTURE.md) for the full dependency graph and binary digest wire format, or open the **[Interactive WebCrypto Evaluator & Trace Verifier](https://8b-is.github.io/spherepop-kernel/)**.

@@ -1,0 +1,48 @@
+name: CI — Go Kernel & Multi-Language Verifiers (Zig · Rust · Idris 2)
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  go-kernel:
+    name: Go Reference Kernel & Conformance Vectors
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+      - name: Vet & Test Go Packages
+        run: |
+          go vet ./...
+          go test -v ./...
+      - name: Build CLI & Verify Trace Replay
+        run: |
+          go build -o spherepop ./cmd/spherepop
+          ./spherepop test
+          ./spherepop reduce 'S K K x' --out /tmp/skk_trace.json
+          ./spherepop check /tmp/skk_trace.json
+
+  rust-verifier:
+    name: Rust Zero-Dep Trace & Digest Verifier
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Run Rust Independent Verifier Tests
+        run: cargo test --manifest-path verifiers/rust/Cargo.toml -- --nocapture
+
+  zig-verifier:
+    name: Zig Independent Trace & Digest Verifier
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mlugg/setup-zig@v2
+        with:
+          version: master
+      - name: Run Zig Independent Verifier Tests
+        run: zig test verifiers/zig/src/verifier.zig
