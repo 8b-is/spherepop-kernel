@@ -177,3 +177,69 @@ func TestFold0xE1034E575C371AB0AtQT55AndUltrabackyardLoop(t *testing.T) {
 		t.Fatalf("VerifyUltrabackyardLoopHierarchy: %v", err)
 	}
 }
+
+func TestByteDiffAndPopcountSWARMatchesScalar(t *testing.T) {
+	a := make([]byte, 1089)
+	b := make([]byte, 1089)
+	var x uint64 = 0xe1034e575c371ab0
+	for i := range a {
+		x = x*6364136223846793005 + 1442695040888963407
+		a[i] = byte(x >> 33)
+		x = x*6364136223846793005 + 1442695040888963407
+		b[i] = byte(x >> 33)
+	}
+	for n := 0; n <= len(a); n++ {
+		var wantDiff uint64
+		for i := 0; i < n; i++ {
+			if a[i] != b[i] {
+				wantDiff++
+			}
+		}
+		if got := ByteDiff(a[:n], b[:n]); got != wantDiff {
+			t.Fatalf("len=%d: ByteDiff=%d want=%d", n, got, wantDiff)
+		}
+	}
+	if got := ByteDiff(a, a); got != 0 {
+		t.Fatalf("ByteDiff(a, a) = %d, want 0", got)
+	}
+}
+
+func BenchmarkXORFold64K(b *testing.B) {
+	buf := bytes.Repeat([]byte{0x62, 0x55, 0xe1, 0x03, 0x4e, 0x57, 0x5c, 0x37}, 8192)
+	b.SetBytes(int64(len(buf)))
+	b.ResetTimer()
+	var sink uint64
+	for i := 0; i < b.N; i++ {
+		sink ^= XORFold(buf)
+	}
+	if sink == 0xdeadbeef {
+		b.Fatal(sink)
+	}
+}
+
+func BenchmarkPopcount64K(b *testing.B) {
+	buf := bytes.Repeat([]byte{0x62, 0x55, 0xe1, 0x03, 0x4e, 0x57, 0x5c, 0x37}, 8192)
+	b.SetBytes(int64(len(buf)))
+	b.ResetTimer()
+	var sink uint64
+	for i := 0; i < b.N; i++ {
+		sink += Popcount(buf)
+	}
+	if sink == 0 {
+		b.Fatal(sink)
+	}
+}
+
+func BenchmarkByteDiff64K(b *testing.B) {
+	a := bytes.Repeat([]byte{0x62, 0x55, 0xe1, 0x03, 0x4e, 0x57, 0x5c, 0x37}, 8192)
+	c := bytes.Repeat([]byte{0x62, 0x5a, 0xe1, 0x03, 0x4e, 0x57, 0x5c, 0x38}, 8192)
+	b.SetBytes(int64(len(a)))
+	b.ResetTimer()
+	var sink uint64
+	for i := 0; i < b.N; i++ {
+		sink += ByteDiff(a, c)
+	}
+	if sink == 0 {
+		b.Fatal(sink)
+	}
+}

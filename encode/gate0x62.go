@@ -44,18 +44,20 @@ func XORFoldScalar(data []byte) uint64 {
 	return acc
 }
 
-// XORFold computes the 64-bit little-endian XOR fold in 32-byte (4-word) steps.
-// It agrees bit-for-bit with XORFoldScalar and the Zig xorFold implementation.
+// XORFold computes the 64-bit little-endian XOR fold in 64-byte (8-word) steps
+// across four independent accumulators to maximize instruction-level parallelism.
+// It agrees bit-for-bit with XORFoldScalar and the wupz Zig xorFold implementation.
 func XORFold(data []byte) uint64 {
-	var acc uint64
+	var a0, a1, a2, a3 uint64
 	i := 0
-	for ; i+32 <= len(data); i += 32 {
-		w0 := binary.LittleEndian.Uint64(data[i : i+8])
-		w1 := binary.LittleEndian.Uint64(data[i+8 : i+16])
-		w2 := binary.LittleEndian.Uint64(data[i+16 : i+24])
-		w3 := binary.LittleEndian.Uint64(data[i+24 : i+32])
-		acc ^= (w0 ^ w1) ^ (w2 ^ w3)
+	for ; i+64 <= len(data); i += 64 {
+		b := data[i : i+64 : i+64]
+		a0 ^= binary.LittleEndian.Uint64(b[0:8]) ^ binary.LittleEndian.Uint64(b[32:40])
+		a1 ^= binary.LittleEndian.Uint64(b[8:16]) ^ binary.LittleEndian.Uint64(b[40:48])
+		a2 ^= binary.LittleEndian.Uint64(b[16:24]) ^ binary.LittleEndian.Uint64(b[48:56])
+		a3 ^= binary.LittleEndian.Uint64(b[24:32]) ^ binary.LittleEndian.Uint64(b[56:64])
 	}
+	acc := (a0 ^ a1) ^ (a2 ^ a3)
 	for ; i+8 <= len(data); i += 8 {
 		acc ^= binary.LittleEndian.Uint64(data[i : i+8])
 	}
@@ -117,14 +119,23 @@ func StreamXORFold(r io.Reader) (fold uint64, totalBytes int64, err error) {
 }
 
 // ByteDiff returns the number of differing byte positions across the shared
-// prefix of a and b.
+// prefix of a and b using 64-bit SWAR non-zero byte detection.
 func ByteDiff(a, b []byte) uint64 {
 	n := len(a)
 	if len(b) < n {
 		n = len(b)
 	}
 	var count uint64
-	for i := 0; i < n; i++ {
+	i := 0
+	for ; i+8 <= n; i += 8 {
+		d := binary.LittleEndian.Uint64(a[i:i+8]) ^ binary.LittleEndian.Uint64(b[i:i+8])
+		if d != 0 {
+			// Collapse any non-zero byte into a 1 in its MSB, then count set MSBs.
+			msb := ((d & 0x7f7f7f7f7f7f7f7f) + 0x7f7f7f7f7f7f7f7f) | d
+			count += uint64(bits.OnesCount64(msb & 0x8080808080808080))
+		}
+	}
+	for ; i < n; i++ {
 		if a[i] != b[i] {
 			count++
 		}
@@ -132,10 +143,19 @@ func ByteDiff(a, b []byte) uint64 {
 	return count
 }
 
-// Popcount returns the total number of set bits in data using 64-bit POPCNT.
+// Popcount returns the total number of set bits in data using 4-way unrolled
+// 64-bit hardware POPCNT.
 func Popcount(data []byte) uint64 {
-	var count uint64
+	var c0, c1, c2, c3 uint64
 	i := 0
+	for ; i+32 <= len(data); i += 32 {
+		b := data[i : i+32 : i+32]
+		c0 += uint64(bits.OnesCount64(binary.LittleEndian.Uint64(b[0:8])))
+		c1 += uint64(bits.OnesCount64(binary.LittleEndian.Uint64(b[8:16])))
+		c2 += uint64(bits.OnesCount64(binary.LittleEndian.Uint64(b[16:24])))
+		c3 += uint64(bits.OnesCount64(binary.LittleEndian.Uint64(b[24:32])))
+	}
+	count := (c0 + c1) + (c2 + c3)
 	for ; i+8 <= len(data); i += 8 {
 		count += uint64(bits.OnesCount64(binary.LittleEndian.Uint64(data[i : i+8])))
 	}

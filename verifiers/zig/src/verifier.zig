@@ -369,17 +369,36 @@ pub fn xorFoldScalar(bytes: []const u8) u64 {
 }
 
 pub fn xorFold(bytes: []const u8) u64 {
-    var acc: u64 = 0;
+    var acc0: @Vector(4, u64) = @splat(0);
+    var acc1: @Vector(4, u64) = @splat(0);
     var i: usize = 0;
-    while (i + 32 <= bytes.len) : (i += 32) {
-        const words: @Vector(4, u64) = .{
+    while (i + 64 <= bytes.len) : (i += 64) {
+        const w0: @Vector(4, u64) = .{
             std.mem.readInt(u64, bytes[i..][0..8], .little),
             std.mem.readInt(u64, bytes[i + 8 ..][0..8], .little),
             std.mem.readInt(u64, bytes[i + 16 ..][0..8], .little),
             std.mem.readInt(u64, bytes[i + 24 ..][0..8], .little),
         };
-        acc ^= @reduce(.Xor, words);
+        const w1: @Vector(4, u64) = .{
+            std.mem.readInt(u64, bytes[i + 32 ..][0..8], .little),
+            std.mem.readInt(u64, bytes[i + 40 ..][0..8], .little),
+            std.mem.readInt(u64, bytes[i + 48 ..][0..8], .little),
+            std.mem.readInt(u64, bytes[i + 56 ..][0..8], .little),
+        };
+        acc0 ^= w0;
+        acc1 ^= w1;
     }
+    if (i + 32 <= bytes.len) {
+        const w0: @Vector(4, u64) = .{
+            std.mem.readInt(u64, bytes[i..][0..8], .little),
+            std.mem.readInt(u64, bytes[i + 8 ..][0..8], .little),
+            std.mem.readInt(u64, bytes[i + 16 ..][0..8], .little),
+            std.mem.readInt(u64, bytes[i + 24 ..][0..8], .little),
+        };
+        acc0 ^= w0;
+        i += 32;
+    }
+    var acc: u64 = @reduce(.Xor, acc0 ^ acc1);
     while (i + 8 <= bytes.len) : (i += 8) {
         acc ^= std.mem.readInt(u64, bytes[i..][0..8], .little);
     }
@@ -387,6 +406,57 @@ pub fn xorFold(bytes: []const u8) u64 {
         acc ^= @as(u64, bytes[i]);
     }
     return acc;
+}
+
+pub fn byteDiff(a: []const u8, b: []const u8) u64 {
+    const n = @min(a.len, b.len);
+    var count: u64 = 0;
+    var i: usize = 0;
+    const ones: @Vector(16, u8) = @splat(1);
+    const zeros: @Vector(16, u8) = @splat(0);
+    while (i + 32 <= n) {
+        const pairs: usize = @min((n - i) / 32, @as(usize, 127));
+        const block_end = i + pairs * 32;
+        var lane_acc0: @Vector(16, u8) = @splat(0);
+        var lane_acc1: @Vector(16, u8) = @splat(0);
+        while (i < block_end) : (i += 32) {
+            const va0: @Vector(16, u8) = a[i..][0..16].*;
+            const vb0: @Vector(16, u8) = b[i..][0..16].*;
+            const va1: @Vector(16, u8) = a[i + 16 ..][0..16].*;
+            const vb1: @Vector(16, u8) = b[i + 16 ..][0..16].*;
+            lane_acc0 +%= @select(u8, va0 != vb0, ones, zeros);
+            lane_acc1 +%= @select(u8, va1 != vb1, ones, zeros);
+        }
+        const wide0: @Vector(16, u16) = @intCast(lane_acc0);
+        const wide1: @Vector(16, u16) = @intCast(lane_acc1);
+        count += @as(u64, @reduce(.Add, wide0 + wide1));
+    }
+    while (i < n) : (i += 1) {
+        if (a[i] != b[i]) count += 1;
+    }
+    return count;
+}
+
+pub fn popcount(bytes: []const u8) u64 {
+    var count: u64 = 0;
+    var i: usize = 0;
+    while (i + 32 <= bytes.len) {
+        const pairs: usize = @min((bytes.len - i) / 32, @as(usize, 31));
+        const block_end = i + pairs * 32;
+        var lane_acc0: @Vector(16, u8) = @splat(0);
+        var lane_acc1: @Vector(16, u8) = @splat(0);
+        while (i < block_end) : (i += 32) {
+            const v0: @Vector(16, u8) = bytes[i..][0..16].*;
+            const v1: @Vector(16, u8) = bytes[i + 16 ..][0..16].*;
+            lane_acc0 +%= @popCount(v0);
+            lane_acc1 +%= @popCount(v1);
+        }
+        const wide0: @Vector(16, u16) = @intCast(lane_acc0);
+        const wide1: @Vector(16, u16) = @intCast(lane_acc1);
+        count += @as(u64, @reduce(.Add, wide0 + wide1));
+    }
+    while (i < bytes.len) : (i += 1) count += @popCount(bytes[i]);
+    return count;
 }
 
 pub fn sealFrame32B(raw: []const u8, packed_bytes: []const u8, gate: u8) [32]u8 {
