@@ -1,0 +1,161 @@
+{
+  "format": "spherepop-sched/1",
+  "config": {
+    "root": [
+      "W",
+      "K",
+      "C",
+      "S"
+    ],
+    "perm": {
+      "p": [
+        "W",
+        "K",
+        "C",
+        "S"
+      ],
+      "q": [
+        "S"
+      ]
+    },
+    "gated": [
+      "W",
+      "K",
+      "C"
+    ],
+    "absorb": "s",
+    "sc": "settled"
+  },
+  "policy": {
+    "strategy": "lo",
+    "budget": 3
+  },
+  "initial": [
+    {
+      "id": "a",
+      "term": "K x y",
+      "digest": "136e737e43a8d41849905f4fa1baca8fd26655811a4712824f20a362e1ce55f7"
+    },
+    {
+      "id": "b",
+      "term": "W W W",
+      "digest": "4e908638d1c7b0fa1667350f43b64a2960b5b50826336600177d3634f57f5e28"
+    },
+    {
+      "id": "c",
+      "term": "I (I (I (I (I z))))",
+      "digest": "24fa2cd18e512ace2ae991e22803498addb4d027211ca8ea2fd31e533ed7298e"
+    },
+    {
+      "id": "d",
+      "term": "sc_p (K u v) w",
+      "digest": "61555440fefdc522eb725b9e2fb55e02b73f733e148c0998bd09b9d64300a506"
+    }
+  ],
+  "events": [
+    {
+      "tick": 0,
+      "entity": "a",
+      "decision": "run",
+      "budget": 3,
+      "slice": {
+        "format": "spherepop-trace/1",
+        "config": {
+          "root": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ],
+          "perm": {
+            "p": [
+              "W",
+              "K",
+              "C",
+              "S"
+            ],
+            "q": [
+              "S"
+            ]
+          },
+          "gated": [
+            "W",
+            "K",
+            "C"
+          ],
+          "absorb": "s",
+          "sc": "settled"
+        },
+        "start": "K x y",
+        "start_digest": "136e737e43a8d41849905f4fa1baca8fd26655811a4712824f20a362e1ce55f7",
+        "strategy": "lo",
+        "fuel": 3,
+        "steps": [
+          {
+            "rule": "K",
+            "path": "",
+            "after": "07685251c255bb056e562da8ea71975e722286dc4f4d243210b102adbd3c1395",
+            "link": "6a67e963a2893294ab2fc57e200438364cb79f8df89d9abf8182144793cb30f8"
+          }
+        ],
+        "final": "x",
+        "final_digest": "07685251c255bb056e562da8ea71975e722286dc4f4d243210b102adbd3c1395",
+        "exhausted": false,
+        "head": "6a67e963a2893294ab2fc57e200438364cb79f8df89d9abf8182144793cb30f8"
+      }
+    },
+    {
+      "tick": 0,
+      "entity": "b",
+      "decision": "run",
+      "budget": 3,
+      "slice": {
+        "format": "spherepop-trace/1",
+        "config": {
+          "root": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ],
+          "perm": {
+            "p": [
+              "W",
+              "K",
+              "C",
+              "S"
+            ],
+            "q": [
+              "S"
+            ]
+          },
+          "gated": [
+            "W",
+            "K",
+            "C"
+          ],
+          "absorb": "s",
+          "sc": "settled"
+        },
+        "start": "W W W",
+        "start_digest": "4e908638d1c7b0fa1667350f43b64a2960b5b50826336600177d3634f57f5e28",
+        "strategy": "lo",
+        "fuel": 3,
+        "steps": [
+          {
+            "rule": "W",
+            "path": "",
+            "after": "4e908638d1c7b0fa1667350f43b64a2960b5b50826336600177d3634f57f5e28",
+            "link": "061b60a28820ab1edb0a399f395797f211400a5d70175b779c4cd7c1302bd832"
+          },
+          {
+            "rule": "W",
+            "path": "",
+            "after": "4e908638d1c7b0fa1667350f43b64a2960b5b50826336600177d3634f57f5e28",
+            "link": "2433028daf67d094ad7d48f879884a49800551029d94d46235cadf192250522e"
+          },
+          {
+            "rule": "W",
+            "path": "",
+            "after": "4e908638d1c7b0fa1667350f43b64a2960b5b50826336600177d3634f57f5e28",
+            "link": "78b092637df1cb9

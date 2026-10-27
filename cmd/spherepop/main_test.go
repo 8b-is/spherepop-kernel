@@ -172,3 +172,145 @@ func TestSettledScopeFlag(t *testing.T) {
 		t.Fatalf("bad scope mode gave exit %d", code)
 	}
 }
+
+func headOf(t *testing.T, out string) string {
+	t.Helper()
+	for _, l := range strings.Split(out, "\n") {
+		if rest, ok := strings.CutPrefix(l, "effects log head: "); ok {
+			return strings.TrimSpace(rest)
+		}
+	}
+	t.Fatalf("no head in output:\n%s", out)
+	return ""
+}
+
+func TestArenaRunAndVerifyLogs(t *testing.T) {
+	dir := t.TempDir()
+	eff, sch := filepath.Join(dir, "e.jsonl"), filepath.Join(dir, "s.json")
+	code, out, errOut := do(t, "", "arena", "../../examples/cruise.lam", "--frames", "40", "--effects", eff, "--sched", sch)
+	if code != exitOK {
+		t.Fatalf("exit %d: %s", code, errOut)
+	}
+	if !strings.Contains(out, "cell=b") || !strings.Contains(out, "committed=") {
+		t.Fatalf("ship should reach cell b with committed effects:\n%s", out)
+	}
+	head := headOf(t, out)
+
+	if code, out, _ := do(t, "", "checkeffects", eff, "--anchor", head); code != exitOK || !strings.Contains(out, "head matches the anchor") {
+		t.Fatalf("checkeffects: exit %d, %q", code, out)
+	}
+	if code, out, _ := do(t, "", "checklog", sch); code != exitOK {
+		t.Fatalf("checklog: exit %d, %q", code, out)
+	}
+
+	// Removing the tail leaves a valid chain, which only the anchor detects.
+	b, _ := os.ReadFile(eff)
+	lines := strings.SplitAfter(strings.TrimRight(string(b), "\n"), "\n")
+	short := filepath.Join(dir, "short.jsonl")
+	os.WriteFile(short, []byte(strings.Join(lines[:len(lines)-3], "")+"\n"), 0o644)
+	if code, _, _ := do(t, "", "checkeffects", short); code != exitOK {
+		t.Fatalf("a truncated chain should still verify bare, exit %d", code)
+	}
+	if code, _, _ := do(t, "", "checkeffects", short, "--anchor", head); code != exitFailure {
+		t.Fatalf("a truncated log must fail against the anchor, exit %d", code)
+	}
+	// Changing a disposition breaks the chain.
+	bad := filepath.Join(dir, "bad.jsonl")
+	os.WriteFile(bad, []byte(strings.Replace(string(b), "committed", "denied", 1)), 0o644)
+	if code, _, _ := do(t, "", "checkeffects", bad); code != exitFailure {
+		t.Fatalf("a tampered log must fail, exit %d", code)
+	}
+}
+
+func TestArenaIsReproducibleAndHonoursModes(t *testing.T) {
+	_, a, _ := do(t, "", "arena", "../../examples/cruise.lam", "--frames", "30")
+	_, b, _ := do(t, "", "arena", "../../examples/cruise.lam", "--frames", "30")
+	if a != b {
+		t.Fatalf("two runs differ:\n%s\n%s", a, b)
+	}
+	// The same behavior under the experimental configuration reaches the same state.
+	_, c, _ := do(t, "", "arena", "../../examples/cruise.lam", "--frames", "30", "--absorb", "u", "--sc", "safe")
+	// The world and the effects are the same. The log head differs, because
+	// each entry cites the trace of the reduction that produced it and a trace
+	// records its configuration; evidence follows the rules that were used.
+	body := func(s string) string { return s[:strings.Index(s, "effects log head")] }
+	if body(a) != body(c) {
+		t.Fatalf("the experimental configuration changed the run:\n%s\n%s", a, c)
+	}
+	if headOf(t, a) == headOf(t, c) {
+		t.Fatal("the log head should record which configuration produced the traces")
+	}
+}
+
+func TestArenaStatefulExample(t *testing.T) {
+	code, out, errOut := do(t, "", "arena", "../../examples/stateful.lam", "--registers", "--frames", "60")
+	if code != exitOK || !strings.Contains(out, "reg=1") || !strings.Contains(out, "cell=b") {
+		t.Fatalf("exit %d: %s%s", code, out, errOut)
+	}
+	// Without the register argument the program is applied to too few
+	// arguments, never reaches a normal form with effects, and the ship stays.
+	_, out, _ = do(t, "", "arena", "../../examples/stateful.lam", "--frames", "20")
+	if !strings.Contains(out, "cell=a") {
+		t.Fatalf("a program given too few observations should not act:\n%s", out)
+	}
+}
+
+func TestArenaUsageErrors(t *testing.T) {
+	for _, args := range [][]string{
+		{"arena"},
+		{"arena", "x.lam", "y.lam"},
+		{"arena", "../../examples/cruise.lam", "--strategy", "zz"},
+		{"arena", "../../examples/cruise.lam", "--sc", "zz"},
+		{"checkeffects"},
+	} {
+		if code, _, _ := do(t, "", args...); code != exitUsage {
+			t.Errorf("%v: exit %d, want %d", args, code, exitUsage)
+		}
+	}
+	if code, _, _ := do(t, "", "arena", "/nonexistent.lam"); code != exitFailure {
+		t.Errorf("a missing file should fail, got %d", code)
+	}
+	if code, _, _ := do(t, `\x.`, "arena", "-"); code != exitFailure {
+		t.Errorf("a bad program should fail, got %d", code)
+	}
+}
+
+func TestHostDefaultIsSettledAndOverridable(t *testing.T) {
+	// The default must equal an explicit request for the settled pair.
+	_, a, _ := do(t, "", "arena", "../../examples/cruise.lam", "--frames", "10")
+	_, b, _ := do(t, "", "arena", "../../examples/cruise.lam", "--frames", "10", "--absorb", "s", "--sc", "settled")
+	if a != b {
+		t.Fatalf("the arena default is not settled/s:\n%s\n%s", a, b)
+	}
+	// And the sim default likewise: a term whose Sc argument has a pending Abs
+	// waits under the host default and does not under safe.
+	_, d, _ := do(t, "", "sim", "--entity", "e=sc_x (<I>_x a)", "--ticks", "1", "--budget", "1", "--perm", "x=K")
+	_, s, _ := do(t, "", "sim", "--entity", "e=sc_x (<I>_x a)", "--ticks", "1", "--budget", "1", "--perm", "x=K", "--sc", "safe", "--absorb", "u")
+	if d == s {
+		t.Fatalf("sim default behaved like safe/u:\n%s", d)
+	}
+}
+
+func TestArenaSchemaFeedsCheckEffects(t *testing.T) {
+	dir := t.TempDir()
+	eff := filepath.Join(dir, "fx.jsonl")
+	if code, _, errs := do(t, "", "arena", "../../examples/cruise.lam", "--frames", "6", "--effects", eff); code != exitOK {
+		t.Fatalf("arena: %d %s", code, errs)
+	}
+	code, schema, _ := do(t, "", "arena-schema")
+	if code != exitOK || !strings.Contains(schema, `"door"`) {
+		t.Fatalf("arena-schema: %d %q", code, schema)
+	}
+	sf := filepath.Join(dir, "schema.json")
+	if err := os.WriteFile(sf, []byte(schema), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if code, out, _ := do(t, "", "checkeffects", eff, "--schema", sf); code != exitOK {
+		t.Fatalf("checkeffects with schema file: %d %s", code, out)
+	}
+	empty := filepath.Join(dir, "empty.json")
+	os.WriteFile(empty, []byte(`{"targets":{}}`), 0o600)
+	if code, _, _ := do(t, "", "checkeffects", eff, "--schema", empty); code != exitFailure {
+		t.Fatalf("an empty schema accepted committed requests: %d", code)
+	}
+}

@@ -22,6 +22,7 @@ var (
 	ErrFinalMismatch     = errors.New("trace: final term does not match the replay")
 	ErrStatusMismatch    = errors.New("trace: claimed termination status is wrong")
 	ErrStrategyDeviation = errors.New("trace: step is not the one the claimed strategy takes")
+	ErrStepAfterStop     = errors.New("trace: step taken from a term at an execution boundary")
 )
 
 // Violation locates a failure. Step is the zero-based index of the offending
@@ -60,6 +61,10 @@ type Options struct {
 	// truncate a run and state whatever fuel makes the truncation look like
 	// exhaustion.
 	Fuel uint64
+	// Stop, if not nil, marks execution boundaries: a term for which it holds
+	// is where the run ends, so no step may be taken from it and it does not
+	// count as having a redex available. It is not a rule of the calculus.
+	Stop func(*term.Term) bool
 }
 
 // Report is what a successful check establishes.
@@ -111,6 +116,9 @@ func Check(d Document, opt Options) (Report, error) {
 			return Report{}, fail(i, ErrChainBroken, "link %.12s, recomputed %.12s", s.Link, want)
 		}
 		prev = s.Link
+		if opt.Stop != nil && opt.Stop(cur) {
+			return Report{}, fail(i, ErrStepAfterStop, "%s at %q is taken from a stopped term", s.Rule, s.Path)
+		}
 		if opt.RequireStrategy {
 			rs := cfg.Redexes(cur, strat)
 			if len(rs) == 0 || rs[0].Rule != s.Rule || string(rs[0].Path) != s.Path {
@@ -133,6 +141,9 @@ func Check(d Document, opt Options) (Report, error) {
 		return Report{}, fail(-1, ErrFinalMismatch, "replay ends at %s, claimed %.12s", cur.Digest().Short(), d.FinalDigest)
 	}
 	more := len(cfg.Redexes(cur, reduce.LeftmostOutermost)) > 0
+	if opt.Stop != nil && opt.Stop(cur) {
+		more = false
+	}
 	if d.Exhausted != more {
 		return Report{}, fail(-1, ErrStatusMismatch, "claimed exhausted=%v but redexes available=%v", d.Exhausted, more)
 	}

@@ -60,6 +60,9 @@ func ParsePermSet(names []string) (PermSet, error) {
 		if !ok {
 			return 0, fmt.Errorf("reduce: %q is not in the permission alphabet %v", n, PermAll.Names())
 		}
+		if s&b != 0 {
+			return 0, fmt.Errorf("reduce: %q is repeated in a permission list", n)
+		}
 		s |= b
 	}
 	return s, nil

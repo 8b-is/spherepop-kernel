@@ -20,6 +20,18 @@ type Authorizer interface {
 	Authorize(subject string, r Request) Decision
 }
 
+// AtomicWorld is a World that can carry out several requests as one step:
+// either every request takes effect or the world is left unchanged. A host
+// treats a group as failed if its world does not offer this. CommitAll must
+// be rollback-safe: it may only change state it can restore, and it must not
+// call out to anything or emit an event that cannot be taken back. A world
+// whose commits have such effects should stage them and release them after
+// CommitAll succeeds.
+type AtomicWorld interface {
+	World
+	CommitAll(rs []Request) error
+}
+
 // World carries out authorized requests. Commit may still refuse, for
 // instance because a door does not exist; that is recorded as Failed.
 type World interface {
@@ -61,9 +73,12 @@ type Host struct {
 	MaxRequests int // 0 means DefaultMaxRequests
 }
 
-// Handle processes the outcome of one reduction for one subject. Requests are
+// Handle processes the outcome of one reduction for one subject. Outputs are
 // independent: each is decoded, authorized and committed on its own, in the
 // order the program listed them, and a failure of one does not affect another.
+// An output is either a request or a group (atomic r1 ... rn), which is one
+// unit: it is logged as one entry, every member must decode and be authorized,
+// and the world applies all members or none.
 // An exhausted reduction is never read, because a partial term is not an
 // output. ref is an opaque pointer to the evidence, such as a trace head.
 func (h *Host) Handle(tick int, subject, ref string, res reduce.Result) ([]Entry, error) {
@@ -98,26 +113,51 @@ func (h *Host) HandleOutcome(tick int, subject, ref string, t *term.Term, exhaus
 		if i >= limit {
 			return out, add(Entry{Index: -1, Disposition: Truncated, Reason: fmt.Sprintf("%d requests ignored beyond the limit of %d", len(reqs)-limit, limit)})
 		}
-		req, err := h.Schema.Decode(rt)
+		reqs, group, err := h.Schema.DecodeOutput(rt)
 		if err != nil {
 			if err := add(Entry{Index: i, Request: rt.String(), Disposition: Malformed, Reason: err.Error()}); err != nil {
 				return out, err
 			}
 			continue
 		}
-		if d := h.Auth.Authorize(subject, req); !d.Allow {
-			if err := add(Entry{Index: i, Request: req.String(), Disposition: Denied, Reason: d.Reason}); err != nil {
+		text := reqs[0].String()
+		if group {
+			text = GroupTerm(reqs).String()
+		}
+		denied := ""
+		for j, req := range reqs {
+			if d := h.Auth.Authorize(subject, req); !d.Allow {
+				denied = d.Reason
+				if group {
+					denied = fmt.Sprintf("member %d: %s", j, d.Reason)
+				}
+				break
+			}
+		}
+		if denied != "" {
+			if err := add(Entry{Index: i, Request: text, Disposition: Denied, Reason: denied}); err != nil {
 				return out, err
 			}
 			continue
 		}
-		if err := h.World.Commit(req); err != nil {
-			if err := add(Entry{Index: i, Request: req.String(), Disposition: Failed, Reason: err.Error()}); err != nil {
+		var cerr error
+		switch {
+		case !group:
+			cerr = h.World.Commit(reqs[0])
+		default:
+			if aw, ok := h.World.(AtomicWorld); ok {
+				cerr = aw.CommitAll(reqs)
+			} else {
+				cerr = fmt.Errorf("the world cannot commit a group atomically")
+			}
+		}
+		if cerr != nil {
+			if err := add(Entry{Index: i, Request: text, Disposition: Failed, Reason: cerr.Error()}); err != nil {
 				return out, err
 			}
 			continue
 		}
-		if err := add(Entry{Index: i, Request: req.String(), Disposition: Committed}); err != nil {
+		if err := add(Entry{Index: i, Request: text, Disposition: Committed}); err != nil {
 			return out, err
 		}
 	}

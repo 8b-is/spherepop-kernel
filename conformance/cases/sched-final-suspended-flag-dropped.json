@@ -1,0 +1,93 @@
+{
+  "format": "spherepop-sched/1",
+  "config": {
+    "root": [
+      "W",
+      "K",
+      "C",
+      "S"
+    ],
+    "perm": {
+      "p": [
+        "W",
+        "K",
+        "C",
+        "S"
+      ],
+      "q": [
+        "S"
+      ]
+    },
+    "gated": [
+      "W",
+      "K",
+      "C"
+    ],
+    "absorb": "s",
+    "sc": "settled"
+  },
+  "policy": {
+    "strategy": "lo",
+    "budget": 3
+  },
+  "initial": [
+    {
+      "id": "a",
+      "term": "yield (K x y)",
+      "digest": "9b09a29cec2f4dd723394f18ffe2633ff85e5f339599513a83689ed574ad86f3"
+    }
+  ],
+  "events": [
+    {
+      "tick": 0,
+      "entity": "a",
+      "decision": "run",
+      "budget": 3,
+      "slice": {
+        "format": "spherepop-trace/1",
+        "config": {
+          "root": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ],
+          "perm": {
+            "p": [
+              "W",
+              "K",
+              "C",
+              "S"
+            ],
+            "q": [
+              "S"
+            ]
+          },
+          "gated": [
+            "W",
+            "K",
+            "C"
+          ],
+          "absorb": "s",
+          "sc": "settled"
+        },
+        "start": "yield (K x y)",
+        "start_digest": "9b09a29cec2f4dd723394f18ffe2633ff85e5f339599513a83689ed574ad86f3",
+        "strategy": "lo",
+        "fuel": 3,
+        "steps": [],
+        "final": "yield (K x y)",
+        "final_digest": "9b09a29cec2f4dd723394f18ffe2633ff85e5f339599513a83689ed574ad86f3",
+        "exhausted": false,
+        "head": "07cf0b506103706653db384622c70e27e9e79751c71e73c926a1d40dfb09a4a9"
+      }
+    }
+  ],
+  "final": [
+    {
+      "id": "a",
+      "term": "yield (K x y)",
+      "digest": "9b09a29cec2f4dd723394f18ffe2633ff85e5f339599513a83689ed574ad86f3"
+    }
+  ]
+}

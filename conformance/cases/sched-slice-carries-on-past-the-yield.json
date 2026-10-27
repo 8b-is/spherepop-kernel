@@ -1,0 +1,101 @@
+{
+  "format": "spherepop-sched/1",
+  "config": {
+    "root": [
+      "W",
+      "K",
+      "C",
+      "S"
+    ],
+    "perm": {
+      "p": [
+        "W",
+        "K",
+        "C",
+        "S"
+      ],
+      "q": [
+        "S"
+      ]
+    },
+    "gated": [
+      "W",
+      "K",
+      "C"
+    ],
+    "absorb": "s",
+    "sc": "settled"
+  },
+  "policy": {
+    "strategy": "lo",
+    "budget": 3
+  },
+  "initial": [
+    {
+      "id": "a",
+      "term": "yield (K x y)",
+      "digest": "9b09a29cec2f4dd723394f18ffe2633ff85e5f339599513a83689ed574ad86f3"
+    }
+  ],
+  "events": [
+    {
+      "tick": 0,
+      "entity": "a",
+      "decision": "run",
+      "budget": 3,
+      "slice": {
+        "format": "spherepop-trace/1",
+        "config": {
+          "root": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ],
+          "perm": {
+            "p": [
+              "W",
+              "K",
+              "C",
+              "S"
+            ],
+            "q": [
+              "S"
+            ]
+          },
+          "gated": [
+            "W",
+            "K",
+            "C"
+          ],
+          "absorb": "s",
+          "sc": "settled"
+        },
+        "start": "yield (K x y)",
+        "start_digest": "9b09a29cec2f4dd723394f18ffe2633ff85e5f339599513a83689ed574ad86f3",
+        "strategy": "lo",
+        "fuel": 3,
+        "steps": [
+          {
+            "rule": "K",
+            "path": "R",
+            "after": "11c44a58ed1c7be3c4c781c061e1bcbefe773b6a5856f3792b50443f41cda2f8",
+            "link": "a65e944e17428cb0f587780e45942002c84736e9ee1559a4e8aa538bf3bd3c8f"
+          }
+        ],
+        "final": "yield x",
+        "final_digest": "11c44a58ed1c7be3c4c781c061e1bcbefe773b6a5856f3792b50443f41cda2f8",
+        "exhausted": false,
+        "head": "a65e944e17428cb0f587780e45942002c84736e9ee1559a4e8aa538bf3bd3c8f"
+      }
+    }
+  ],
+  "final": [
+    {
+      "id": "a",
+      "term": "yield x",
+      "digest": "11c44a58ed1c7be3c4c781c061e1bcbefe773b6a5856f3792b50443f41cda2f8",
+      "normal": true
+    }
+  ]
+}

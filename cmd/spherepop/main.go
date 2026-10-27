@@ -37,7 +37,12 @@ commands:
   compile       turn a lambda expression into a combinator term (--def NAME=TERM)
   sim           run several terms on a fixed per-tick budget
                 (--entity ID=TERM... --budget N --ticks T --strategy lo|li|ri|ro --out FILE,
-                 plus the reduce configuration flags; --sc defaults to safe here)
+                 plus the reduce configuration flags; the defaults here are the host's, --absorb s --sc settled)
+  arena FILE    run a lambda-syntax behavior in the built-in arena
+                (--frames N --budget N --registers --effects FILE --sched FILE -v
+                 plus --strategy, --absorb, --sc, --def)
+  arena-schema      print the arena effect schema as JSON
+  checkeffects FILE verify an effects log (--anchor HEAD, --schema FILE)
   checklog FILE verify a scheduler log
   test          run the conformance vectors
   rules         print the rule table
@@ -59,6 +64,12 @@ func run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		return cmdCompile(args[1:], stdout, stderr)
 	case "sim":
 		return cmdSim(args[1:], stdout, stderr)
+	case "arena":
+		return cmdArena(args[1:], stdin, stdout, stderr)
+	case "arena-schema":
+		return cmdArenaSchema(stdout, stderr)
+	case "checkeffects":
+		return cmdCheckEffects(args[1:], stdin, stdout, stderr)
 	case "checklog":
 		return cmdCheckLog(args[1:], stdin, stdout, stderr)
 	case "test":
@@ -336,8 +347,8 @@ func cmdSim(args []string, stdout, stderr io.Writer) int {
 	strat := fs.String("strategy", "lo", "lo, li, ri or ro")
 	out := fs.String("out", "", "write the scheduler log to this file")
 	root := fs.String("root", "W,K,C,S", "permissions at the root chain")
-	absorb := fs.String("absorb", "u", "absorption mode: off, any, nf, s or u")
-	sc := fs.String("sc", "safe", "scope-constructor mode: safe (game-host default), settled or any (research mode)")
+	absorb := fs.String("absorb", "s", "absorption mode: off, any, nf, s (game-host default) or u")
+	sc := fs.String("sc", "settled", "scope-constructor mode: settled (game-host default), safe or any (research modes)")
 	var ents, perms listFlag
 	fs.Var(&ents, "entity", "ID=TERM entity (repeatable)")
 	fs.Var(&perms, "perm", "LABEL=K,C permissions of a label (repeatable)")

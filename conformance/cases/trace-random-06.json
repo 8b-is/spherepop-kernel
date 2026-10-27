@@ -1,0 +1,43 @@
+{
+  "format": "spherepop-trace/1",
+  "config": {
+    "root": [
+      "W",
+      "K",
+      "C",
+      "S"
+    ],
+    "perm": {
+      "p": [
+        "W",
+        "K",
+        "S"
+      ],
+      "q": [
+        "S"
+      ]
+    },
+    "gated": [
+      "K",
+      "C"
+    ],
+    "absorb": "nf",
+    "sc": "settled"
+  },
+  "start": "<<sc_q ((a) (I))>_q>_p",
+  "start_digest": "4982add2ce7abfb0d861b2e9e73cbed5a6571278b2e2eb1136c7577793b9f943",
+  "strategy": "li",
+  "fuel": 40,
+  "steps": [
+    {
+      "rule": "Sc",
+      "path": "BB",
+      "after": "bbc99814b7bd0beebbe19a4775b86635171ecb32b3b8fa4c0a2b80dd3c1461e1",
+      "link": "68a43774883a29a321465da6b9e25e652f23f53399fa399c46bb10d0b08fbd5c"
+    }
+  ],
+  "final": "<<<a I>_q>_q>_p",
+  "final_digest": "bbc99814b7bd0beebbe19a4775b86635171ecb32b3b8fa4c0a2b80dd3c1461e1",
+  "exhausted": false,
+  "head": "68a43774883a29a321465da6b9e25e652f23f53399fa399c46bb10d0b08fbd5c"
+}

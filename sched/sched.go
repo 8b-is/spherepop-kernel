@@ -25,13 +25,15 @@ import (
 const Format = "spherepop-sched/1"
 
 // HostConfig is the configuration a game host should start from. It differs
-// from reduce.DefaultConfig in one respect: Sc is in its safe mode. That mode
-// is an experimental extension whose confluence is not established
-// (SPEC.md section 10), and the unrestricted rule stays available by setting
-// Sc to reduce.ScAny, which is the research setting.
+// from reduce.DefaultConfig in the two boundary rules: both Abs and Sc fire
+// only on settled arguments. That combination is the one for which confluence
+// is proved (SPEC.md section 17). The language default, the essay's
+// unrestricted Sc with absorption mode u, and the experimental safe mode stay
+// available by setting the fields, and are research settings.
 func HostConfig() reduce.Config {
 	c := reduce.DefaultConfig()
-	c.Sc = reduce.ScSafe
+	c.Absorb = reduce.AbsS
+	c.Sc = reduce.ScSettled
 	return c
 }
 
@@ -57,11 +59,32 @@ var (
 	ErrLogRejected = errors.New("sched: log rejected")
 )
 
+// YieldAtom heads a suspension request. A term (yield k) at the root of an
+// entity's term is a request to be resumed at k on the next tick. It is an
+// ordinary atom to the reducer; only the scheduler gives it meaning, and only
+// at the root.
+const YieldAtom = "yield"
+
+// Continuation reports whether t is exactly (yield k) and returns k.
+func Continuation(t *term.Term) (*term.Term, bool) {
+	if t.Kind() != term.KindApp {
+		return nil, false
+	}
+	f := t.Fun()
+	if f.Kind() != term.KindAtom || f.Name() != YieldAtom {
+		return nil, false
+	}
+	return t.Arg(), true
+}
+
+func atBoundary(t *term.Term) bool { _, ok := Continuation(t); return ok }
+
 type entity struct {
-	id      string
-	term    *term.Term
-	normal  bool
-	pending *term.Term // replacement staged by Rearm, applied at the start of the next tick
+	id        string
+	term      *term.Term
+	suspended bool // the term is (yield k), awaiting resumption at k
+	normal    bool
+	pending   *term.Term // replacement staged by Rearm, applied at the start of the next tick
 }
 
 // World is a set of entities and the log of everything done to them.
@@ -146,20 +169,25 @@ func (w *World) EventsFrom(i int) []Event {
 func (w *World) Tick() error {
 	for _, e := range w.ents {
 		var rearm *Rearm
+		resumed := false
 		if e.pending != nil {
 			rearm = &Rearm{Term: e.pending.String(), Digest: e.pending.Digest().String(), Preempted: !e.normal}
-			e.term, e.normal, e.pending = e.pending, false, nil
+			e.term, e.normal, e.suspended, e.pending = e.pending, false, false, nil
+		} else if e.suspended {
+			k, _ := Continuation(e.term)
+			e.term, e.suspended, resumed = k, false, true
 		}
 		if e.normal {
 			w.log.Events = append(w.log.Events, Event{Tick: w.tick, Entity: e.id, Decision: Skip})
 			continue
 		}
-		res, doc, err := trace.Record(w.cfg, e.term, w.pol.Strategy, w.pol.Budget)
+		res, doc, err := trace.RecordUntil(w.cfg, e.term, w.pol.Strategy, w.pol.Budget, atBoundary)
 		if err != nil {
 			return fmt.Errorf("sched: entity %q: %w", e.id, err)
 		}
-		w.log.Events = append(w.log.Events, Event{Tick: w.tick, Entity: e.id, Decision: Run, Budget: w.pol.Budget, Slice: &doc, Rearm: rearm})
-		e.term, e.normal = res.Term, !res.Exhausted
+		w.log.Events = append(w.log.Events, Event{Tick: w.tick, Entity: e.id, Decision: Run, Budget: w.pol.Budget, Slice: &doc, Rearm: rearm, Resumed: resumed})
+		e.term, e.suspended = res.Term, res.Stopped
+		e.normal = !res.Exhausted && !res.Stopped
 	}
 	w.tick++
 	return nil
@@ -189,7 +217,7 @@ func (w *World) Done() bool {
 func (w *World) States() []EntityState {
 	out := make([]EntityState, len(w.ents))
 	for i, e := range w.ents {
-		out[i] = EntityState{ID: e.id, Term: e.term.String(), Digest: e.term.Digest().String(), Normal: e.normal}
+		out[i] = EntityState{ID: e.id, Term: e.term.String(), Digest: e.term.Digest().String(), Normal: e.normal, Suspended: e.suspended}
 	}
 	return out
 }

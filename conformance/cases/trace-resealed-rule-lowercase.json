@@ -1,0 +1,87 @@
+{
+  "format": "spherepop-trace/1",
+  "config": {
+    "root": [
+      "W",
+      "K",
+      "C",
+      "S"
+    ],
+    "perm": {
+      "p": [
+        "W",
+        "K",
+        "C",
+        "S"
+      ],
+      "q": [
+        "S"
+      ]
+    },
+    "gated": [
+      "W",
+      "K",
+      "C"
+    ],
+    "absorb": "s",
+    "sc": "settled"
+  },
+  "start": "sc_p (K a b) d (<K c e>_q (S I I x))",
+  "start_digest": "1c3bac63d784a059df91e49d642227663e8c4960dda62fef834e2af3c197373a",
+  "strategy": "lo",
+  "fuel": 50,
+  "steps": [
+    {
+      "rule": "k",
+      "path": "LLR",
+      "after": "dbfe599595d7150dbb6a1425f5f90c28c49e37754118ea2480ac6a8bd775eee0",
+      "link": "37463e035d2f7236c79ad28042facdb116fced9f480e857f82fc62194cfd0cf9"
+    },
+    {
+      "rule": "Sc",
+      "path": "LL",
+      "after": "0575914e36752e96938c852e01aa8e598d6a99a3a09b50c2c970f21c77673955",
+      "link": "14ad6f2ebfdb46735b580e2f24a1dbdb501ee7ba2f97c97ddc9df2cf1ec53e89"
+    },
+    {
+      "rule": "Abs",
+      "path": "L",
+      "after": "f620d808e7057ea6d445a5874d95252db273529a83b1c926217482d397b97203",
+      "link": "e9d3fe3d6d852cd5e41f48fa0aa98db1eff40c7b8a3f8d9f5118980cce5cac72"
+    },
+    {
+      "rule": "S",
+      "path": "RR",
+      "after": "bd61528fa65cabfb5b596b86569dfb63161a4a1dabbe4ff828de525ead57aaab",
+      "link": "4797ec951b870a4d5e89b3e23d779e97ea0acfc239e3f2e272d110488c19fded"
+    },
+    {
+      "rule": "I",
+      "path": "RRL",
+      "after": "ebefc0fd809b0e698b95e82214be7d6eba45490c9d42bc85bebce8b188a68f1c",
+      "link": "3a002e79c4e77123427571af59de340fd595a96d1c7e00a0c698d2ed9732dbf7"
+    },
+    {
+      "rule": "I",
+      "path": "RRR",
+      "after": "f8d62a56bbd605cbf9717eeeb65f4edd61e7a6b831518cadb3d33f25fc5258ce",
+      "link": "f5d3921115d3da912b64ad3205d7976daeb407c03dc70211d6b637c993339432"
+    },
+    {
+      "rule": "Abs",
+      "path": "R",
+      "after": "c40d40219a13eb17d796b4c786afbf93c2c2c5aecee4840c430046b94a4c6b7a",
+      "link": "85e4a23a5adf07a6c2bcacf0f7e3662ab0147b74b47dfff378702cefeba0a71a"
+    },
+    {
+      "rule": "Abs",
+      "path": "",
+      "after": "d4c066df35ecd06382038ff7d8e468f97a030772664158369474938a5df2d9a2",
+      "link": "5954fbee42433da3fc47eebcb2ae34b3c881046b012ba01063a922724c5df232"
+    }
+  ],
+  "final": "<a d <K c e (x x)>_q>_p",
+  "final_digest": "d4c066df35ecd06382038ff7d8e468f97a030772664158369474938a5df2d9a2",
+  "exhausted": false,
+  "head": "5954fbee42433da3fc47eebcb2ae34b3c881046b012ba01063a922724c5df232"
+}

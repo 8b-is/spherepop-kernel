@@ -1,0 +1,42 @@
+{
+  "format": "spherepop-sched/1",
+  "config": {
+    "root": [
+      "W",
+      "K",
+      "C",
+      "S"
+    ],
+    "perm": {
+      "p": [
+        "W",
+        "K",
+        "C",
+        "S"
+      ],
+      "q": [
+        "S"
+      ]
+    },
+    "gated": [
+      "W",
+      "K",
+      "C"
+    ],
+    "absorb": "s",
+    "sc": "settled"
+  },
+  "policy": {
+    "strategy": "lo",
+    "budget": 3
+  },
+  "initial": [],
+  "events": [
+    {
+      "tick": 0,
+      "entity": "a",
+      "decision": "skip"
+    }
+  ],
+  "final": []
+}

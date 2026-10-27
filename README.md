@@ -16,7 +16,13 @@ spherepop compile '\x y. x'                     # K
 spherepop sim --entity a='K x y' --entity b='I z' --ticks 2 --budget 5
 spherepop rules                                 # the rule table
 spherepop test                                  # conformance vectors
+
+spherepop arena examples/cruise.lam --frames 40 --effects fx.jsonl --sched sched.json
+spherepop checkeffects fx.jsonl --anchor HEAD   # HEAD is the "effects log head" the run printed
+spherepop checklog sched.json
 ```
+
+The `arena` command compiles a behavior written in lambda syntax, runs it as the program of a ship in a small built-in world for a number of frames, and writes two logs that the checkers verify independently. A log with its tail removed passes the chain check and fails against the head you held outside it, which is the reason the head is printed.
 
 Reduction takes `--strategy lo|li|ri|ro`, a `--fuel` bound, and the permission configuration flags `--root`, `--perm LABEL=K,C`, `--absorb` and `--sc`. A run that exhausts its fuel exits with status 3 and says so; it never presents a partial term as a result. Exit statuses are 0 for success, 1 for failure, 2 for usage errors and 3 for exhausted fuel.
 
@@ -45,7 +51,22 @@ A program is a term that takes the world's observations as arguments and reduces
 
 The reducer implements the combinators with permission-gated contraction and two boundary rules, absorption (`Abs`) and scope (`Sc`). Their side conditions decide whether the system is confluent, and the repository is explicit about which claims are proved and which are not.
 
-With `--absorb s --sc settled`, where both boundary rules fire only on arguments that contain no steps at all, confluence is proved for every permission structure, non-terminating terms included. The proof is `notes/settled-scope.tex`, and a bounded search of tens of millions of parallel-reduction pairs agrees with it. The `safe` scope mode, which the scheduler uses by default, is not proved. The proof route fails at one identified pattern, `sc_x (<I>_x a)`, and local confluence of the full relation still held in every case searched, so it is unrefuted and unproven. The reducer's default `--absorb u` is likewise outside the theorem. The essay's unrestricted `Sc` is available as `--sc any` and is a research mode: it is known to be non-confluent when a label restricts the root permission.
+With `--absorb s --sc settled`, where both boundary rules fire only on arguments that contain no steps at all, confluence is proved for every permission structure, non-terminating terms included. The proof is `notes/settled-scope.tex`, and a bounded search of tens of millions of parallel-reduction pairs agrees with it. The scheduler, `sim` and `arena` use this pair by default. The `safe` scope mode is an experimental alternative and is not proved. The proof route fails at one identified pattern, `sc_x (<I>_x a)`, and local confluence of the full relation still held in every case searched, so it is unrefuted and unproven. The reducer's default `--absorb u` is likewise outside the theorem. The essay's unrestricted `Sc` is available as `--sc any` and is a research mode: it is known to be non-confluent when a label restricts the root permission.
+
+## Cross-implementation verification
+
+`SPEC.md` section 18 fixes every hashed byte and every verifier decision. `tools/verify-py/spherepop_verify.py` is a second verifier in Python that shares no code with the Go packages: it rebuilds term hashes, replays traces, checks scheduler and effects logs, and reads the same JSON under the same strictness rules. `conformance/` holds a corpus of about 400 valid, malformed, truncated and deliberately mutated records with the verdict and failure class each requires. `go test ./conformance` holds both verifiers to it, and `python3 conformance/crosscheck.py 500` has each implementation reduce random terms and check the other's traces.
+
+```
+python3 tools/verify-py/spherepop_verify.py trace trace.json --require-strategy
+python3 tools/verify-py/spherepop_verify.py sched sched.json
+spherepop arena-schema > schema.json
+python3 tools/verify-py/spherepop_verify.py effects fx.jsonl --schema schema.json --anchor HEAD
+```
+
+Suspension is a scheduler protocol and not a reduction rule: an entity whose term reaches the root form `yield k` is stopped there, recorded as suspended, and resumed at `k` on its next turn (`SPEC.md` section 17a). The traces keep their format, the scheduler log distinguishes suspension from fuel exhaustion and from a host re-arm, and both verifiers check it. A test shows that suspending and resuming reaches the same result as uninterrupted evaluation under every strategy and budget.
+
+A verified effects log shows that the host recorded these dispositions in a chain, and that each request is consistent with the schema. It does not show that the authorizer decided correctly unless its policy and inputs are replayed. A verified scheduler log is only as checkable as the state and rules it records.
 
 ## Tests
 
@@ -53,7 +74,7 @@ With `--absorb s --sc settled`, where both boundary rules fire only on arguments
 
 ## Not done
 
-Suspension points inside a round, atomic transactions, a command-line entry for the driver and the arena, and a second independent implementation of the verifiers written from the specification. A proof for the `safe` and `u` modes is open.
+Suspension points inside a round, atomic transactions, and a second independent implementation of the verifiers written from the specification. A proof for the `safe` and `u` modes is open.
 
 ## Specification
 

@@ -1,0 +1,67 @@
+{
+  "format": "spherepop-trace/1",
+  "config": {
+    "root": [
+      "W",
+      "K",
+      "C"
+    ],
+    "perm": {
+      "p": [
+        "K",
+        "S"
+      ],
+      "q": [
+        "K",
+        "C",
+        "S"
+      ]
+    },
+    "gated": [
+      "W",
+      "S"
+    ],
+    "absorb": "nf",
+    "sc": "settled"
+  },
+  "start": "<sc_p (c)>_q (<I (a) (I (I))>_p)",
+  "start_digest": "88e14a3ebc4e83f436826f28136d0d515b03a166dd15930e9c5fca5184f80412",
+  "strategy": "lo",
+  "fuel": 8,
+  "steps": [
+    {
+      "rule": "Sc",
+      "path": "LB",
+      "after": "fe5672a4b97e35fc376baf4b3d2a39202b90911c4f9775a27651643570bd2246",
+      "link": "87ebf970ecfef602467b84577e7f10b1b978f7afc656611f94b8992e17cbacf0"
+    },
+    {
+      "rule": "I",
+      "path": "RBL",
+      "after": "5c495bf3333544b4efebde98fa41e418d4852f7ade3c1637a87500aed93fabe7",
+      "link": "be12c02c77564741d9273f21eb82834c1c3febf1eb68793ee579cdee9444468a"
+    },
+    {
+      "rule": "I",
+      "path": "RBR",
+      "after": "13dc94d5a8a2b0b4514052305652415416c5628807bca5ab406b194dfc07b92d",
+      "link": "b8cb2ae3720d787aee9655522a0bc78d3a21341d1cb8c9ce93d281097c4978fe"
+    },
+    {
+      "rule": "Abs",
+      "path": "",
+      "after": "6ff91ee5d5ca62f549c5869e99b1dde3c6b9f21aaa579cb80e1f1a5db6fd03c4",
+      "link": "a8689ce905020b6a475993105a13f4454c6ff141ff48c91c5e45351fb4001608"
+    },
+    {
+      "rule": "Abs",
+      "path": "B",
+      "after": "0f6e83f9147c6748ac1e481847de305922d61e19429760109f93752f4a72120e",
+      "link": "a4bf058df6a52890d2f39e8ba2b57b4d65613b501473e4cc53854b0f6d92d829"
+    }
+  ],
+  "final": "<<c <a I>_p>_p>_q",
+  "final_digest": "0f6e83f9147c6748ac1e481847de305922d61e19429760109f93752f4a72120e",
+  "exhausted": false,
+  "head": "a4bf058df6a52890d2f39e8ba2b57b4d65613b501473e4cc53854b0f6d92d829"
+}

@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "lamp": {
+      "id": "sym",
+      "verbs": {
+        "dim": [
+          "int",
+          "sym"
+        ],
+        "on": []
+      }
+    }
+  }
+}

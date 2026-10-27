@@ -35,16 +35,20 @@ func world(t *testing.T, cfg reduce.Config, budget uint64, in []Init) *World {
 	return w
 }
 
-func TestHostDefaultsToSafeScopeLanguageDoesNot(t *testing.T) {
-	if HostConfig().Sc != reduce.ScSafe {
-		t.Error("host should default to safe Sc")
+func TestHostDefaultsToSettledBoundaryRulesLanguageDoesNot(t *testing.T) {
+	h := HostConfig()
+	if h.Absorb != reduce.AbsS || h.Sc != reduce.ScSettled {
+		t.Errorf("host should use settled absorption and settled scope, got absorb=%s sc=%s", h.Absorb, h.Sc)
 	}
 	c := reduce.DefaultConfig()
-	if c.Sc == reduce.ScSafe {
-		t.Error("the language default must remain the essay's rule")
+	if c.Sc == reduce.ScSettled || c.Absorb == reduce.AbsS {
+		t.Error("the language default must not change with the host default")
 	}
 	if got := c.Spec().Sc; got != "any" {
 		t.Errorf("language default serialises as %q", got)
+	}
+	if got := h.Spec(); got.Sc != "settled" || got.Absorb != "s" {
+		t.Errorf("host default serialises as %+v", got)
 	}
 }
 

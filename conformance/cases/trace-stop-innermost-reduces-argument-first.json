@@ -1,0 +1,51 @@
+{
+  "format": "spherepop-trace/1",
+  "config": {
+    "root": [
+      "W",
+      "K",
+      "C",
+      "S"
+    ],
+    "perm": {
+      "p": [
+        "W",
+        "K",
+        "C",
+        "S"
+      ],
+      "q": [
+        "S"
+      ]
+    },
+    "gated": [
+      "W",
+      "K",
+      "C"
+    ],
+    "absorb": "s",
+    "sc": "settled"
+  },
+  "start": "I (yield (K a b))",
+  "start_digest": "53065c8e642c6e52b9fac7bbd225e4e128368da88e9de312ec1a64f3317b236c",
+  "strategy": "li",
+  "fuel": 50,
+  "steps": [
+    {
+      "rule": "K",
+      "path": "RR",
+      "after": "04329ea8d2c81371b393f016b6db35a6ebd1a48bd2cc74b0f20b83b97b9bbe23",
+      "link": "8aef8adaf7752135a879a45bfd2ea61ea5163af3988882b52050628caf5399a4"
+    },
+    {
+      "rule": "I",
+      "path": "",
+      "after": "af750b581adef75e82f54711ceb8d899e85497de319cad6f53b3de5c3cd18f2f",
+      "link": "03695be593d478cf61c19c17783072cc379c0ada1b644db22b7183bf30bf9838"
+    }
+  ],
+  "final": "yield a",
+  "final_digest": "af750b581adef75e82f54711ceb8d899e85497de319cad6f53b3de5c3cd18f2f",
+  "exhausted": false,
+  "head": "03695be593d478cf61c19c17783072cc379c0ada1b644db22b7183bf30bf9838"
+}

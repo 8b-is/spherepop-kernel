@@ -11,6 +11,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/standardgalactic/spherepop-kernel/internal/strict"
 	"github.com/standardgalactic/spherepop-kernel/reduce"
 	"github.com/standardgalactic/spherepop-kernel/term"
 )
@@ -115,8 +116,15 @@ func Build(cfg reduce.Config, start *term.Term, strat reduce.Strategy, fuel uint
 
 // Record reduces start and returns the result together with its trace.
 func Record(cfg reduce.Config, start *term.Term, strat reduce.Strategy, fuel uint64) (reduce.Result, Document, error) {
+	return RecordUntil(cfg, start, strat, fuel, nil)
+}
+
+// RecordUntil is Record for a run with an execution boundary, see
+// reduce.Config.ReduceUntil. The document is an ordinary trace; a checker must
+// be given the same predicate in Options.Stop to accept it.
+func RecordUntil(cfg reduce.Config, start *term.Term, strat reduce.Strategy, fuel uint64, stop func(*term.Term) bool) (reduce.Result, Document, error) {
 	cfg.Trace = true
-	res, err := cfg.Reduce(start, strat, fuel)
+	res, err := cfg.ReduceUntil(start, strat, fuel, stop)
 	if err != nil {
 		return res, Document{}, err
 	}
@@ -137,13 +145,8 @@ func Marshal(d Document) ([]byte, error) {
 // carry data the checker silently ignores.
 func Unmarshal(b []byte) (Document, error) {
 	var d Document
-	dec := json.NewDecoder(bytesReader(b))
-	dec.DisallowUnknownFields()
-	if err := dec.Decode(&d); err != nil {
+	if err := strict.Unmarshal(b, &d); err != nil {
 		return Document{}, fmt.Errorf("%w: %v", ErrFormat, err)
-	}
-	if dec.More() {
-		return Document{}, fmt.Errorf("%w: trailing data after document", ErrFormat)
 	}
 	return d, nil
 }

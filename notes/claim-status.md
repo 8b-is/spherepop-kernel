@@ -1,0 +1,133 @@
+# SpherePOP Kernel: Claims, Evidence, and Open Obligations
+
+This document classifies the substantive claims of `SPEC.md` by what supports them. It exists because the architecture of the kernel is built to keep four kinds of claim apart, and a project that separates them in its code should not run them together in its documentation. A claim of mathematical correctness says that a rewriting system has a property. A claim of implementation conformance says that a program computes what the specification says. A claim of evidence integrity says that a record has not been altered and that each step in it is licensed by the rules. A claim of host authorization says that someone with the standing to decide did decide. Each of these can hold while the others fail, and the sections below take them in that order.
+
+Every claim carries one of four statuses. A claim is **proved** when there is an argument that establishes it for all cases within stated hypotheses; the proof is named, and where it is a paper proof and not a machine-checked one, that is said. It is **tested** when it has been checked on a finite set of cases, whose bounds are stated together with what the result does not establish. It is **by design** when it holds because of how the code is structured, so that violating it would require changing the structure; such claims are still checked by tests where a test can reach them. It is **open** when it is believed or hoped but neither proved nor refuted. Where a claim has a mathematical aspect and an operational aspect, the two are classified separately and appear in separate entries.
+
+All figures below were taken from the repository or reproduced in the course of writing this document, except where an entry says otherwise. Two figures that were quoted to me in conversation needed correcting against the code, and the corrections are noted in the entries concerned.
+
+## 1. Mathematical correctness
+
+### 1.1 What is taken from the source essays
+
+The reduction core is the combinators `I B C K W S` with permission-gated contraction, together with the boundary rules `Abs` and `Sc`. The statements that the system with `Abs` off and no `Sc` is confluent for every permission structure (Theorem 4.1 of the scoped-rules essay), that restricted absorption in mode `s` is confluent (Lemma 4.5 and Theorem 4.7), and that mode `u` is confluent (Theorem 4.9) are theorems of the source essays. They are not re-derived in this repository and have not been machine-checked here. The status of each is therefore proved in the source, not proved by this project. The code is tested against them, which is a separate matter and is recorded in section 2. A reader who wants to rely on Theorems 4.1, 4.7 or 4.9 should rely on the essays' proofs.
+
+The essay's Theorem 4.4, that absorption restricted to R-normal arguments is insufficient, is stated for an abstract spine-based relation whose counterexample is not representable in the combinatory configuration used here. It is not among the conformance vectors, and the claim is not tested by this project.
+
+### 1.2 Failure of the unrestricted rules
+
+Unrestricted absorption is not confluent when the root permission is not contained in every label's permission (Theorem 4.2 of the essay), and the essay's unrestricted `Sc` is not confluent under the same condition. The mathematical aspect is a finite counterexample, which is a proof for the specific statement: `<a>_l (K b c)` has two normal forms, as does `sc_x (K a a)` under a label that withholds `K`. The operational aspect is that the implementation reproduces these. The conformance vectors contain the absorption counterexample, and the exhaustive search of section 13 of the specification has two positive controls that must find both failures, at the minimal terms `sc_x (K a a)` and `<a>_x (K a a)`, and do. These establish that the failures exist and that the search can see them. They do not bear on the cases where the system is confluent.
+
+The consequence for defaults is stated in the specification and repeated here because it is easy to miss. The reducer's own default is the essay's rule, absorption mode `u` with scope mode `any`, and scope mode `any` is not confluent in general. The host default (`--absorb s --sc settled`, `sched.HostConfig`) is the configuration with a proof, described next.
+
+### 1.3 Settled absorption with settled scope
+
+**Proved**, in `notes/settled-scope.tex`: for every permission structure and every gated set, the system consisting of the contractions, absorption restricted to settled arguments, and the scope constructor restricted to settled arguments has the diamond property for parallel reduction, and its reduction relation is therefore confluent, non-terminating terms included. The argument is a Takahashi-style complete-development proof resting on four lemmas: settled terms stay settled when the permission shrinks, a settled term contains no redex at any smaller permission (so the side conditions are stable), parallel reduction is closed under the contraction right-hand sides, and every parallel successor of a term reduces to its complete development. The hypotheses are exactly those of the theorem as stated: the absorption mode is `s`, the scope mode is `settled`, and the definition of settled is the one in section 18.4 of the specification, which includes the clause that an application with a bracket or a scope constructor as function child is unsettled.
+
+The proof is a paper proof by one author. It has not been machine-checked and has not been reviewed by anyone else. Two things are said in its favor and neither is a substitute for review. A computational record agrees with it, and the record was run with positive controls and a mutation, so that it is known to be able to fail.
+
+**Tested**, in the parallel-diamond search (`reduce/parallel_test.go`, driven by `SPHEREPOP_SEARCH_*`): the diamond held on every term in each of three sets, over the symbols `a K C W I sc_x` (and `sc_y` with two labels), under every assignment of subsets of `{W, K, C}` to the labels with full root permission, for every pair of parallel successors. The sets are all 410,960 terms of at most four leaves and two brackets with one label (6,664,432 pairs), all 1,366,969 terms of at most five leaves and one bracket (31,696,480 pairs), and all 368,430 terms of at most three leaves and three brackets with two labels (28,639,888 pairs). With absorption off and settled scope the diamond held on the same three sets (2,979,568, 20,851,984 and 7,657,808 pairs). Non-terminating terms such as `W W W` are included, and no search in these runs was cut off by a cap. The check was given two positive controls and one mutation. It fails for the essay's `Sc` at `sc_x (K a a)`. It fails for the safe forms at the identified patterns, with 1,272 failing pairs for safe scope with absorption `s` at four leaves and one bracket. And when the settled condition of `Sc` was weakened by hand to plain normality, it reported 37,440 failing pairs at four leaves and two brackets. A weakening of the parallel step itself that dropped nested reduction of arguments did not disturb the diamond, which agrees with the theory and shows the check is sensitive to the side conditions and not to that part of the construction.
+
+What the search does not establish: it is bounded by term size, by the symbol set, and by the label count. It is not a proof of anything beyond those bounds, and the proof does not depend on it.
+
+### 1.4 The safe forms and absorption mode `u` with scope
+
+**Open.** Whether scope mode `safe`, and absorption mode `u` in combination with `Sc`, are confluent is not known. The proof route of section 1.3 fails for them at an identified pattern, `sc_x (<I>_x a)` with `I` ungated: the argument is normal and insensitive, so safe `Sc` may fire, but the argument also contains a pending `Abs` whose firing creates a contraction redex that blocks the outer `Sc`, and the two orders do not rejoin in a single parallel round. The same pattern defeats `Abs` in mode `u` with nested brackets, as in `<a>_x (<I>_x a)`. This is a failure of one proof method and not a counterexample, and it does not contradict the essay's Theorem 4.9, whose proof has not been re-derived here and may take a different route.
+
+Two bodies of computational evidence bear on the question, and both are evidence of absence of a counterexample in a bounded region, nothing more.
+
+The exhaustive normal-form search (`reduce/exhaustive_test.go`, `TestExhaustiveSafeModes`) enumerates terms up to a bound, assigns every combination of permissions from `{W, K, C}` to the labels, explores every reduction path, and reports a counterexample whenever a term has two distinct normal forms. Its recorded runs are in section 13 of the specification. For this document the largest run was repeated: at three leaves, three brackets and two labels, there are 368,430 terms and 17,921,392 explorations per mode, an exploration being a term together with one assignment of permissions to its labels. In mode `u` with safe scope, 2,208 of those explorations hit the cap (600 states or 40 circles) and were counted as capped and not as passes; the same number were capped in mode `s` with safe scope; with absorption off none were. The three modes together account for 53,764,176 explorations, which is about 53.8 million. No second normal form was found in any of them. The capped explorations contain `W` loops, so what is unexplored is the non-terminating region, which is also where the proof route is silent. The capped count is a count of explorations and not of terms: it was described to me as terms, and the code counts `(term, permission assignment)` pairs.
+
+The local-confluence search (`reduce/peaks_test.go`) joins every one-step peak found, to depth eight in both directions, for absorption `u` with safe scope. At four leaves and two brackets with one label there were 81,616 peaks between contractions, 309,024 between boundary steps and 433,944 mixed peaks, all joined and none undetermined. Boundary steps alone are not confluent, because a boundary step may have to wait for a contraction, and the joins use both kinds.
+
+What these do not establish: local confluence does not imply confluence for a system that does not terminate, since Newman's lemma needs termination. The exhaustive search says nothing about terms larger than its bounds. The earlier randomized property test (`reduce/property_test.go`: several thousand random terms per mode for the settled and `u` modes without `sc`, and 3,000 per mode for safe scope, depth five, three atoms, two labels) found no divergence, and is weaker than the exhaustive search.
+
+### 1.5 Strategies and results
+
+When the system is confluent, the strategy decides termination and not the result. For configurations outside section 1.3 this is not available as a theorem, so the statement "the strategy does not change the result" is proved for the configuration of section 1.3 and unproved, though tested, elsewhere. The claim that a strategy is a function of the current term, so that dividing a fixed total of fuel into different budgets gives the same final state, is by design and is tested: holding the total at 60 and varying the budget over 1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30 and 60 gives identical final states equal to the unsliced reduction (section 11 of the specification).
+
+### 1.6 Suspension: result equivalence and history non-equivalence
+
+Suspension is a scheduler protocol and not a reduction rule, so the confluence theorem of section 1.3 neither depends on it nor is affected by it. Two different claims about it are made, and they have different statuses.
+
+**Result equivalence.** The claim is that an entity which suspends and resumes reaches the normal form of the uninterrupted term with root `yield` layers removed. The argument that it should is short and is not formalized: a root of the form `yield k` stays one under every step that can be taken from it, so stopping there discards no reduction, and resumption replaces `yield k` by `k`, a term the calculus would reach the same normal form from; under a confluent configuration the order of the reductions does not matter. The mathematical aspect is therefore **open as a theorem**; it is an unwritten corollary of confluence and the root-stability observation. The operational aspect is **tested**: `TestSuspendResumeEqualsUninterruptedEvaluation` generates 600 random terms with `yield` at random positions, all of which reached a normal form within 300 steps, and runs each under four strategies and four budgets (1, 2, 5 and 400), which is 9,600 scheduler runs, of which 640 resumed at least once. In every run the scheduler's final term equalled the stripped uninterrupted normal form, and the resulting logs verified. This is under the settled host configuration only. It says nothing about configurations where reduction is not confluent, about terms that do not reach a normal form, or about terms larger than the generator produces.
+
+**History non-equivalence.** The claim is that two runs with the same result can have different suspension histories. This is **demonstrated by example**, which for an existence claim is a proof. With the term `I (yield (K a b))` and a budget of ten, leftmost-outermost suspends after one step with the residual `yield (K a b)` and spends one further step after resuming, while leftmost-innermost suspends after two steps with the residual `yield a` and spends none after resuming. Both end at `a`. `TestSameResultDifferentSuspensionHistory` asserts this. The example establishes that the history is not invariant under strategy. It does not characterize the relation between histories, and no claim is made that the history is invariant under anything.
+
+**Embedded yield.** That a `yield` below the root never suspends (as in `K x (yield y)`, where the argument is discarded) holds by design, since the boundary predicate tests the root only, and is tested for all four strategies.
+
+## 2. Implementation conformance
+
+### 2.1 Against the specification
+
+**By design:** `reduce.Apply` is the single place that decides what a step means, so the scheduler, the trace builder and the checker cannot disagree with the reducer about a step. This is also a limitation: the Go trace checker shares `Apply` with the Go reducer, so a bug in `Apply` would be accepted by the Go checker. The second verifier exists for that reason.
+
+**Tested:** twenty-eight conformance vectors reproduce the worked examples of the source essays, including the counterexamples of Theorem 4.2 and the strategy table. `spherepop test` runs them. The `M x` vector checks the normal form only, because the essay gives no step count for it. The randomized property audit of section 12 of the specification found and fixed two defects in the first version, a claim of exhaustion not tied to the step count and a parser without bounds.
+
+### 2.2 Across two implementations
+
+The specification's section 18 fixes every hashed byte and every verifier decision, and `tools/verify-py/spherepop_verify.py` is a second verifier in Python that shares no code with the Go packages. It reconstructs term hashes, replays traces, and checks scheduler and effects logs under the same strictness rules. `conformance/` holds 455 cases, each with the verdict and failure class the specification requires: 222 trace cases (99 valid, 123 invalid), 109 scheduler cases (12 valid, 97 invalid) and 124 effects cases (46 valid, 78 invalid). `go test ./conformance` holds the Go verifiers to the manifest and then runs the Python verifier over the same manifest, so a disagreement fails the test. The invalid cases are single mutations, some resealed so that every hash verifies and only the semantic check can reject them, and several are built so that exactly one check can reject them.
+
+**Tested** further: `conformance/crosscheck.py` has each implementation reduce random terms under random configurations and strategies and checks the other's trace, and requires the two traces to be step-for-step identical. It also compares scheduler logs, including suspensions, made by each implementation. The run made when this document was finalized covered 300 random cases and 30 scheduler logs, 15 of which resumed at least once, with no disagreement; earlier runs during development were larger and also found none, but only the final run is recorded here with figures. These runs are one-off, reproducible with the script, and not part of `go test`.
+
+The corpus is also a mutation-tested artifact: each check in the Go and Python verifiers was neutralized in turn and the corpus run, and the checks whose removal went undetected were examined. The survivors were checks that another check always also performs (for example, a rearm whose label is unknown is also caught because the slice that follows must start at the replacement term), and the schema-file error paths, which are input errors and not verdicts. This is a practice that found real gaps while the corpus was being built and is not a guarantee that none remain.
+
+What the corpus found while it was built: a scheduler log with no entities skipped the final-state check; a label with an empty permission was written as `null` and rejected by the reader that had just been made strict; the effects hash depended on how Go escapes strings; JSON decoding accepted case-variant member names, missing members, nulls and duplicates; and section 5 of the specification contradicted the code on the scope clause of settledness and on the default scope mode.
+
+**The independence caveat, which stays.** The specification was drafted from the behaviour of the Go code, and both verifiers and the specification have one author. Two implementations in different languages are meaningful evidence that the specification is complete enough to implement from and that the Go packages follow it, but they are not two independent interpretations. A misreading common to the specification and to both verifiers would pass every test in this repository. The missing test is a second person implementing a verifier from section 18 alone.
+
+### 2.3 Known limits of conformance
+
+The Python verifier runs on a large thread stack and has not been exercised near the nesting limit of 100,000. Strings containing unpaired surrogates, which JSON can spell and UTF-8 cannot, are outside the corpus, and the verifiers may differ on them. A schema file that is unreadable or names an unknown type is an input error and is not tested. The memoisation tables of a long reduction grow with the number of distinct subterms visited and are bounded only by fuel. The scheduler log stores slices whole and has no bound on size.
+
+## 3. Evidence integrity
+
+**By design, and tested:** a trace is a claim, and the checker accepts it only if every step is an instance of a rule at a position where the rule is permitted under the configuration recorded in the document, and the recorded final term is what the steps produce. Matching final hashes are not relied on. The hash chain binds each step to its predecessors, the start term and the configuration, so a step list cannot be moved to another run, and the configuration in the document is part of the chain, which is why the same behaviour under two configurations gives different log heads. Strict JSON decoding (section 18.9) means a record has one spelling.
+
+**An assumption:** all of this rests on SHA-256 being collision resistant. Nothing here tests that.
+
+**What a verified trace does not establish.** It does not show that the result is the unique normal form, since confluence belongs to the system and configuration and not to a trace. Without the strategy option it does not show which order the worker used. It shows the steps are lawful, not that they are the only lawful ones.
+
+**Tamper evidence is relative to an anchor.** A bare chain cannot reveal removal of its tail, and whoever can rewrite a whole log can rewrite its chain with it. The tail truncation case in the corpus (valid without an anchor, rejected against one) demonstrates both halves. The anchor is a head digest held outside the log. Agreeing on how an anchor is held and published is not done.
+
+**A verified scheduler log** establishes that its decisions follow the policy, that each slice is a valid trace under the declared configuration, strategy, budget and execution boundary, that the slices chain, that each re-arm is well formed and correctly marked as preempting or not, that each resumption starts at the continuation of the suspension it follows, and that the final states are what the chain produces. It is checkable only as far as the state and rules it records. The entity set, the policy and the configuration are recorded. The observations that produced a re-armed term are not.
+
+**Three boundaries stay separately observable:** reduction steps in a trace, suspension in the scheduler log, and commitment in the effects log. This is by design and the logs are tested to keep them apart.
+
+## 4. Host authorization
+
+This is the category the evidence cannot settle, and the claims here are the narrowest.
+
+**By design:** effects are inert data during reduction. A host reads them only from a normal form at the designated output position, validates each against a schema it controls, asks an authorizer, and only then asks the world to commit. Every outcome, refusals included, is logged. The policy is fail-closed: only explicitly granted combinations of subject, target kind and verb are allowed. In the arena, a ship may command only itself.
+
+**Tested:** a denied request never reaches the world; a malformed request never reaches the world; the dispositions are independent of one another and recorded in order; proposals are invariant under strategy and under frame subdivision while commits depend on the host's processing order, which is the host's decision and nothing else's.
+
+**What a verified effects log does not establish.** It shows that the host recorded these dispositions in an unbroken chain and that each request is consistent with the schema: a request recorded as committed, denied or failed decodes, and one recorded as malformed does not. It does not show that the authorizer decided correctly. For that, the policy and the inputs would have to be replayed, and the log records neither. A log that says denied is evidence that the host says it denied the request.
+
+**Atomic groups.** A group `(atomic r1 ... rn)` is one log entry, every member must decode and be authorized, and the world applies all members or none. **Tested:** the arena world restores doors, registers and queued thrust when a member fails, and mutating each part of the restore makes the tests fail. The verifiers check that the group entry decodes and is in canonical text. **Not establishable from the log:** that a failed group left the world unchanged, because the log does not record world state. **A requirement on the world and not a checked property:** `CommitAll` must be rollback-safe. It may change only state it can restore, and it must not call out to anything or emit an event that cannot be taken back. A world with such effects should stage them and release them after the commit succeeds. A world that does not implement `AtomicWorld` fails every group. Nothing in the kernel can enforce the rollback-safety contract on a world it does not own.
+
+**Suspension grants no authority.** A `yield` cannot occur inside a group, since a group member must be a request of the schema, and resuming an entity uses no host input. A host that gives an entity new input does so by re-arming it, which is recorded separately and marked as preempting.
+
+## 5. Open obligations
+
+The following are not discharged, and a first release should say so.
+
+A proof, or a counterexample, for scope mode `safe` and for absorption mode `u` with `Sc`. The route of section 1.3 is known to fail; a different commutation argument that tolerates a created redex in the argument, or a measure on the pending boundary steps of an insensitive argument, would be needed.
+
+A machine-checked version of the proof in `notes/settled-scope.tex`, or at least review of it by someone other than its author.
+
+A written proof of result equivalence for suspension, as a corollary of confluence, and a statement of what holds outside the confluent configuration.
+
+A second human implementation of a verifier from section 18, which is the only test that can expose a misreading shared by the specification and both existing verifiers.
+
+An agreed way to hold and publish a log anchor.
+
+Larger or differently shaped searches: terms of four leaves and two brackets with two labels did not finish in the time allowed and are not counted anywhere above. The unexplored region of the capped explorations is the non-terminating one.
+
+Not implemented: term graphs with sharing and the Any and All policies, the Gross-Knuth strategy, the counter-machine compilation, the disposition calculus, mailboxes and per-entity budgets in the scheduler, and a bound on scheduler log size.
+
+## 6. Release status
+
+With this document, the kernel is a reproducible research prototype, suitable for a `v0.1.0` release candidate. What that label asserts is that the code builds, the tests pass, the formats are specified to the byte and checked by two implementations against a shared corpus, and the limits are written down. It does not assert that the open mathematical obligations above have been discharged, that the specification has been independently reviewed, or that any host built on the kernel authorizes correctly.
+
+To reproduce the figures: `go test ./...` runs the default configuration in about a minute, including the corpus, the suspension tests and the Python verifier. The searches of section 1 are rerun by setting `SPHEREPOP_SEARCH_LEAVES`, `SPHEREPOP_SEARCH_BRACKETS` and `SPHEREPOP_SEARCH_LABELS=2`; the 3-leaf, 3-bracket, 2-label normal-form search takes about five minutes on the machine used here. `python3 conformance/crosscheck.py 300` runs the random differential test, which builds the Go binary itself.

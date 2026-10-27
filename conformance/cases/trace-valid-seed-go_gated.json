@@ -1,0 +1,69 @@
+{
+  "format": "spherepop-trace/1",
+  "config": {
+    "root": [
+      "W",
+      "K",
+      "C",
+      "S"
+    ],
+    "perm": {
+      "q": [
+        "S"
+      ]
+    },
+    "gated": [
+      "W",
+      "K",
+      "C"
+    ],
+    "absorb": "u",
+    "sc": "safe"
+  },
+  "start": "\u003cK a b\u003e_q (S I I x) (K y z)",
+  "start_digest": "6d8b778769c284750e4249e58b05f9f469dcedf06e0e1bf3163362d343d2ed62",
+  "strategy": "ri",
+  "fuel": 1000,
+  "steps": [
+    {
+      "rule": "K",
+      "path": "R",
+      "after": "d5a8a1d06d37c51b177504b31163dbfb676e1171b686992fb63b9448d8f72614",
+      "link": "bcf086a4931ad3454761805f0a2653ba592e76fd9cb2046151a31ff8f645b504"
+    },
+    {
+      "rule": "S",
+      "path": "LR",
+      "after": "e7510560e8570c66817ee3daed9461a4faeac834ce72c14f5f816bcefe7bd38b",
+      "link": "3063fbdaca932475db8772de203b16ffe1206224e356b93f5cdc475d58a873bf"
+    },
+    {
+      "rule": "I",
+      "path": "LRR",
+      "after": "83327f534f55c9ac3af4cfe9525670d7ae011aa70ade9a6bd7d6b51dfced05a9",
+      "link": "f4c0de5d5a9f0987bb432cdd9ebbf7ad08b113b95f02ede2e37662461471068f"
+    },
+    {
+      "rule": "I",
+      "path": "LRL",
+      "after": "889ab9047b2807a97091492c5912781a2feb12fb6fc973b1b05099c7c2479d24",
+      "link": "7064a4c2d6b38580eb2184d1ff03474118ed5d6538145bfe6971454b0a22cfff"
+    },
+    {
+      "rule": "Abs",
+      "path": "L",
+      "after": "ed71dc468796ce1cbdc7cbd6d1f20b201e766897381b2bc321bae2f821e2d194",
+      "link": "8c82c91865442afb9a0402e6f8e5a8a5c8e79294babcf879b59237e2bf28e525"
+    },
+    {
+      "rule": "Abs",
+      "path": "",
+      "after": "40e9ac7197429ce8364b943382a39e98769dad6506438bef452a704154cef1ec",
+      "link": "7211b8c6b8436faed762999114d85c860fa99a80f57eac6100974a8df232ec46"
+    }
+  ],
+  "final": "\u003cK a b (x x) y\u003e_q",
+  "final_digest": "40e9ac7197429ce8364b943382a39e98769dad6506438bef452a704154cef1ec",
+  "exhausted": false,
+  "head": "7211b8c6b8436faed762999114d85c860fa99a80f57eac6100974a8df232ec46"
+}

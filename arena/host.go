@@ -134,3 +134,26 @@ func (o Observer) Observe(subject string, frame int) ([]*term.Term, error) {
 	}
 	return obs, nil
 }
+
+// CommitAll implements effects.AtomicWorld. It applies the requests in order
+// and, if any is refused, restores the doors and ships it started from.
+func (w *World) CommitAll(rs []effects.Request) error {
+	doors := make(map[uint32]bool, len(w.doors))
+	for k, v := range w.doors {
+		doors[k] = v
+	}
+	ships := make(map[string]Ship, len(w.ships))
+	for k, s := range w.ships {
+		ships[k] = *s
+	}
+	for i, r := range rs {
+		if err := w.Commit(r); err != nil {
+			w.doors = doors
+			for k, s := range ships {
+				*w.ships[k] = s
+			}
+			return fmt.Errorf("group member %d: %w", i, err)
+		}
+	}
+	return nil
+}

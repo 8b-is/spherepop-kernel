@@ -1,0 +1,4 @@
+\ge gw gn gs gu gd ing dopen reg.
+  reg (\z. effects)
+      (ing (effects (effect (door 1) close) (effect (ship s1) set 1))
+           (effects (effect (door 1) open) (effect (ship s1) thrust east)))

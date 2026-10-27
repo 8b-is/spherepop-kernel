@@ -24,6 +24,7 @@ type Result struct {
 	Term      *term.Term
 	Steps     uint64
 	Exhausted bool // fuel ran out while a redex was still available
+	Stopped   bool // the caller's stop predicate held before the run could continue
 	Trace     []Step
 }
 
@@ -37,6 +38,15 @@ func Reduce(t *term.Term, strat Strategy, fuel uint64) (Result, error) {
 // reached within the budget, Exhausted is false and Term is that normal form.
 // Otherwise Exhausted is true and Term is the term after the last step.
 func (c *Config) Reduce(t *term.Term, strat Strategy, fuel uint64) (Result, error) {
+	return c.ReduceUntil(t, strat, fuel, nil)
+}
+
+// ReduceUntil is Reduce with an execution boundary. Before each step, and
+// before declaring a normal form or exhaustion, it asks stop of the current
+// term; if stop holds the run ends there with Stopped set. The predicate is
+// not a rule: it never changes a term, and a term it stops is a term the rules
+// could still reduce. A nil stop never holds.
+func (c *Config) ReduceUntil(t *term.Term, strat Strategy, fuel uint64, stop func(*term.Term) bool) (Result, error) {
 	if _, ok := ParseStrategy(strat.String()); !ok {
 		return Result{Term: t}, fmt.Errorf("reduce: unknown strategy %d", uint8(strat))
 	}
@@ -47,6 +57,10 @@ func (c *Config) Reduce(t *term.Term, strat Strategy, fuel uint64) (Result, erro
 	s.strategy = strat
 	res := Result{Term: t}
 	for {
+		if stop != nil && stop(res.Term) {
+			res.Stopped = true
+			return res, nil
+		}
 		var next Redex
 		var found bool
 		s.visit = func(r Redex) bool { next, found = r, true; return true }

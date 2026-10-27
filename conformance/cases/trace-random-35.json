@@ -1,0 +1,63 @@
+{
+  "format": "spherepop-trace/1",
+  "config": {
+    "root": [
+      "W",
+      "K",
+      "C",
+      "S"
+    ],
+    "perm": {
+      "p": [],
+      "q": []
+    },
+    "gated": [
+      "W",
+      "K",
+      "C",
+      "S"
+    ],
+    "absorb": "any",
+    "sc": "settled"
+  },
+  "start": "sc_q (sc_q (sc_p (I) (<B>_q)))",
+  "start_digest": "d1ec6b1bf70b9b575874c84e85c5dd65ef991c4ec51b6f4a6fd098983b5f1343",
+  "strategy": "ro",
+  "fuel": 8,
+  "steps": [
+    {
+      "rule": "Sc",
+      "path": "RRL",
+      "after": "0ac3346393595589496fbdcbf5f6afeba04d39afc432c8aacf3f7971f1d16aeb",
+      "link": "6de26321df61f486c508a1aebef5f3ad99fd91799dbe8128767bfd435786ad1b"
+    },
+    {
+      "rule": "Abs",
+      "path": "RR",
+      "after": "e523b8b1e367915b2d15856e6cd6e423d26099ba37635b6950519740f60df1b6",
+      "link": "a7b1f95f6fe4b840988a6abe015f96e40d4106f013da78a8ceb8a7149fe8d6d6"
+    },
+    {
+      "rule": "I",
+      "path": "RRB",
+      "after": "af810097a47b48c51844e9fafb107a92df9ce114c52e382b5a25fe78363dbb97",
+      "link": "3a33dc70281d5bf6da1ef5f45cf6ff07cf3f6ef5af4ead1a30c37cc013ec572c"
+    },
+    {
+      "rule": "Sc",
+      "path": "R",
+      "after": "cc2b78104434411aa09127b98e6d52ec17c75ab5558d7c3a365b679194ff9a14",
+      "link": "6f820315ae930a2b80f8bd5bba915fde5fc733dd260ed28707733d95877a4039"
+    },
+    {
+      "rule": "Sc",
+      "path": "",
+      "after": "d3f0ed7cd127da7ff2dd085095f16fb93f8ef09dbc657e45eee4f54f545c963a",
+      "link": "a922122a0655450cab09ee1452a1b3508f4e1fb8a476b0f8bd89aa3defa40988"
+    }
+  ],
+  "final": "<<<<B>_q>_p>_q>_q",
+  "final_digest": "d3f0ed7cd127da7ff2dd085095f16fb93f8ef09dbc657e45eee4f54f545c963a",
+  "exhausted": false,
+  "head": "a922122a0655450cab09ee1452a1b3508f4e1fb8a476b0f8bd89aa3defa40988"
+}

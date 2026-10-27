@@ -1,0 +1,3 @@
+\ge gw gn gs gu gd ing dopen.
+  ing (effects (effect (door 1) close))
+      (effects (effect (door 1) open) (effect (ship s1) thrust east))

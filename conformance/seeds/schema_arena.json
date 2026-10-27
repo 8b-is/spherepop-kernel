@@ -1,0 +1,22 @@
+{
+  "targets": {
+    "door": {
+      "id": "int",
+      "verbs": {
+        "close": [],
+        "open": []
+      }
+    },
+    "ship": {
+      "id": "sym",
+      "verbs": {
+        "set": [
+          "int"
+        ],
+        "thrust": [
+          "sym"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,1 @@
+{"seq":0,"tick":0,"subject":"s1","index":0,"request":"atomic (effect (door 1) open) (effect (ship s1) set 3)","disposition":"failed","prev":"cf3ce2db7ead61aaf4cc515e314bf5175125f93aeed75f57144976840a2b60e7","hash":"cd5ca1c5d60e453893a5fe41ff609ead074d7725aa54211a761fc8cd07d6c967"}

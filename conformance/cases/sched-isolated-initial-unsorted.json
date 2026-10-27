@@ -1,0 +1,58 @@
+{
+  "format": "spherepop-sched/1",
+  "config": {
+    "root": [
+      "W",
+      "K",
+      "C",
+      "S"
+    ],
+    "perm": {
+      "p": [
+        "W",
+        "K",
+        "C",
+        "S"
+      ],
+      "q": [
+        "S"
+      ]
+    },
+    "gated": [
+      "W",
+      "K",
+      "C"
+    ],
+    "absorb": "s",
+    "sc": "settled"
+  },
+  "policy": {
+    "strategy": "lo",
+    "budget": 3
+  },
+  "initial": [
+    {
+      "id": "b",
+      "term": "I z",
+      "digest": "df4bb1a005c4a1004a5dd2b12113c4679598965e9cc9e16754b90c057d4e6374"
+    },
+    {
+      "id": "a",
+      "term": "K x y",
+      "digest": "136e737e43a8d41849905f4fa1baca8fd26655811a4712824f20a362e1ce55f7"
+    }
+  ],
+  "events": [],
+  "final": [
+    {
+      "id": "b",
+      "term": "I z",
+      "digest": "df4bb1a005c4a1004a5dd2b12113c4679598965e9cc9e16754b90c057d4e6374"
+    },
+    {
+      "id": "a",
+      "term": "K x y",
+      "digest": "136e737e43a8d41849905f4fa1baca8fd26655811a4712824f20a362e1ce55f7"
+    }
+  ]
+}

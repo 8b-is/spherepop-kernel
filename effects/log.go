@@ -4,12 +4,14 @@ import (
 	"bufio"
 	"bytes"
 	"crypto/sha256"
+	"encoding/binary"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 
+	"github.com/standardgalactic/spherepop-kernel/internal/strict"
 	"github.com/standardgalactic/spherepop-kernel/term"
 )
 
@@ -43,19 +45,31 @@ type Entry struct {
 	Hash        string      `json:"hash"`
 }
 
-const logDomain = "spherepop-effects/1"
+const logDomain = "spherepop-effects/2"
 
 func genesis() string {
 	h := sha256.Sum256([]byte(logDomain))
 	return hex.EncodeToString(h[:])
 }
 
+func framed(buf []byte, s string) []byte {
+	buf = binary.AppendUvarint(buf, uint64(len(s)))
+	return append(buf, s...)
+}
+
+// digest is the entry hash of SPEC 18.8: a binary encoding with no dependence
+// on how any JSON library escapes a string.
 func (e Entry) digest() string {
-	e.Hash = ""
-	b, err := json.Marshal(e)
-	if err != nil { // cannot happen for this struct
-		panic(err)
-	}
+	b := framed(nil, logDomain)
+	b = binary.BigEndian.AppendUint64(b, e.Seq)
+	b = binary.BigEndian.AppendUint64(b, uint64(int64(e.Tick)))
+	b = framed(b, e.Subject)
+	b = framed(b, e.Ref)
+	b = binary.BigEndian.AppendUint64(b, uint64(int64(e.Index)))
+	b = framed(b, e.Request)
+	b = framed(b, string(e.Disposition))
+	b = framed(b, e.Reason)
+	b = framed(b, e.Prev)
 	h := sha256.Sum256(b)
 	return hex.EncodeToString(h[:])
 }
@@ -150,8 +164,8 @@ func VerifyAgainst(entries []Entry, s Schema) error {
 	for i, e := range entries {
 		switch e.Disposition {
 		case Committed, Denied, Failed, Malformed:
-			if e.Request == "" {
-				return fmt.Errorf("%w: entry %d has no request", ErrLogEntry, i)
+			if e.Request == "" || e.Index < 0 {
+				return fmt.Errorf("%w: entry %d has no request or no request index", ErrLogEntry, i)
 			}
 			t, err := term.Parse(e.Request)
 			if err != nil {
@@ -160,7 +174,10 @@ func VerifyAgainst(entries []Entry, s Schema) error {
 				}
 				return fmt.Errorf("%w: entry %d: %v", ErrLogEntry, i, err)
 			}
-			_, derr := s.Decode(t)
+			if t.String() != e.Request {
+				return fmt.Errorf("%w: entry %d: request is not in canonical text", ErrLogEntry, i)
+			}
+			_, _, derr := s.DecodeOutput(t)
 			if e.Disposition == Malformed && derr == nil {
 				return fmt.Errorf("%w: entry %d is recorded malformed but decodes", ErrLogEntry, i)
 			}
@@ -168,7 +185,7 @@ func VerifyAgainst(entries []Entry, s Schema) error {
 				return fmt.Errorf("%w: entry %d is recorded %s but does not decode: %v", ErrLogEntry, i, e.Disposition, derr)
 			}
 		case NoOutput, Exhausted, Truncated:
-			if e.Index != -1 {
+			if e.Index != -1 || e.Request != "" {
 				return fmt.Errorf("%w: entry %d: %s concerns the whole output", ErrLogEntry, i, e.Disposition)
 			}
 		default:
@@ -188,9 +205,7 @@ func ReadJSONL(r io.Reader) ([]Entry, error) {
 			continue
 		}
 		var e Entry
-		dec := json.NewDecoder(bytes.NewReader(sc.Bytes()))
-		dec.DisallowUnknownFields()
-		if err := dec.Decode(&e); err != nil {
+		if err := strict.Unmarshal(sc.Bytes(), &e); err != nil {
 			return nil, fmt.Errorf("%w: %v", ErrChain, err)
 		}
 		out = append(out, e)

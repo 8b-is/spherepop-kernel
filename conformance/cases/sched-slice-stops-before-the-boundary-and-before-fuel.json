@@ -1,0 +1,100 @@
+{
+  "format": "spherepop-sched/1",
+  "config": {
+    "root": [
+      "W",
+      "K",
+      "C",
+      "S"
+    ],
+    "perm": {
+      "p": [
+        "W",
+        "K",
+        "C",
+        "S"
+      ],
+      "q": [
+        "S"
+      ]
+    },
+    "gated": [
+      "W",
+      "K",
+      "C"
+    ],
+    "absorb": "s",
+    "sc": "settled"
+  },
+  "policy": {
+    "strategy": "lo",
+    "budget": 3
+  },
+  "initial": [
+    {
+      "id": "a",
+      "term": "I (I (yield (K x y)))",
+      "digest": "3ac247cc8752c04837ae71406825a135bdcdae43c231add55b73dbec92c76349"
+    }
+  ],
+  "events": [
+    {
+      "tick": 0,
+      "entity": "a",
+      "decision": "run",
+      "budget": 3,
+      "slice": {
+        "format": "spherepop-trace/1",
+        "config": {
+          "root": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ],
+          "perm": {
+            "p": [
+              "W",
+              "K",
+              "C",
+              "S"
+            ],
+            "q": [
+              "S"
+            ]
+          },
+          "gated": [
+            "W",
+            "K",
+            "C"
+          ],
+          "absorb": "s",
+          "sc": "settled"
+        },
+        "start": "I (I (yield (K x y)))",
+        "start_digest": "3ac247cc8752c04837ae71406825a135bdcdae43c231add55b73dbec92c76349",
+        "strategy": "lo",
+        "fuel": 3,
+        "steps": [
+          {
+            "rule": "I",
+            "path": "",
+            "after": "80159fa4c62029a828ec9e0f3b465e1e9541d42e5b53c9266331c0fcb6db2f2b",
+            "link": "cc37898dd839cdde52a4fb982f75b5e6a6b746a677b28569ec3069770f3085b7"
+          }
+        ],
+        "final": "I (yield (K x y))",
+        "final_digest": "80159fa4c62029a828ec9e0f3b465e1e9541d42e5b53c9266331c0fcb6db2f2b",
+        "exhausted": false,
+        "head": "cc37898dd839cdde52a4fb982f75b5e6a6b746a677b28569ec3069770f3085b7"
+      }
+    }
+  ],
+  "final": [
+    {
+      "id": "a",
+      "term": "I (yield (K x y))",
+      "digest": "80159fa4c62029a828ec9e0f3b465e1e9541d42e5b53c9266331c0fcb6db2f2b"
+    }
+  ]
+}

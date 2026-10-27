@@ -146,7 +146,11 @@ func (c Config) Spec() ConfigSpec {
 	if len(c.Perm) > 0 {
 		s.Perm = make(map[string][]string, len(c.Perm))
 		for _, l := range sortedKeys(c.Perm) {
-			s.Perm[l] = c.Perm[l].Names()
+			names := c.Perm[l].Names()
+			if names == nil {
+				names = []string{} // an empty permission is [], never null
+			}
+			s.Perm[l] = names
 		}
 	}
 	if s.Root == nil {
@@ -177,10 +181,26 @@ func (s ConfigSpec) Config() (Config, error) {
 	if len(s.Perm) > 0 {
 		c.Perm = make(map[string]PermSet, len(s.Perm))
 		for l, names := range s.Perm {
+			if !validLabel(l) {
+				return c, fmt.Errorf("reduce: label %q must be non-empty and use letters and digits only", l)
+			}
 			if c.Perm[l], err = ParsePermSet(names); err != nil {
 				return c, err
 			}
 		}
 	}
 	return c, nil
+}
+
+func validLabel(l string) bool {
+	if l == "" {
+		return false
+	}
+	for i := 0; i < len(l); i++ {
+		c := l[i]
+		if !(c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c >= '0' && c <= '9') {
+			return false
+		}
+	}
+	return true
 }

@@ -1,0 +1,42 @@
+{
+  "format": "spherepop-sched/1",
+  "config": {
+    "root": [
+      "W",
+      "K",
+      "C",
+      "S"
+    ],
+    "perm": {
+      "p": [
+        "W",
+        "K",
+        "C",
+        "S"
+      ],
+      "q": [
+        "S"
+      ]
+    },
+    "gated": [
+      "W",
+      "K",
+      "C"
+    ],
+    "absorb": "s",
+    "sc": "settled"
+  },
+  "policy": {
+    "strategy": "lo",
+    "budget": 3
+  },
+  "initial": [],
+  "events": [],
+  "final": [
+    {
+      "id": "a",
+      "term": "a",
+      "digest": "7e131fbf44fdf3aff1be0c74dd55a9113a45fd95d08993ee7df83f356ba1a052"
+    }
+  ]
+}

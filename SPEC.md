@@ -81,11 +81,11 @@ Unrestricted absorption is confluent only when `pi(eps)` is contained in `pi(l)`
 | `any` | always | confluent iff `pi(eps)` is contained in every `pi(l)` (Theorem 4.2); kept to demonstrate failure |
 | `nf` | `v` is R-normal | insufficient (Theorem 4.4) |
 | `s` | `v` is settled | confluent (Lemma 4.5, Theorem 4.7) |
-| `u` | `v` is R-normal and either settled or insensitive | confluent (Theorem 4.9); the default |
+| `u` | `v` is R-normal and either settled or insensitive | confluent (Theorem 4.9); the language default, and outside the proof of section 17 |
 
-`v` is R-normal at a chain when it contains no permitted contraction there. It is settled when it is R-normal and no application inside it has a bracket as function child. It is insensitive when it contains no gated constant. `Config.Safe` exposes the criterion of Proposition 4.11, which is decidable in time linear in the size of `v`.
+`v` is R-normal at a chain when it contains no permitted contraction there. It is settled when it is R-normal and no application inside it has a bracket or a scope constructor as function child. It is insensitive when it contains no gated constant. Section 18 gives the exact recursive definitions, which are normative. `Config.Safe` exposes the criterion of Proposition 4.11, which is decidable in time linear in the size of `v`.
 
-The `Sc` rule has a mode of its own, and restricting `Abs` does nothing for it. Theorem 4.2 states that the system with `Sc` is confluent iff `pi(eps)` is contained in every `pi(l)`, because `sc_l u` moves `u` into the chain of `l` whatever `u` contains. Randomized testing reproduces this: with `Sc` as stated and AbsU in force, divergent normal forms appear within a few hundred random terms. The mode `any` is the rule as the essay states it and is the default. The mode `safe` applies `Sc` only when its argument satisfies the same `Safe` criterion as AbsU. That restriction is not in the essays. It is status P: no proof, and the only evidence is the randomized test described in section 12.
+The `Sc` rule has a mode of its own, and restricting `Abs` does nothing for it. Theorem 4.2 states that the system with `Sc` is confluent iff `pi(eps)` is contained in every `pi(l)`, because `sc_l u` moves `u` into the chain of `l` whatever `u` contains. Randomized testing reproduces this: with `Sc` as stated and AbsU in force, divergent normal forms appear within a few hundred random terms. The mode `any` is the rule as the essay states it and is the language default. The mode `safe` applies `Sc` only when its argument satisfies the same `Safe` criterion as AbsU. The mode `settled` applies `Sc` only when its argument is settled. The last two are not in the essays. With `--absorb s` the mode `settled` is proved confluent (section 17); `safe` is status P, supported by the randomized test of section 12 and the searches of section 13.
 
 ## 6. Strategies
 
@@ -136,8 +136,14 @@ Matching final digests alone prove nothing, and the checker does not rely on the
 
 | Command | Effect |
 |---|---|
-| `spherepop reduce TERM [--fuel N] [--strategy lo\|li\|ri\|ro] [--trace] [--out FILE] [--perm LABEL=K,C]... [--root W,K,C,S] [--absorb off\|any\|nf\|s\|u] [--sc any\|safe] [--def NAME=TERM]...` | reduce and print the result; flags may follow the term |
+| `spherepop reduce TERM [--fuel N] [--strategy lo\|li\|ri\|ro] [--trace] [--out FILE] [--perm LABEL=K,C]... [--root W,K,C,S] [--absorb off\|any\|nf\|s\|u] [--sc any\|safe\|settled] [--def NAME=TERM]...` | reduce and print the result; flags may follow the term |
 | `spherepop check FILE [--strategy] [--fuel N] [--max-steps N]` | verify a trace; `-` reads standard input |
+| `spherepop compile EXPR [--def NAME=TERM]...` | compile a lambda expression to a combinator term (section 16) |
+| `spherepop sim --entity ID=TERM... [--budget N] [--ticks T] [--strategy] [--out FILE]` plus the reduce configuration flags | run several terms on a fixed per-tick budget; the defaults here are the host's, `--absorb s --sc settled` (section 11) |
+| `spherepop checklog FILE` | verify a scheduler log |
+| `spherepop arena FILE [--frames N] [--budget N] [--registers] [--effects FILE] [--sched FILE] [-v]` plus `--strategy`, `--absorb`, `--sc`, `--def` | run a lambda-syntax behavior in the built-in arena (section 16) |
+| `spherepop checkeffects FILE [--anchor HEAD] [--schema FILE]` | verify an effects log against the arena schema (or the schema file given), and against an anchor if given |
+| `spherepop arena-schema` | print the arena effect schema as JSON, the form `--schema` and the Python verifier read |
 | `spherepop test` | run the conformance vectors |
 | `spherepop rules` | print the rule table |
 
@@ -149,13 +155,13 @@ Source text is bounded. `term.Parse` rejects input longer than `MaxSourceBytes` 
 
 The essays use `S` only for comparison and gate only `W`, `K` and `C`. The code allows `S` to be gated as an option. The theorems are not claimed for a configuration that gates `S`.
 
-The scoped essay defines settled without mentioning `sc`. The code also treats a pending `sc_l u` inside the argument as unsettled. This is stricter than the essay, so it can only refuse absorptions the essay would allow, but the confluence theorems have not been re-proved for the combination of `Sc` with restricted absorption; that combination is status P here. The `safe` mode of `Sc` (section 5) is likewise this module's own addition and also status P.
+The scoped essay defines settled without mentioning `sc`. The code also treats a pending `sc_l u` inside the argument as unsettled. This is stricter than the essay, so it can only refuse absorptions the essay would allow, but the confluence theorems have not been re-proved for the combination of `Sc` with restricted absorption; that combination is status P here, except for the settled form of both boundary rules, which section 17 proves. The `safe` mode of `Sc` (section 5) is this module's own addition and remains status P.
 
 Theorem 4.4 is stated for an abstract spine-based relation, `((p x) y) -> x` permitted when a label is absent from the chain. The configuration here is combinatory, so that counterexample is not representable and is not among the vectors. The Theorem 4.2 counterexamples for `K`, `W`, `C` and `Sc` are.
 
-Open mathematical obligation: a proof for the `safe` mode of `Sc`. What exists is an overlap analysis and an exhaustive search, both described in section 13. Neither is a proof.
+Open mathematical obligation: a proof for the `safe` mode of `Sc`, and for absorption in mode `u`. What exists is an overlap analysis and an exhaustive search (section 13) and the parallel-reduction analysis of section 17, which proves the settled form and shows where the route fails for `safe`. None of these is a proof for `safe`.
 
-Not implemented in this milestone: term graphs with sharing and the Any and All policies (Example 5.4), the Gross-Knuth strategy, bracket abstraction and the counter-machine compilation, the disposition calculus (POP, REFUSE, BIND, TRANSFORM, VERIFY, COLLAPSE), and any per-tick scheduler. The disposition lifecycle is intended to live in the evidence layer next to `trace`, not in the reducer. Redex search is a tree walk with memoisation on digest and effective permission, which is adequate for the vectors but will need a graph-based representation for terms with heavy sharing. Lemma 6.1 (effective permission of a surviving constant only shrinks) is relied on by the design but has no vector yet, because tracking the identity of a constant through duplication needs a term-graph representation.
+Not implemented in this milestone: term graphs with sharing and the Any and All policies (Example 5.4), the Gross-Knuth strategy, the counter-machine compilation, and the disposition calculus (POP, REFUSE, BIND, TRANSFORM, VERIFY, COLLAPSE). Bracket abstraction is in package `lambda` and the scheduler is section 11. The disposition lifecycle is intended to live in the evidence layer next to `trace`, not in the reducer. Redex search is a tree walk with memoisation on digest and effective permission, which is adequate for the vectors but will need a graph-based representation for terms with heavy sharing. Lemma 6.1 (effective permission of a surviving constant only shrinks) is relied on by the design but has no vector yet, because tracking the identity of a constant through duplication needs a term-graph representation.
 
 The `M x` vector checks the normal form `x x x` only, since the essay gives no step count for it.
 
@@ -167,13 +173,17 @@ Entities run in byte order of their identifiers, whatever order they were suppli
 
 The log separates two kinds of record. Scheduler decisions (`run` with a budget, or `skip`) are events. Reduction steps appear only inside the slice document attached to a `run` event, which is an ordinary trace document. `sched.CheckLog` verifies three things independently: that the decisions follow the policy (whole ticks, identifier order, finished entities skipped, exactly the budget granted); that every slice passes `trace.Check` with the strategy enforced, the fuel fixed at the budget, and the log's own configuration; and that the slices chain, each starting where the entity's previous slice ended, with the final states following from the chain.
 
-`sched.HostConfig` is the configuration a game host should start from. It differs from `reduce.DefaultConfig` only in setting `Sc` to `safe`. The language default stays the essay's rule, and `--sc any` remains available as the research mode. `spherepop sim` follows the host default.
+`sched.HostConfig` is the configuration a game host should start from. It differs from `reduce.DefaultConfig` in the two boundary rules: absorption mode `s` and scope mode `settled`, the combination whose confluence is proved (section 17). The language default stays the essay's rule with absorption mode `u`, and `--sc any`, `--sc safe` and `--absorb u` remain available as research and experimental settings. `spherepop sim` and `spherepop arena` follow the host default.
 
 Entities do not communicate, because the language has no effects yet. This is deliberate: it makes the following experiment meaningful. Holding total fuel per entity constant while varying the frame subdivision (budgets 1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30 and 60 over a fixed total of 60) gives identical final states, equal to the unsliced reduction. The reason is that a strategy is a function of the current term, so slicing a run and resuming it reproduces the unsliced run. Scheduling alone therefore cannot change a result, entity order does not change any entity's outcome, and the same world under two different strategies on a non-confluent configuration does disagree. Any difference that appears after events are introduced can thus be attributed to event ordering and not to slicing or to the calculus.
 
 A host can start a new round of a persistent program with `World.Rearm`, which stages a replacement term applied at the start of the next tick and recorded in that tick's event, with a flag marking whether it preempted an unfinished term. The scheduler carries the replacement and vouches for nothing about it; `CheckLog` verifies that the recorded digest matches the text, that the labels are known, that the preemption flag agrees with the entity's state, and that the following slice starts from the replacement. A replacement cannot ride on a skip event.
 
 Not yet done: mailboxes, per-entity budgets or priorities, a bound on log size (slices are stored whole), and an agreed external anchor for the log head.
+
+### What a verified scheduler log does not establish
+
+A scheduler log verifies its decisions, each slice as a trace under the declared configuration and budget, the chaining of slices, the validity of each re-arm, and the final states. It is independently checkable only to the extent that the state and the scheduling rules are recorded in it: the entity set, the policy and the configuration are, but the observations that produced a re-armed term are an input the log cannot vouch for.
 
 ## 12. Audit record
 
@@ -225,6 +235,8 @@ Each request is decoded, authorized and committed on its own, in the order the p
 
 ### Dispositions and the log
 
+A program may also group requests, `effects (atomic (effect ...) (effect ...))`. A group is one unit: the host logs it as one entry, authorizes every member, and a world that implements `AtomicWorld` applies all members or none. A world that does not implement it fails the group. The group is a host convention over inert data, so reduction is unchanged.
+
 Every outcome is appended to a log: committed, denied, failed (authorized but the world refused), malformed, no output, exhausted, or truncated. Each entry carries the tick, the subject, an opaque reference to the evidence (for instance a trace head), the position of the request in the output, the canonical text of the request, and a reason. The log is append-only and hash-chained, and it can be streamed as JSON lines. `Verify` checks the chain; `VerifyAnchored` also requires the head to equal a digest held elsewhere, because a bare chain cannot reveal removal of its tail; `VerifyAgainst` also checks the entries against the schema, so a log cannot present a schema-invalid request as committed or a valid one as malformed. As with trace documents, tamper evidence is relative to an external anchor.
 
 ### What the experiment shows
@@ -233,7 +245,11 @@ Two entities propose conflicting changes to one door. Their programs reach the s
 
 ### Not yet done
 
-Atomic transactions. Explicit suspension points. A command-line entry point for the host. A second implementation of the log verifier written from this section.
+Atomic transactions. Explicit suspension points. A second implementation of the log verifier written from this section. The command-line entry for the arena host is section 16.
+
+### What a verified log does not establish
+
+A verified effects log establishes that the chain is intact, that the recorded entries are consistent with the schema, and, against an anchor, that nothing was removed from the end. It does not establish that the authorizer decided correctly. A `denied` or `committed` entry records a decision, and checking it would need the policy and the inputs to the decision replayed, which the log does not contain. Nor does it establish that a committed request was applied faithfully by the world, only that the host reported it as applied. The effects log and the scheduler log answer different questions and neither substitutes for the other: the first records what the host did with each proposed request, the second records what the scheduler ran and which traces it accepted.
 
 ## 15. Observation and the frame loop
 
@@ -261,7 +277,7 @@ Each effects entry carries the head of the trace slice that produced its output,
 
 ### Not yet done
 
-Suspension points inside a round. Atomic transactions. A command-line entry point for the driver (the arena is exercised by tests only). A second implementation of the verifiers written from sections 11, 14 and 15.
+Suspension points inside a round. Atomic transactions. A second implementation of the verifiers written from sections 11, 14 and 15.
 
 ## 16. Lambda front end and the arena world
 
@@ -283,9 +299,13 @@ Tests run a behavior written in lambda syntax end to end: open the door and thru
 
 A program is stateless between rounds, so memory is a fact about the world. Each ship has a register holding an integer from 0 to `MaxReg` (64), changed only by the effect `ship S set N`, which goes through the same decode, authorization and logging as every other effect, and so appears in the effects log. With `Observer.Registers` on, the register is passed as a ninth argument, a Church numeral. A two-state behavior can then branch on it (`reg (\z. idle) active` selects `active` for 0 and `idle` otherwise), and a test shows a ship that cruises, closes the door on arrival, records that in its register, and afterwards leaves an outside change to the door alone. Memory therefore adds no authority: a program can write only its own ship's register, because the self-command rule applies to every ship verb, and the register is bounded so that its numeral stays small.
 
+### Command line
+
+`spherepop arena FILE` compiles the file with the lambda front end and runs it as the program of the built-in ship (`s1`, in the first of two boxes joined by a portal that door 1 gates, with the second box as the goal) for `--frames` frames under the host configuration of package `sched`, which `--absorb` and `--sc` override. It prints the ship's final state, or one line per frame with `-v`, the count of effects by disposition, and the head of the effects log. `--effects FILE` writes the log as one JSON entry per line and `--sched FILE` writes the scheduler log, and these verify with `spherepop checkeffects` (against the arena schema, and against a head held outside the log with `--anchor`) and `spherepop checklog`. A log with its tail removed verifies bare and fails against the anchor, as in section 14, and a changed disposition breaks the chain. Two runs of the same behavior give identical output. The head also records the configuration: the same behavior under `--absorb s --sc settled` reaches the same world with the same effects but a different head, because each entry cites a trace and a trace records the configuration it was produced under. `examples/cruise.lam` and `examples/stateful.lam` are the two behaviors used in the tests, the second with `--registers`.
+
 ### What this shows and does not show
 
-The Church encodings are livable once the front end exists: the behavior above is three lines. Programs are still stateless between rounds, so any behavior that needs memory has to put it in the world. The physics is deliberately crude and is not a model of Descent. Nothing here is evidence about the confluence of safe `Sc`; the arena runs with `Sc = safe` as the host default, as in section 11.
+The Church encodings are livable once the front end exists: the behavior above is three lines. Programs are still stateless between rounds, so any behavior that needs memory has to put it in the world. The physics is deliberately crude and is not a model of Descent. Nothing here is evidence about the confluence of any boundary mode; the arena runs with the host default of section 11, absorption `s` and scope `settled`, the pair for which section 17 gives a proof.
 
 ## 17. Confluence of the scope constructor
 
@@ -301,7 +321,7 @@ The `safe` mode, which admits an argument that is R-normal and either settled or
 
 ### Recommendation
 
-Before the game host treats scope construction as a stable part of the language, change its restriction from safe to settled for both boundary rules, that is `--absorb s --sc settled`. The cost is that `sc_l u` waits until every boundary step inside `u` has run, so a scope whose argument holds a boundary step that never fires stays inert, which matches what a blocked `Abs` already does. The host default in package `sched` is still `safe` and `u`; changing it is a decision for the language owner, not a consequence of the tests.
+The game host uses `--absorb s --sc settled` for both boundary rules, and `sched.HostConfig` and the `sim` and `arena` commands default to it. The cost is that `sc_l u` waits until every boundary step inside `u` has run, so a scope whose argument holds a boundary step that never fires stays inert, which matches what a blocked `Abs` already does. The language default is unchanged, and `safe` and `u` remain selectable as experimental modes and as subjects of the confluence investigation. This was the language owner's decision; the tests do not make it.
 
 ### Tests
 
@@ -310,3 +330,105 @@ Before the game host treats scope construction as a stable part of the language,
 ### Not covered
 
 The search uses the symbols `a K C W I sc_x` (and `sc_y`), so `S` and `B` appear in the theorem but not in the enumeration. Permissions are subsets of `{W,K,C}`. The theorem does not cover `--absorb u`, which remains the reducer's default outside the host, or `--absorb any` and `nf`.
+
+## 17a. Suspension
+
+A suspension is a boundary in execution and not a reduction rule. A program asks to be suspended by reaching a root of the form `yield k`. The scheduler stops the run there, whether or not fuel remains and whether or not `k` still contains redexes, and records the entity as suspended. On the entity's next turn the scheduler resumes it at `k`, with a fresh budget. The three outcomes of a slice are different things: a normal form, fuel exhausted with a step still available, and suspended at the boundary. The reduction trace of a slice is an ordinary trace, with no fabricated step; the scheduler log says which outcome it was, and the checker is told about the boundary.
+
+Because the boundary is a predicate on the root, and a root of the form `yield k` stays one under every step that can be taken from it, stopping there never discards or reorders a reduction the calculus could make elsewhere. Which strategy reached the boundary decides how far `k` had been reduced at that moment, and so the exact term resumed, but not the result: under a configuration where reduction is confluent, an entity that suspends and resumes reaches the normal form of the uninterrupted term with its root `yield` layers removed, under every strategy and every budget. `sched/suspend_test.go` checks this on random terms with `yield` at random positions. The theorem of section 17 is untouched, and the equality is not proved here for the configurations outside it.
+
+Result equivalence is not history equivalence. Confluence makes the final term independent of the strategy, but root suspension is a property of the operational protocol, and a strategy decides when the root first has the form `yield k` and how far `k` has been reduced by then. For `I (yield (K a b))` with a budget of ten, leftmost-outermost suspends after one step with the residual `yield (K a b)` and spends one further step after resuming; leftmost-innermost suspends after two steps with the residual `yield a` and spends none after resuming. Both end at `a`. The scheduler log records exactly this history, and two runs with equal results may therefore have different logs, as two runs in the arena reach the same world with different trace heads. A statement about a run should say which it means. What is proved or tested is result equivalence; the history is evidence, checked step by step, and is not claimed to be invariant. `TestSameResultDifferentSuspensionHistory` pins the example down.
+
+Resumption without host input is the only kind the scheduler performs. A host that wants the program to see something new re-arms it, which the log records separately and marks as preempting. Three boundaries stay independently observable: reduction steps in a trace, suspension in the scheduler log, and commitment in the effects log. A `yield` cannot occur inside an atomic group, since a group member must be a request of the schema.
+
+## 18. Evidence formats and normative definitions
+
+This section is normative. It fixes every byte that is hashed and every decision a verifier makes, so that a verifier can be written from this text alone. Where an earlier section is looser, this section governs. The reference verifier in `tools/verify-py` was written against this section and shares no code with the Go packages, and `conformance/` holds the records both verifiers are held to. The independence is of implementation and not of authorship: the section was drafted from the behaviour of the Go code and both verifiers were written by the same hand, so a misreading common to both would survive. A third implementation by someone else is the test this setup cannot supply.
+
+### 18.1 Encodings
+
+All hashes are SHA-256. A hash is written as 64 lower-case hexadecimal characters. `framed(s)` is the unsigned LEB128 encoding of the byte length of `s` followed by the UTF-8 bytes of `s`. `u64be(n)` and `i64be(n)` are eight bytes, big endian, the second in two's complement.
+
+The digest of a term is defined by node kind. Kinds are atom 1, constant 2, scope constructor 3, application 4, bracket 5. Let `D = framed("spherepop-term/1")`. For a leaf of kind `k` and name `n` (the label, for a scope constructor), the digest is `SHA256(D || k || framed(n))`. For an application of `f` to `x` it is `SHA256(D || 0x04 || digest(f) || digest(x))` using the 32 raw digest bytes. For a bracket labelled `l` with body `b` it is `SHA256(D || 0x05 || framed(l) || digest(b))`.
+
+The canonical text of a term is `n` for an atom or constant, `sc_l` for a scope constructor, `<t>_l` for a bracket with body text `t`, and for an application the text of the function child, a space, and the text of the argument child, with the argument parenthesised exactly when it is itself an application. Parsing the canonical text of a term gives that term.
+
+### 18.2 Concrete syntax
+
+Whitespace is space, tab, line feed and carriage return. A term is a non-empty juxtaposition of atoms of syntax, associating to the left, ended by end of input, `)` or `>`. An identifier is a maximal run of letters, digits, `_` and `'` starting with a letter. An identifier that is one of `S K I B C W` is a constant. An identifier beginning `sc_` is a scope constructor whose label, the rest of the identifier, must be non-empty and consist of letters and digits only, and otherwise the identifier is a syntax error. An identifier beginning with a lower-case letter is an atom. Any other identifier is a syntax error, so `SK` is an error. A maximal run of decimal digits is an atom, and it is a syntax error if the next character is an identifier character. `(t)` groups. `<t>_l` is a bracket, where the label `l` is a non-empty maximal run of letters and digits immediately after `>_`. Any other character is a syntax error, and so is input remaining after a complete term. Source longer than 4194304 bytes, or nested deeper than 100000 combined parentheses and brackets, is a syntax error.
+
+### 18.3 Configuration
+
+A configuration has root permission, a permission per label, a gated set, an absorption mode and a scope mode. The permission alphabet is `W K C S` in that order. A permission is a subset, written as an array of distinct names. The absorption modes are `off any nf s u` and the scope modes are `any safe settled`. A label with no entry has the empty permission. A label in a configuration is a non-empty string of letters and digits. A term whose labels are not all in the configuration is rejected.
+
+The effective permission of a position is the root permission intersected with the permission of every bracket label on the path from the root to the position, entering a bracket body.
+
+The canonical text of a configuration, used only for hashing, is compact JSON with members in this order: `"root"` as an array of names, `"perm"` as an object from label to array of names with labels in ascending byte order, present only if it has at least one entry, `"gated"` as an array of names, `"absorb"` as a string, and `"sc"` as a string. Arrays appear in the order the document gives them, with no normalisation. There is no whitespace.
+
+### 18.4 Redexes and steps
+
+Let `mask` be the effective permission at a node. A constant is admissible at `mask` if it is not in the gated set or is in `mask`. A node is a contraction redex if it is an application whose spine head (following function children) is a constant `h`, the number of applications in the spine equals the arity of `h`, and `h` is admissible. The arities are `I` 1, `K` 2, `W` 2, `B` 3, `C` 3, `S` 3. A spine never crosses a bracket, because a bracket is not an application.
+
+`rnormal(v, m)`: for an application, `v` is not a contraction redex at `m` and both children are `rnormal` at `m`; for a bracket labelled `l`, the body is `rnormal` at `m` intersected with the permission of `l`; a leaf is `rnormal`.
+
+`settled(v, m)`: for an application, the function child is neither a bracket nor a scope constructor, `v` is not a contraction redex at `m`, and both children are `settled` at `m`; for a bracket labelled `l`, the body is `settled` at `m` intersected with the permission of `l`; a leaf is `settled`.
+
+`insensitive(v)`: `v` contains no constant that is both in the gated set and in the alphabet `W K C S`.
+
+The side condition of `Abs` on argument `v` at `m` is, by absorption mode: `off` false, `any` true, `nf` `rnormal(v, m)`, `s` `settled(v, m)`, `u` `rnormal(v, m)` and (`settled(v, m)` or `insensitive(v)`). The side condition of `Sc` on argument `v` at `m` is, by scope mode: `any` true, `safe` `rnormal(v, m)` and (`settled(v, m)` or `insensitive(v)`), `settled` `settled(v, m)`.
+
+An application node is a redex at `m` as follows. If its function child is a scope constructor it is an `Sc` redex when the scope side condition holds for its argument, and otherwise it is not a redex. If its function child is a bracket it is an `Abs` redex when the absorption side condition holds for its argument, and otherwise it is not a redex. Otherwise it is a redex exactly when it is a contraction redex, with the rule named by its head.
+
+A step is a rule identifier and a path. A path is a string over `L` (function child), `R` (argument child) and `B` (bracket body). Applying a step to a term follows the path, which fails if a character does not apply to the node reached, intersecting the permission with the bracket's label at each `B`. At the node reached, `Sc` requires an application whose function child is a scope constructor `sc_l` and whose argument `u` satisfies the scope side condition, and replaces the node by `<u>_l`. `Abs` requires an application whose function child is a bracket `<u>_l` and whose argument `v` satisfies the absorption side condition, and replaces the node by `<u v>_l`. A contraction rule requires that the node be an application whose spine head is the constant of that rule with exactly its arity of arguments, and that the constant be admissible, and replaces the node by its right-hand side from section 4. A step that fails any requirement, or whose rule identifier is not one of `I B C K W S Sc Abs`, is rejected.
+
+### 18.5 Strategy order
+
+The step a strategy takes is the first redex found by this traversal, which visits each node with the node's own effective permission. For leftmost-outermost, test the node, then visit its function child, then its argument child; a bracket's body is visited at the intersected permission. Rightmost-outermost tests the node, then the argument child, then the function child. Leftmost-innermost visits the function child, then the argument child, then tests the node. Rightmost-innermost visits the argument child, then the function child, then tests the node. For a bracket the node is tested (a bracket is never a redex) and its body visited, in the order the strategy gives. A term has a step if the traversal finds any redex.
+
+### 18.6 Trace document
+
+The execution boundary is a term that is an application whose function child is the atom `yield`, that is exactly `yield k`. It is not a rule of the calculus: no rule mentions it and it changes no term. A checker may be told that it applies. Then a run ends at the first term at the boundary, so no step may be taken from such a term, and such a term does not count as having a step in the status test below. The boundary is tested on the root only: `K x (yield y)` is never at the boundary, and `yield a b` is not either, because its function child is an application.
+
+A trace is a JSON object with the members `format`, `config`, `start`, `start_digest`, `strategy`, `fuel`, `steps`, `final`, `final_digest`, `exhausted`, `head`, all required. `config` has `root`, `gated`, `absorb`, `sc` required and `perm` optional. A step has `rule`, `path`, `after`, `link`, all required. `format` must be `spherepop-trace/1`.
+
+Let `sum(p1, ..., pn)` be `SHA256(p1 || 0x00 || p2 || 0x00 || ... || pn || 0x00)` over the UTF-8 bytes of each part, written in hexadecimal. The configuration digest is `sum("spherepop-config/1", canonical configuration text)`. The genesis link is `sum("spherepop-trace/1", start_digest, configuration digest)`. The link of a step is `sum(previous link, rule, path, after)`, where the first previous link is the genesis link and `after` is the claimed hexadecimal digest as written.
+
+A verifier takes options: whether the strategy is required, an optional maximum number of steps, an optional agreed fuel. It checks in this order and stops at the first failure, which has the class shown. If `format` is wrong, class `format`. If a maximum is given and exceeded, `format`. If the configuration is not valid by 18.3, `format`. If the start text does not parse, `format`. If the digest of the parsed start term differs from `start_digest`, `start-mismatch`. If the start term uses a label with no entry, `format`. If the strategy is required and not one of `lo ro li ri`, `format`. Then for each step in order: if its link differs from the recomputed one, `chain`; if the boundary applies and the current term is at it, `step-after-stop`; if the strategy is required and the step is not the strategy's step at the current term (including when the term has no step), `strategy-deviation`; if applying the step is rejected, `step-rejected`; if the digest of the result differs from `after`, `digest-mismatch`. After the last step: if `head` differs from the last link, `chain`; if the digest or canonical text of the final term differs from `final_digest` or `final`, `final-mismatch`; if `exhausted` differs from whether the final term has a step (by any strategy, and not at the boundary when it applies), `status-mismatch`; if an agreed fuel is given and differs from `fuel`, `status-mismatch`; if `exhausted` is true and the number of steps differs from `fuel`, `status-mismatch`; if the number of steps exceeds `fuel`, `status-mismatch`. Otherwise the trace is valid. The `start` and `final` texts are parsed, and the start text need not be canonical.
+
+### 18.7 Scheduler log
+
+A scheduler log is a JSON object with `format` (`spherepop-sched/1`), `config`, `policy` (`strategy`, `budget`), `initial` (an array of states with `id`, `term`, `digest`, and optional `normal`), `events`, and `final` (states as for `initial`), all required. An event has `tick`, `entity`, `decision`, and optional `budget`, `slice` (a trace document) and `rearm` (`term`, `digest`, optional `preempted`). Optional members are absent when zero or false. An initial state has no `suspended` member. The verifier rejects, in any order, the following: a wrong format; an invalid configuration; a strategy that is not `lo ro li ri` or a zero budget; an initial entity with an empty or repeated id, or ids not in ascending byte order, or a term that does not parse, whose digest differs from `digest`, whose labels are not in the configuration, or with `normal` true; a number of events that is not a multiple of the number of entities (and any events at all if there are no entities).
+
+An entity is in one of three conditions after each of its slices: suspended if the final term of the slice is at the boundary, finished if not suspended and the slice is not exhausted, and otherwise running. The boundary is checked on the final term whether or not redexes remain inside the continuation. The entity's current term is tracked as text: the initial term, a rearm's term, or the final term of the last slice.
+
+Event `i` must have `tick` equal to `i` divided by the number of entities, rounded down, and `entity` equal to the entity at index `i` modulo that number, in ascending order. A `rearm`, if present, must parse to a term with the stated digest whose labels are in the configuration, and `preempted` must equal not-finished for the entity at that moment; it then sets the entity's digest to the replacement's and marks it unfinished. A finished entity requires decision `skip`, no slice, no budget and no `resumed` member. An unfinished entity requires decision `run`, the policy's budget, and a slice. A suspended entity whose event has no `rearm` is resumed: `resumed` must be true, and its current term becomes the argument `k` of its `yield k`. In every other case `resumed` must be absent. A resumption is the scheduler's own step and takes no input from the host; a term supplied by the host is a `rearm`, which also ends a suspension and is preempting because the entity was not finished. The slice must start at the entity's current digest, name the policy's strategy, have a configuration whose canonical text equals that of the log's, and be valid as a trace with the strategy required, the agreed fuel equal to the policy's budget, and the boundary applying. After it the entity's term is the slice's `final`. At the end `final` must list each entity in order with the chained digest, the finished flag (`normal`) and the suspended flag (`suspended`), a term that parses to that digest, and nothing else.
+
+### 18.8 Effects log
+
+An effects log is a sequence of JSON objects, one per line, blank lines ignored, each with `seq`, `tick`, `subject`, `index`, `disposition`, `prev`, `hash` required and `ref`, `request`, `reason` optional and absent when empty. `seq` is an unsigned 64-bit integer, `tick` and `index` are signed 64-bit integers.
+
+The genesis value is the SHA-256 of the ASCII bytes of `spherepop-effects/2`, in hexadecimal. The hash of an entry is the hexadecimal SHA-256 of `framed("spherepop-effects/2") || u64be(seq) || i64be(tick) || framed(subject) || framed(ref) || i64be(index) || framed(request) || framed(disposition) || framed(reason) || framed(prev)`, with absent members taken as the empty string.
+
+The chain is valid if for every entry `i` from zero, `seq` is `i`, `prev` is the previous entry's `hash` (the genesis value for the first), `hash` is the recomputed hash, and `index` is at least -1. Against an anchor, the final `hash`, or the genesis value for an empty log, must equal the anchor.
+
+A failure of the chain, including a line that is not a document of the exact shape of 18.9, has class `chain`. A failure against the schema has class `log-entry`. A failure against the anchor has class `anchor`. They are checked in that order: chain for the whole log, then every entry against the schema, then the anchor.
+
+Given a schema, a valid chain must also satisfy, per entry. The disposition must be one of `committed denied failed malformed no-output exhausted truncated`. For `committed`, `denied`, `failed` and `malformed`, `index` is at least 0 and `request` is non-empty; if it parses as a term, its canonical text must equal `request`; it must decode under the schema for the first three, and must not decode for `malformed`; if it does not parse, only `malformed` is allowed. For `no-output`, `exhausted` and `truncated`, `index` is -1 and `request` is empty.
+
+A request term also decodes if it is a group: its spine head is the atom `atomic`, it has at least one argument, and every argument decodes as a single request as above. Groups do not nest. A group is one entry in the log: the host decodes every member, asks the authorizer about each in order, and asks the world to apply all members or none, so the entry is `committed` only if every member took effect, `denied` if any member was refused, `failed` if the world refused the group, and `malformed` if the term is not a group or request of the schema. A verifier checks only the decoding rule; whether the world was left unchanged by a failed group is not in the log.
+
+A schema is a JSON object `{"targets": {kind: {"id": type, "verbs": {verb: [type, ...]}}}}` with type `sym` or `int`. A request term decodes if its spine head is the atom `effect` with at least two arguments; the first is an application of an atom (the kind, which must be in the schema) to one atom (the id); the second is an atom, a verb of that kind; the remaining arguments are atoms, as many as the verb lists. An atom of type `sym` is a lower-case letter followed by letters, digits, `_` and `'`. An atom of type `int` is `0` or a digit string not starting with `0`, at most 4294967295. The id is read with the kind's id type and each argument with its listed type.
+
+### 18.9 JSON strictness
+
+Every document is a JSON object whose members are exactly those listed, spelled and cased as listed. A required member that is absent, an unlisted member, a member that appears twice, a member whose value is `null`, or a member of the wrong JSON type is a rejection. An optional member that is present with its zero value (`false`, `0`, the empty string, an empty array or an empty object) is also a rejection, so each document has one spelling. Integers are JSON numbers written without fraction or exponent, in the stated range. Trailing content after the document is a rejection.
+
+### 18.10 Conformance corpus
+
+`conformance/manifest.json` lists every case: an identifier, the kind (`trace`, `sched` or `effects`), the file, the verdict `valid` or `invalid`, for an invalid case the class this section assigns, and options (`require_strategy`, `max_steps`, `fuel`, `schema`, `anchor`). A conforming verifier gives the listed verdict for every case and, for an invalid case, the listed class. Cases are made by `conformance/gen_corpus.py` from seeds written by the Go implementation and from records the generator builds itself. The invalid cases are single mutations: tampering with each member of a record, resealing a tampered record so that the chain verifies and only the semantic check can reject it, truncating files, breaking the strictness rules, and isolating each check of 18.7 and 18.8 from the checks that would also catch it. `go test ./conformance` runs the Go verifiers and then the Python verifier over the corpus. `conformance/crosscheck.py` is the random companion: it has each implementation reduce random terms under random configurations and strategies, has the other check the trace, and requires the two traces to be identical.
+
+A schema file that cannot be read, or names a type other than `sym` or `int`, is an input error and not a verdict, and the corpus does not test it.
+
+### 18.11 Limits of the reference verifier
+
+The reference verifier in `tools/verify-py` runs on a large thread stack and has not been exercised near the nesting limit of 18.2. The conformance records stay shallow. Strings that contain unpaired surrogates, which JSON can spell but UTF-8 cannot, are outside the corpus and the two verifiers may differ on them.

@@ -108,3 +108,41 @@ func Extract(n *term.Term) (requests []*term.Term, found bool) {
 	}
 	return args, true
 }
+
+// AtomAtomic heads a group of requests that the host carries out together or
+// not at all.
+const AtomAtomic = "atomic"
+
+// GroupTerm builds (atomic r1 ... rn) from decoded requests.
+func GroupTerm(rs []Request) *term.Term {
+	args := make([]*term.Term, len(rs))
+	for i, r := range rs {
+		args[i] = r.Term()
+	}
+	return term.Apply(term.Atom(AtomAtomic), args...)
+}
+
+// DecodeOutput reads one argument of the effects term: either a single
+// request or a group (atomic r1 ... rn) with at least one member, every
+// member a request. Groups do not nest. The second result reports a group.
+func (s Schema) DecodeOutput(t *term.Term) (reqs []Request, group bool, err error) {
+	head, args := t.Spine()
+	if name, ok := atomName(head); ok && name == AtomAtomic {
+		if len(args) == 0 {
+			return nil, true, malformed("an atomic group needs at least one request")
+		}
+		for i, a := range args {
+			r, err := s.Decode(a)
+			if err != nil {
+				return nil, true, malformed("member %d of an atomic group: %v", i, err)
+			}
+			reqs = append(reqs, r)
+		}
+		return reqs, true, nil
+	}
+	r, err := s.Decode(t)
+	if err != nil {
+		return nil, false, err
+	}
+	return []Request{r}, false, nil
+}

@@ -1,0 +1,1 @@
+{"seq":0,"tick":0,"subject":"s1","index":0,"request":"atomic (effect (door 1) open) (effect (door x) open)","disposition":"committed","prev":"cf3ce2db7ead61aaf4cc515e314bf5175125f93aeed75f57144976840a2b60e7","hash":"ffe0ff89080efdaeecf7aaa74693bbfbb51b0d43d94e3217a7abc63df2a5d941"}

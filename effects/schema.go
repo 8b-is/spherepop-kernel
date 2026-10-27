@@ -18,10 +18,13 @@
 package effects
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"sort"
 	"strconv"
+
+	"github.com/standardgalactic/spherepop-kernel/internal/strict"
 )
 
 // ArgType is the type of a request argument. Both types are carried by atoms;
@@ -89,7 +92,7 @@ func validName(s string) bool {
 func (s Schema) Validate() error {
 	for _, kind := range s.sortedKinds() {
 		ts := s.Targets[kind]
-		if !validName(kind) || kind == AtomEffect || kind == AtomEffects {
+		if !validName(kind) || kind == AtomEffect || kind == AtomEffects || kind == AtomAtomic {
 			return fmt.Errorf("%w: target kind %q", ErrSchema, kind)
 		}
 		if ts.ID != Sym && ts.ID != Int {
@@ -99,7 +102,7 @@ func (s Schema) Validate() error {
 			return fmt.Errorf("%w: target %q has no verbs", ErrSchema, kind)
 		}
 		for verb, vs := range ts.Verbs {
-			if !validName(verb) || verb == AtomEffect || verb == AtomEffects {
+			if !validName(verb) || verb == AtomEffect || verb == AtomEffects || verb == AtomAtomic {
 				return fmt.Errorf("%w: verb %q of %q", ErrSchema, verb, kind)
 			}
 			for _, a := range vs.Args {
@@ -139,4 +142,77 @@ func readAtom(name string, t ArgType) error {
 		}
 	}
 	return nil
+}
+
+type schemaJSON struct {
+	Targets map[string]targetJSON `json:"targets"`
+}
+
+type targetJSON struct {
+	ID    string              `json:"id"`
+	Verbs map[string][]string `json:"verbs"`
+}
+
+func argTypeNamed(s string) (ArgType, bool) {
+	switch s {
+	case "sym":
+		return Sym, true
+	case "int":
+		return Int, true
+	}
+	return 0, false
+}
+
+// MarshalSchema writes a schema in the JSON form of SPEC 18.8.
+func MarshalSchema(s Schema) ([]byte, error) {
+	out := schemaJSON{Targets: map[string]targetJSON{}}
+	for kind, t := range s.Targets {
+		tj := targetJSON{ID: t.ID.String(), Verbs: map[string][]string{}}
+		for verb, v := range t.Verbs {
+			args := []string{}
+			for _, a := range v.Args {
+				args = append(args, a.String())
+			}
+			tj.Verbs[verb] = args
+		}
+		out.Targets[kind] = tj
+	}
+	b, err := json.MarshalIndent(out, "", "  ")
+	if err != nil {
+		return nil, err
+	}
+	return append(b, '\n'), nil
+}
+
+// ParseSchema reads the JSON form of a schema and applies the same checks as
+// building one in code.
+func ParseSchema(b []byte) (Schema, error) {
+	var in schemaJSON
+	if err := strict.Unmarshal(b, &in); err != nil {
+		return Schema{}, fmt.Errorf("%w: %v", ErrSchema, err)
+	}
+	s := Schema{Targets: map[string]TargetSpec{}}
+	for kind, t := range in.Targets {
+		id, ok := argTypeNamed(t.ID)
+		if !ok {
+			return Schema{}, fmt.Errorf("%w: unknown type %q", ErrSchema, t.ID)
+		}
+		ts := TargetSpec{ID: id, Verbs: map[string]VerbSpec{}}
+		for verb, args := range t.Verbs {
+			vs := VerbSpec{}
+			for _, a := range args {
+				at, ok := argTypeNamed(a)
+				if !ok {
+					return Schema{}, fmt.Errorf("%w: unknown type %q", ErrSchema, a)
+				}
+				vs.Args = append(vs.Args, at)
+			}
+			ts.Verbs[verb] = vs
+		}
+		s.Targets[kind] = ts
+	}
+	if err := s.Validate(); err != nil {
+		return Schema{}, err
+	}
+	return s, nil
 }

@@ -1,12 +1,12 @@
 package sched
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"reflect"
 	"sort"
 
+	"github.com/standardgalactic/spherepop-kernel/internal/strict"
 	"github.com/standardgalactic/spherepop-kernel/reduce"
 	"github.com/standardgalactic/spherepop-kernel/term"
 	"github.com/standardgalactic/spherepop-kernel/trace"
@@ -35,6 +35,9 @@ type EntityState struct {
 	Term   string `json:"term"`
 	Digest string `json:"digest"`
 	Normal bool   `json:"normal,omitempty"`
+	// Suspended is meaningful only in the final section: the entity's last
+	// slice ended at a term of the form (yield k).
+	Suspended bool `json:"suspended,omitempty"`
 }
 
 // Rearm records that the host replaced an entity's term at the start of a
@@ -56,6 +59,10 @@ type Event struct {
 	Budget   uint64          `json:"budget,omitempty"`
 	Slice    *trace.Document `json:"slice,omitempty"`
 	Rearm    *Rearm          `json:"rearm,omitempty"`
+	// Resumed is true when the entity was suspended and this slice starts at
+	// the continuation k of its (yield k). It is the scheduler's own
+	// transition, with no input from the host; a host-supplied term is a Rearm.
+	Resumed bool `json:"resumed,omitempty"`
 }
 
 // Log is the evidence for a whole run.
@@ -80,13 +87,8 @@ func Marshal(l Log) ([]byte, error) {
 // Unmarshal decodes a log and rejects unknown fields.
 func Unmarshal(b []byte) (Log, error) {
 	var l Log
-	dec := json.NewDecoder(bytes.NewReader(b))
-	dec.DisallowUnknownFields()
-	if err := dec.Decode(&l); err != nil {
+	if err := strict.Unmarshal(b, &l); err != nil {
 		return Log{}, fmt.Errorf("%w: %v", ErrLogRejected, err)
-	}
-	if dec.More() {
-		return Log{}, fmt.Errorf("%w: trailing data", ErrLogRejected)
 	}
 	return l, nil
 }
@@ -117,8 +119,10 @@ func CheckLog(l Log) error {
 	}
 
 	type state struct {
-		digest string
-		normal bool
+		term      *term.Term
+		digest    string
+		normal    bool
+		suspended bool
 	}
 	states := map[string]*state{}
 	var ids []string
@@ -126,7 +130,20 @@ func CheckLog(l Log) error {
 		if s.ID == "" || states[s.ID] != nil {
 			return reject("initial entity %d has an empty or repeated id", i)
 		}
-		states[s.ID] = &state{digest: s.Digest}
+		t, err := term.Parse(s.Term)
+		if err != nil || t.Digest().String() != s.Digest {
+			return reject("initial term of %q does not match its digest", s.ID)
+		}
+		if err := cfg.Validate(t); err != nil {
+			return reject("initial term of %q: %v", s.ID, err)
+		}
+		if s.Normal {
+			return reject("initial state of %q carries a finished flag", s.ID)
+		}
+		if s.Suspended {
+			return reject("initial state of %q carries a suspended flag", s.ID)
+		}
+		states[s.ID] = &state{term: t, digest: s.Digest}
 		ids = append(ids, s.ID)
 	}
 	if !sort.StringsAreSorted(ids) {
@@ -134,13 +151,10 @@ func CheckLog(l Log) error {
 	}
 
 	n := len(ids)
-	if n == 0 {
-		if len(l.Events) != 0 {
-			return reject("events without entities")
-		}
-		return nil
+	if n == 0 && len(l.Events) != 0 {
+		return reject("events without entities")
 	}
-	if len(l.Events)%n != 0 {
+	if n > 0 && len(l.Events)%n != 0 {
 		return reject("%d events do not make whole ticks of %d entities", len(l.Events), n)
 	}
 	for i, ev := range l.Events {
@@ -160,16 +174,23 @@ func CheckLog(l Log) error {
 			if ev.Rearm.Preempted == st.normal {
 				return reject("event %d: replacement for %q claims preempted=%v but the entity's state says otherwise", i, id, ev.Rearm.Preempted)
 			}
-			st.digest, st.normal = ev.Rearm.Digest, false
+			st.term, st.digest, st.normal, st.suspended = t, ev.Rearm.Digest, false, false
 		}
 		if st.normal {
-			if ev.Decision != Skip || ev.Slice != nil || ev.Budget != 0 {
+			if ev.Decision != Skip || ev.Slice != nil || ev.Budget != 0 || ev.Resumed {
 				return reject("event %d: %q is finished and must be skipped", i, id)
 			}
 			continue
 		}
 		if ev.Decision != Run || ev.Budget != l.Policy.Budget || ev.Slice == nil {
 			return reject("event %d: %q must run with budget %d", i, id, l.Policy.Budget)
+		}
+		if ev.Resumed != (st.suspended && ev.Rearm == nil) {
+			return reject("event %d: %q resumed=%v but its state says otherwise", i, id, ev.Resumed)
+		}
+		if ev.Resumed {
+			k, _ := Continuation(st.term)
+			st.term, st.digest, st.suspended = k, k.Digest().String(), false
 		}
 		d := *ev.Slice
 		if d.StartDigest != st.digest {
@@ -178,10 +199,16 @@ func CheckLog(l Log) error {
 		if d.Strategy != strat.String() || !reflect.DeepEqual(d.Config, l.Config) {
 			return reject("event %d: slice for %q ran under a different strategy or configuration", i, id)
 		}
-		if _, err := trace.Check(d, trace.Options{RequireStrategy: true, Fuel: l.Policy.Budget}); err != nil {
+		if _, err := trace.Check(d, trace.Options{RequireStrategy: true, Fuel: l.Policy.Budget, Stop: atBoundary}); err != nil {
 			return fmt.Errorf("%w: event %d (%q): %w", ErrLogRejected, i, id, err)
 		}
-		st.digest, st.normal = d.FinalDigest, !d.Exhausted
+		end, err := term.Parse(d.Final)
+		if err != nil {
+			return reject("event %d: final term of the slice for %q does not parse", i, id)
+		}
+		st.term, st.digest = end, d.FinalDigest
+		st.suspended = atBoundary(end)
+		st.normal = !d.Exhausted && !st.suspended
 	}
 
 	if len(l.Final) != n {
@@ -189,7 +216,7 @@ func CheckLog(l Log) error {
 	}
 	for i, f := range l.Final {
 		st := states[ids[i]]
-		if f.ID != ids[i] || f.Digest != st.digest || f.Normal != st.normal {
+		if f.ID != ids[i] || f.Digest != st.digest || f.Normal != st.normal || f.Suspended != st.suspended {
 			return reject("final state of %q does not match the chain of slices", ids[i])
 		}
 		if t, err := term.Parse(f.Term); err != nil || t.Digest().String() != f.Digest {

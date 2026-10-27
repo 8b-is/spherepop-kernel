@@ -1,0 +1,1403 @@
+{
+  "format": "spherepop-sched/1",
+  "config": {
+    "root": [
+      "W",
+      "K",
+      "C",
+      "S"
+    ],
+    "gated": [
+      "W",
+      "K",
+      "C"
+    ],
+    "absorb": "s",
+    "sc": "settled"
+  },
+  "policy": {
+    "strategy": "lo",
+    "budget": 2000
+  },
+  "initial": [
+    {
+      "id": "s1",
+      "term": "K (K (K (K (K (K (B K (C (C I (effects (effect (door 1) close))) (effects (effect (door 1) open) (effect (ship s1) thrust east))))))))) K (K I) (K I) (K I) (K I) (K I) (K I) (K I)",
+      "digest": "c41cf44bc3cecc6e1c0c9f31ef7f957ad4a581ace5dbf27ed50aef152006d795"
+    }
+  ],
+  "events": [
+    {
+      "tick": 0,
+      "entity": "s1",
+      "decision": "run",
+      "budget": 2000,
+      "slice": {
+        "format": "spherepop-trace/1",
+        "config": {
+          "root": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ],
+          "gated": [
+            "W",
+            "K",
+            "C"
+          ],
+          "absorb": "s",
+          "sc": "settled"
+        },
+        "start": "K (K (K (K (K (K (B K (C (C I (effects (effect (door 1) close))) (effects (effect (door 1) open) (effect (ship s1) thrust east))))))))) K (K I) (K I) (K I) (K I) (K I) (K I) (K I)",
+        "start_digest": "c41cf44bc3cecc6e1c0c9f31ef7f957ad4a581ace5dbf27ed50aef152006d795",
+        "strategy": "lo",
+        "fuel": 2000,
+        "steps": [
+          {
+            "rule": "K",
+            "path": "LLLLLLL",
+            "after": "c5a878bb626e4af66b39317c53756d944eb56689ca245632c1e34fc3c3f765b7",
+            "link": "d3d819cbb8f04421cc2ce3a6f10c7684cbc36563abab101ea48c2ba09a1c48f6"
+          },
+          {
+            "rule": "K",
+            "path": "LLLLLL",
+            "after": "f12d483f929a8f527d5c17fbed9d41c54c149f11b405937329f6fd3c6f358194",
+            "link": "a45065ac397157402cace1ccd303f08a3521973db4fd36218cb971c6a6b14863"
+          },
+          {
+            "rule": "K",
+            "path": "LLLLL",
+            "after": "18c65e77084a25c774731b1b278d52c728db30bcb5b75a839e0cac859e3fc18d",
+            "link": "92c4af1a1756b7bdb1cb3c5f4a7228d79361ed821dec4476f1c0fca0bf0af185"
+          },
+          {
+            "rule": "K",
+            "path": "LLLL",
+            "after": "c4c5fffcfd8af4b1b0dc390d26deb5e5317781d4c318dd7336faf0de86851896",
+            "link": "c61918c8083e5112e03cb5746d12e12def54db57ed59d2a0dfca1d4592996a18"
+          },
+          {
+            "rule": "K",
+            "path": "LLL",
+            "after": "84cc4f4b22b6384110a4046fde6e7c36da89b5051d68b06d008aa614c86f946f",
+            "link": "546ce908e35960a0ab2e87b1a78cd140114762e1b191a34fc3641b0d94b20d09"
+          },
+          {
+            "rule": "K",
+            "path": "LL",
+            "after": "45acf953cf8b0bdf9ffbd8460b5eb4a402000f9e356bf979f101bea3dc4a9003",
+            "link": "b6e7d642b10bc2340694ce5c86a0b7306adca9237c3fc60cd80cd3748e482223"
+          },
+          {
+            "rule": "B",
+            "path": "L",
+            "after": "82e55db06dfce6458017a22e8c14d771354bb2b2fe366546ec4c1ef8f0bd1f6b",
+            "link": "eacc07ae39a5bad4cfeb1a8154e50806a36b97f98b2291aeac74c8625c8a0c4e"
+          },
+          {
+            "rule": "K",
+            "path": "",
+            "after": "9884ebe87890d23403d96eaa60e5bf6832b5fe0aeda4854a28ed4ce54c73ab9e",
+            "link": "b269681b935605397ecdc2d7e3298aedffcd01c5f35eb37af49de8a4d9b75d9f"
+          },
+          {
+            "rule": "C",
+            "path": "",
+            "after": "8aa7224297b95df5b36370ad931d9c805a7aa215a8099d0d635a4d32afb65ac6",
+            "link": "b9ee3f789865edb89a0aa2b175addf413a7e8953db377358fa54542bb6e76a88"
+          },
+          {
+            "rule": "C",
+            "path": "L",
+            "after": "9ad1ac35c1c06cc1d5d497cb84bf843338833becb362fcae179bcfd44746297b",
+            "link": "cd7a331bf421e707468434768d5433486e1c19d64b104f76e6c5c5f03a7e7dc7"
+          },
+          {
+            "rule": "I",
+            "path": "LL",
+            "after": "3cd6e29580aa293357c377f90ee5ba490080a29bd878cce97626064c9c148f1a",
+            "link": "8c3040cf7288c20e0ff5e8d006941c42fbd315314c7e0068bfa34940baf8b43a"
+          },
+          {
+            "rule": "K",
+            "path": "L",
+            "after": "773d78f663de885e33c137e32da9a48b7914372861b545d41388513975aa3d0b",
+            "link": "7d7bb621556457845dfa98942e67c6b6570341be47bdb2638990e8845f1c62cc"
+          },
+          {
+            "rule": "I",
+            "path": "",
+            "after": "0aa6a7699d78c6365ed79d45acaf67a660ee5960a7247fda7e07693a33365a82",
+            "link": "42d209cf1198abe27399992cdfec2649a95503afde518a5769a2e99a28105460"
+          }
+        ],
+        "final": "effects (effect (door 1) open) (effect (ship s1) thrust east)",
+        "final_digest": "0aa6a7699d78c6365ed79d45acaf67a660ee5960a7247fda7e07693a33365a82",
+        "exhausted": false,
+        "head": "42d209cf1198abe27399992cdfec2649a95503afde518a5769a2e99a28105460"
+      }
+    },
+    {
+      "tick": 1,
+      "entity": "s1",
+      "decision": "run",
+      "budget": 2000,
+      "slice": {
+        "format": "spherepop-trace/1",
+        "config": {
+          "root": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ],
+          "gated": [
+            "W",
+            "K",
+            "C"
+          ],
+          "absorb": "s",
+          "sc": "settled"
+        },
+        "start": "K (K (K (K (K (K (B K (C (C I (effects (effect (door 1) close))) (effects (effect (door 1) open) (effect (ship s1) thrust east))))))))) K (K I) (K I) (K I) (K I) (K I) (K I) K",
+        "start_digest": "a8d078196b0550a434bb1ef7e9b7fd4a9ab2f7523475c1b7cbf5205720edb34a",
+        "strategy": "lo",
+        "fuel": 2000,
+        "steps": [
+          {
+            "rule": "K",
+            "path": "LLLLLLL",
+            "after": "6c86c07b4c91f949d2ca77bcddc4970c9f5721c57b6e0f625f923ee7073b9d1f",
+            "link": "02cd042a68a0132b66c1989e3282e7b15968574410495ee8e76049df66fbe7a6"
+          },
+          {
+            "rule": "K",
+            "path": "LLLLLL",
+            "after": "68f89965c5ed0f8710e7da23b07c55d30aeedb976cdac4beccb4b3c0185b9cce",
+            "link": "c503fa1f20779440ecd5ae1dd4795badb4999cc2fab59b7f39ebb3e964b6063a"
+          },
+          {
+            "rule": "K",
+            "path": "LLLLL",
+            "after": "f3b57823e01842be3c02a7f91c62050ec573e1a6654fc75088b88a431dc7d87f",
+            "link": "8f4b6f3f120b6441d47e2600661213a9806f1fb12d4d40f31933b6fb64f30bf9"
+          },
+          {
+            "rule": "K",
+            "path": "LLLL",
+            "after": "27fdc609e333cb0372aaf47717f43868b888728a9fbcd5c3c10cb1f58b9d58e9",
+            "link": "c11dac210dc96240b766b121e4bf339c342bf1db48168b2e18147971f33cd401"
+          },
+          {
+            "rule": "K",
+            "path": "LLL",
+            "after": "5fa22cb0989a081a479334c3aa517ee8281c62e58c26dec7454aff0f05455757",
+            "link": "14ce3924c5e7f719efd3f18604b551cae2e4a8ef2bc653607077bebbe8c02c55"
+          },
+          {
+            "rule": "K",
+            "path": "LL",
+            "after": "b1749256e8faa72cf86572261fe0918e00a24b2ba33261d3481873e1955016ef",
+            "link": "8c4bb3538c798e50c7b5f2aa6ec3913a1d9a68479e09984086c6a5584da34f4c"
+          },
+          {
+            "rule": "B",
+            "path": "L",
+            "after": "6262f365eb885740f41f6c0003672bab95a08ccb45eae4f67744712af439187f",
+            "link": "e511c887ed8ce5466cd2e2dec888bed20a1ae7d6895d332ed99abcb0bc19cfdd"
+          },
+          {
+            "rule": "K",
+            "path": "",
+            "after": "9884ebe87890d23403d96eaa60e5bf6832b5fe0aeda4854a28ed4ce54c73ab9e",
+            "link": "0b01a801e6cfdfd67219c95721bddb95aa147d22747b2ebf1fd50d776c093564"
+          },
+          {
+            "rule": "C",
+            "path": "",
+            "after": "8aa7224297b95df5b36370ad931d9c805a7aa215a8099d0d635a4d32afb65ac6",
+            "link": "49546e9f64b930c54895ce45a19f20d1a488ae3c40c7c95a3b9b9ff873e769d2"
+          },
+          {
+            "rule": "C",
+            "path": "L",
+            "after": "9ad1ac35c1c06cc1d5d497cb84bf843338833becb362fcae179bcfd44746297b",
+            "link": "ee0a8e64bed57ac1fd6560497c2d62f0871a760f8d581f33e92cf9f2654560cd"
+          },
+          {
+            "rule": "I",
+            "path": "LL",
+            "after": "3cd6e29580aa293357c377f90ee5ba490080a29bd878cce97626064c9c148f1a",
+            "link": "4a7d7692f499daf7a6b46c872471363534805149c25c1531c94b9d1f4c922f91"
+          },
+          {
+            "rule": "K",
+            "path": "L",
+            "after": "773d78f663de885e33c137e32da9a48b7914372861b545d41388513975aa3d0b",
+            "link": "c1956b40651d79937a694a3af1bc9fd015df3670262e4a7adbb1cbed75f99d0a"
+          },
+          {
+            "rule": "I",
+            "path": "",
+            "after": "0aa6a7699d78c6365ed79d45acaf67a660ee5960a7247fda7e07693a33365a82",
+            "link": "1152c40fad484bbd2397e6255d8a464b4f9ec20c9fd2331f0a1ce3c5e76f31ff"
+          }
+        ],
+        "final": "effects (effect (door 1) open) (effect (ship s1) thrust east)",
+        "final_digest": "0aa6a7699d78c6365ed79d45acaf67a660ee5960a7247fda7e07693a33365a82",
+        "exhausted": false,
+        "head": "1152c40fad484bbd2397e6255d8a464b4f9ec20c9fd2331f0a1ce3c5e76f31ff"
+      },
+      "rearm": {
+        "term": "K (K (K (K (K (K (B K (C (C I (effects (effect (door 1) close))) (effects (effect (door 1) open) (effect (ship s1) thrust east))))))))) K (K I) (K I) (K I) (K I) (K I) (K I) K",
+        "digest": "a8d078196b0550a434bb1ef7e9b7fd4a9ab2f7523475c1b7cbf5205720edb34a"
+      }
+    },
+    {
+      "tick": 2,
+      "entity": "s1",
+      "decision": "run",
+      "budget": 2000,
+      "slice": {
+        "format": "spherepop-trace/1",
+        "config": {
+          "root": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ],
+          "gated": [
+            "W",
+            "K",
+            "C"
+          ],
+          "absorb": "s",
+          "sc": "settled"
+        },
+        "start": "K (K (K (K (K (K (B K (C (C I (effects (effect (door 1) close))) (effects (effect (door 1) open) (effect (ship s1) thrust east))))))))) K (K I) (K I) (K I) (K I) (K I) (K I) K",
+        "start_digest": "a8d078196b0550a434bb1ef7e9b7fd4a9ab2f7523475c1b7cbf5205720edb34a",
+        "strategy": "lo",
+        "fuel": 2000,
+        "steps": [
+          {
+            "rule": "K",
+            "path": "LLLLLLL",
+            "after": "6c86c07b4c91f949d2ca77bcddc4970c9f5721c57b6e0f625f923ee7073b9d1f",
+            "link": "02cd042a68a0132b66c1989e3282e7b15968574410495ee8e76049df66fbe7a6"
+          },
+          {
+            "rule": "K",
+            "path": "LLLLLL",
+            "after": "68f89965c5ed0f8710e7da23b07c55d30aeedb976cdac4beccb4b3c0185b9cce",
+            "link": "c503fa1f20779440ecd5ae1dd4795badb4999cc2fab59b7f39ebb3e964b6063a"
+          },
+          {
+            "rule": "K",
+            "path": "LLLLL",
+            "after": "f3b57823e01842be3c02a7f91c62050ec573e1a6654fc75088b88a431dc7d87f",
+            "link": "8f4b6f3f120b6441d47e2600661213a9806f1fb12d4d40f31933b6fb64f30bf9"
+          },
+          {
+            "rule": "K",
+            "path": "LLLL",
+            "after": "27fdc609e333cb0372aaf47717f43868b888728a9fbcd5c3c10cb1f58b9d58e9",
+            "link": "c11dac210dc96240b766b121e4bf339c342bf1db48168b2e18147971f33cd401"
+          },
+          {
+            "rule": "K",
+            "path": "LLL",
+            "after": "5fa22cb0989a081a479334c3aa517ee8281c62e58c26dec7454aff0f05455757",
+            "link": "14ce3924c5e7f719efd3f18604b551cae2e4a8ef2bc653607077bebbe8c02c55"
+          },
+          {
+            "rule": "K",
+            "path": "LL",
+            "after": "b1749256e8faa72cf86572261fe0918e00a24b2ba33261d3481873e1955016ef",
+            "link": "8c4bb3538c798e50c7b5f2aa6ec3913a1d9a68479e09984086c6a5584da34f4c"
+          },
+          {
+            "rule": "B",
+            "path": "L",
+            "after": "6262f365eb885740f41f6c0003672bab95a08ccb45eae4f67744712af439187f",
+            "link": "e511c887ed8ce5466cd2e2dec888bed20a1ae7d6895d332ed99abcb0bc19cfdd"
+          },
+          {
+            "rule": "K",
+            "path": "",
+            "after": "9884ebe87890d23403d96eaa60e5bf6832b5fe0aeda4854a28ed4ce54c73ab9e",
+            "link": "0b01a801e6cfdfd67219c95721bddb95aa147d22747b2ebf1fd50d776c093564"
+          },
+          {
+            "rule": "C",
+            "path": "",
+            "after": "8aa7224297b95df5b36370ad931d9c805a7aa215a8099d0d635a4d32afb65ac6",
+            "link": "49546e9f64b930c54895ce45a19f20d1a488ae3c40c7c95a3b9b9ff873e769d2"
+          },
+          {
+            "rule": "C",
+            "path": "L",
+            "after": "9ad1ac35c1c06cc1d5d497cb84bf843338833becb362fcae179bcfd44746297b",
+            "link": "ee0a8e64bed57ac1fd6560497c2d62f0871a760f8d581f33e92cf9f2654560cd"
+          },
+          {
+            "rule": "I",
+            "path": "LL",
+            "after": "3cd6e29580aa293357c377f90ee5ba490080a29bd878cce97626064c9c148f1a",
+            "link": "4a7d7692f499daf7a6b46c872471363534805149c25c1531c94b9d1f4c922f91"
+          },
+          {
+            "rule": "K",
+            "path": "L",
+            "after": "773d78f663de885e33c137e32da9a48b7914372861b545d41388513975aa3d0b",
+            "link": "c1956b40651d79937a694a3af1bc9fd015df3670262e4a7adbb1cbed75f99d0a"
+          },
+          {
+            "rule": "I",
+            "path": "",
+            "after": "0aa6a7699d78c6365ed79d45acaf67a660ee5960a7247fda7e07693a33365a82",
+            "link": "1152c40fad484bbd2397e6255d8a464b4f9ec20c9fd2331f0a1ce3c5e76f31ff"
+          }
+        ],
+        "final": "effects (effect (door 1) open) (effect (ship s1) thrust east)",
+        "final_digest": "0aa6a7699d78c6365ed79d45acaf67a660ee5960a7247fda7e07693a33365a82",
+        "exhausted": false,
+        "head": "1152c40fad484bbd2397e6255d8a464b4f9ec20c9fd2331f0a1ce3c5e76f31ff"
+      },
+      "rearm": {
+        "term": "K (K (K (K (K (K (B K (C (C I (effects (effect (door 1) close))) (effects (effect (door 1) open) (effect (ship s1) thrust east))))))))) K (K I) (K I) (K I) (K I) (K I) (K I) K",
+        "digest": "a8d078196b0550a434bb1ef7e9b7fd4a9ab2f7523475c1b7cbf5205720edb34a"
+      }
+    },
+    {
+      "tick": 3,
+      "entity": "s1",
+      "decision": "run",
+      "budget": 2000,
+      "slice": {
+        "format": "spherepop-trace/1",
+        "config": {
+          "root": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ],
+          "gated": [
+            "W",
+            "K",
+            "C"
+          ],
+          "absorb": "s",
+          "sc": "settled"
+        },
+        "start": "K (K (K (K (K (K (B K (C (C I (effects (effect (door 1) close))) (effects (effect (door 1) open) (effect (ship s1) thrust east))))))))) K (K I) (K I) (K I) (K I) (K I) (K I) K",
+        "start_digest": "a8d078196b0550a434bb1ef7e9b7fd4a9ab2f7523475c1b7cbf5205720edb34a",
+        "strategy": "lo",
+        "fuel": 2000,
+        "steps": [
+          {
+            "rule": "K",
+            "path": "LLLLLLL",
+            "after": "6c86c07b4c91f949d2ca77bcddc4970c9f5721c57b6e0f625f923ee7073b9d1f",
+            "link": "02cd042a68a0132b66c1989e3282e7b15968574410495ee8e76049df66fbe7a6"
+          },
+          {
+            "rule": "K",
+            "path": "LLLLLL",
+            "after": "68f89965c5ed0f8710e7da23b07c55d30aeedb976cdac4beccb4b3c0185b9cce",
+            "link": "c503fa1f20779440ecd5ae1dd4795badb4999cc2fab59b7f39ebb3e964b6063a"
+          },
+          {
+            "rule": "K",
+            "path": "LLLLL",
+            "after": "f3b57823e01842be3c02a7f91c62050ec573e1a6654fc75088b88a431dc7d87f",
+            "link": "8f4b6f3f120b6441d47e2600661213a9806f1fb12d4d40f31933b6fb64f30bf9"
+          },
+          {
+            "rule": "K",
+            "path": "LLLL",
+            "after": "27fdc609e333cb0372aaf47717f43868b888728a9fbcd5c3c10cb1f58b9d58e9",
+            "link": "c11dac210dc96240b766b121e4bf339c342bf1db48168b2e18147971f33cd401"
+          },
+          {
+            "rule": "K",
+            "path": "LLL",
+            "after": "5fa22cb0989a081a479334c3aa517ee8281c62e58c26dec7454aff0f05455757",
+            "link": "14ce3924c5e7f719efd3f18604b551cae2e4a8ef2bc653607077bebbe8c02c55"
+          },
+          {
+            "rule": "K",
+            "path": "LL",
+            "after": "b1749256e8faa72cf86572261fe0918e00a24b2ba33261d3481873e1955016ef",
+            "link": "8c4bb3538c798e50c7b5f2aa6ec3913a1d9a68479e09984086c6a5584da34f4c"
+          },
+          {
+            "rule": "B",
+            "path": "L",
+            "after": "6262f365eb885740f41f6c0003672bab95a08ccb45eae4f67744712af439187f",
+            "link": "e511c887ed8ce5466cd2e2dec888bed20a1ae7d6895d332ed99abcb0bc19cfdd"
+          },
+          {
+            "rule": "K",
+            "path": "",
+            "after": "9884ebe87890d23403d96eaa60e5bf6832b5fe0aeda4854a28ed4ce54c73ab9e",
+            "link": "0b01a801e6cfdfd67219c95721bddb95aa147d22747b2ebf1fd50d776c093564"
+          },
+          {
+            "rule": "C",
+            "path": "",
+            "after": "8aa7224297b95df5b36370ad931d9c805a7aa215a8099d0d635a4d32afb65ac6",
+            "link": "49546e9f64b930c54895ce45a19f20d1a488ae3c40c7c95a3b9b9ff873e769d2"
+          },
+          {
+            "rule": "C",
+            "path": "L",
+            "after": "9ad1ac35c1c06cc1d5d497cb84bf843338833becb362fcae179bcfd44746297b",
+            "link": "ee0a8e64bed57ac1fd6560497c2d62f0871a760f8d581f33e92cf9f2654560cd"
+          },
+          {
+            "rule": "I",
+            "path": "LL",
+            "after": "3cd6e29580aa293357c377f90ee5ba490080a29bd878cce97626064c9c148f1a",
+            "link": "4a7d7692f499daf7a6b46c872471363534805149c25c1531c94b9d1f4c922f91"
+          },
+          {
+            "rule": "K",
+            "path": "L",
+            "after": "773d78f663de885e33c137e32da9a48b7914372861b545d41388513975aa3d0b",
+            "link": "c1956b40651d79937a694a3af1bc9fd015df3670262e4a7adbb1cbed75f99d0a"
+          },
+          {
+            "rule": "I",
+            "path": "",
+            "after": "0aa6a7699d78c6365ed79d45acaf67a660ee5960a7247fda7e07693a33365a82",
+            "link": "1152c40fad484bbd2397e6255d8a464b4f9ec20c9fd2331f0a1ce3c5e76f31ff"
+          }
+        ],
+        "final": "effects (effect (door 1) open) (effect (ship s1) thrust east)",
+        "final_digest": "0aa6a7699d78c6365ed79d45acaf67a660ee5960a7247fda7e07693a33365a82",
+        "exhausted": false,
+        "head": "1152c40fad484bbd2397e6255d8a464b4f9ec20c9fd2331f0a1ce3c5e76f31ff"
+      },
+      "rearm": {
+        "term": "K (K (K (K (K (K (B K (C (C I (effects (effect (door 1) close))) (effects (effect (door 1) open) (effect (ship s1) thrust east))))))))) K (K I) (K I) (K I) (K I) (K I) (K I) K",
+        "digest": "a8d078196b0550a434bb1ef7e9b7fd4a9ab2f7523475c1b7cbf5205720edb34a"
+      }
+    },
+    {
+      "tick": 4,
+      "entity": "s1",
+      "decision": "run",
+      "budget": 2000,
+      "slice": {
+        "format": "spherepop-trace/1",
+        "config": {
+          "root": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ],
+          "gated": [
+            "W",
+            "K",
+            "C"
+          ],
+          "absorb": "s",
+          "sc": "settled"
+        },
+        "start": "K (K (K (K (K (K (B K (C (C I (effects (effect (door 1) close))) (effects (effect (door 1) open) (effect (ship s1) thrust east))))))))) K (K I) (K I) (K I) (K I) (K I) (K I) K",
+        "start_digest": "a8d078196b0550a434bb1ef7e9b7fd4a9ab2f7523475c1b7cbf5205720edb34a",
+        "strategy": "lo",
+        "fuel": 2000,
+        "steps": [
+          {
+            "rule": "K",
+            "path": "LLLLLLL",
+            "after": "6c86c07b4c91f949d2ca77bcddc4970c9f5721c57b6e0f625f923ee7073b9d1f",
+            "link": "02cd042a68a0132b66c1989e3282e7b15968574410495ee8e76049df66fbe7a6"
+          },
+          {
+            "rule": "K",
+            "path": "LLLLLL",
+            "after": "68f89965c5ed0f8710e7da23b07c55d30aeedb976cdac4beccb4b3c0185b9cce",
+            "link": "c503fa1f20779440ecd5ae1dd4795badb4999cc2fab59b7f39ebb3e964b6063a"
+          },
+          {
+            "rule": "K",
+            "path": "LLLLL",
+            "after": "f3b57823e01842be3c02a7f91c62050ec573e1a6654fc75088b88a431dc7d87f",
+            "link": "8f4b6f3f120b6441d47e2600661213a9806f1fb12d4d40f31933b6fb64f30bf9"
+          },
+          {
+            "rule": "K",
+            "path": "LLLL",
+            "after": "27fdc609e333cb0372aaf47717f43868b888728a9fbcd5c3c10cb1f58b9d58e9",
+            "link": "c11dac210dc96240b766b121e4bf339c342bf1db48168b2e18147971f33cd401"
+          },
+          {
+            "rule": "K",
+            "path": "LLL",
+            "after": "5fa22cb0989a081a479334c3aa517ee8281c62e58c26dec7454aff0f05455757",
+            "link": "14ce3924c5e7f719efd3f18604b551cae2e4a8ef2bc653607077bebbe8c02c55"
+          },
+          {
+            "rule": "K",
+            "path": "LL",
+            "after": "b1749256e8faa72cf86572261fe0918e00a24b2ba33261d3481873e1955016ef",
+            "link": "8c4bb3538c798e50c7b5f2aa6ec3913a1d9a68479e09984086c6a5584da34f4c"
+          },
+          {
+            "rule": "B",
+            "path": "L",
+            "after": "6262f365eb885740f41f6c0003672bab95a08ccb45eae4f67744712af439187f",
+            "link": "e511c887ed8ce5466cd2e2dec888bed20a1ae7d6895d332ed99abcb0bc19cfdd"
+          },
+          {
+            "rule": "K",
+            "path": "",
+            "after": "9884ebe87890d23403d96eaa60e5bf6832b5fe0aeda4854a28ed4ce54c73ab9e",
+            "link": "0b01a801e6cfdfd67219c95721bddb95aa147d22747b2ebf1fd50d776c093564"
+          },
+          {
+            "rule": "C",
+            "path": "",
+            "after": "8aa7224297b95df5b36370ad931d9c805a7aa215a8099d0d635a4d32afb65ac6",
+            "link": "49546e9f64b930c54895ce45a19f20d1a488ae3c40c7c95a3b9b9ff873e769d2"
+          },
+          {
+            "rule": "C",
+            "path": "L",
+            "after": "9ad1ac35c1c06cc1d5d497cb84bf843338833becb362fcae179bcfd44746297b",
+            "link": "ee0a8e64bed57ac1fd6560497c2d62f0871a760f8d581f33e92cf9f2654560cd"
+          },
+          {
+            "rule": "I",
+            "path": "LL",
+            "after": "3cd6e29580aa293357c377f90ee5ba490080a29bd878cce97626064c9c148f1a",
+            "link": "4a7d7692f499daf7a6b46c872471363534805149c25c1531c94b9d1f4c922f91"
+          },
+          {
+            "rule": "K",
+            "path": "L",
+            "after": "773d78f663de885e33c137e32da9a48b7914372861b545d41388513975aa3d0b",
+            "link": "c1956b40651d79937a694a3af1bc9fd015df3670262e4a7adbb1cbed75f99d0a"
+          },
+          {
+            "rule": "I",
+            "path": "",
+            "after": "0aa6a7699d78c6365ed79d45acaf67a660ee5960a7247fda7e07693a33365a82",
+            "link": "1152c40fad484bbd2397e6255d8a464b4f9ec20c9fd2331f0a1ce3c5e76f31ff"
+          }
+        ],
+        "final": "effects (effect (door 1) open) (effect (ship s1) thrust east)",
+        "final_digest": "0aa6a7699d78c6365ed79d45acaf67a660ee5960a7247fda7e07693a33365a82",
+        "exhausted": false,
+        "head": "1152c40fad484bbd2397e6255d8a464b4f9ec20c9fd2331f0a1ce3c5e76f31ff"
+      },
+      "rearm": {
+        "term": "K (K (K (K (K (K (B K (C (C I (effects (effect (door 1) close))) (effects (effect (door 1) open) (effect (ship s1) thrust east))))))))) K (K I) (K I) (K I) (K I) (K I) (K I) K",
+        "digest": "a8d078196b0550a434bb1ef7e9b7fd4a9ab2f7523475c1b7cbf5205720edb34a"
+      }
+    },
+    {
+      "tick": 5,
+      "entity": "s1",
+      "decision": "run",
+      "budget": 2000,
+      "slice": {
+        "format": "spherepop-trace/1",
+        "config": {
+          "root": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ],
+          "gated": [
+            "W",
+            "K",
+            "C"
+          ],
+          "absorb": "s",
+          "sc": "settled"
+        },
+        "start": "K (K (K (K (K (K (B K (C (C I (effects (effect (door 1) close))) (effects (effect (door 1) open) (effect (ship s1) thrust east))))))))) K (K I) (K I) (K I) (K I) (K I) (K I) K",
+        "start_digest": "a8d078196b0550a434bb1ef7e9b7fd4a9ab2f7523475c1b7cbf5205720edb34a",
+        "strategy": "lo",
+        "fuel": 2000,
+        "steps": [
+          {
+            "rule": "K",
+            "path": "LLLLLLL",
+            "after": "6c86c07b4c91f949d2ca77bcddc4970c9f5721c57b6e0f625f923ee7073b9d1f",
+            "link": "02cd042a68a0132b66c1989e3282e7b15968574410495ee8e76049df66fbe7a6"
+          },
+          {
+            "rule": "K",
+            "path": "LLLLLL",
+            "after": "68f89965c5ed0f8710e7da23b07c55d30aeedb976cdac4beccb4b3c0185b9cce",
+            "link": "c503fa1f20779440ecd5ae1dd4795badb4999cc2fab59b7f39ebb3e964b6063a"
+          },
+          {
+            "rule": "K",
+            "path": "LLLLL",
+            "after": "f3b57823e01842be3c02a7f91c62050ec573e1a6654fc75088b88a431dc7d87f",
+            "link": "8f4b6f3f120b6441d47e2600661213a9806f1fb12d4d40f31933b6fb64f30bf9"
+          },
+          {
+            "rule": "K",
+            "path": "LLLL",
+            "after": "27fdc609e333cb0372aaf47717f43868b888728a9fbcd5c3c10cb1f58b9d58e9",
+            "link": "c11dac210dc96240b766b121e4bf339c342bf1db48168b2e18147971f33cd401"
+          },
+          {
+            "rule": "K",
+            "path": "LLL",
+            "after": "5fa22cb0989a081a479334c3aa517ee8281c62e58c26dec7454aff0f05455757",
+            "link": "14ce3924c5e7f719efd3f18604b551cae2e4a8ef2bc653607077bebbe8c02c55"
+          },
+          {
+            "rule": "K",
+            "path": "LL",
+            "after": "b1749256e8faa72cf86572261fe0918e00a24b2ba33261d3481873e1955016ef",
+            "link": "8c4bb3538c798e50c7b5f2aa6ec3913a1d9a68479e09984086c6a5584da34f4c"
+          },
+          {
+            "rule": "B",
+            "path": "L",
+            "after": "6262f365eb885740f41f6c0003672bab95a08ccb45eae4f67744712af439187f",
+            "link": "e511c887ed8ce5466cd2e2dec888bed20a1ae7d6895d332ed99abcb0bc19cfdd"
+          },
+          {
+            "rule": "K",
+            "path": "",
+            "after": "9884ebe87890d23403d96eaa60e5bf6832b5fe0aeda4854a28ed4ce54c73ab9e",
+            "link": "0b01a801e6cfdfd67219c95721bddb95aa147d22747b2ebf1fd50d776c093564"
+          },
+          {
+            "rule": "C",
+            "path": "",
+            "after": "8aa7224297b95df5b36370ad931d9c805a7aa215a8099d0d635a4d32afb65ac6",
+            "link": "49546e9f64b930c54895ce45a19f20d1a488ae3c40c7c95a3b9b9ff873e769d2"
+          },
+          {
+            "rule": "C",
+            "path": "L",
+            "after": "9ad1ac35c1c06cc1d5d497cb84bf843338833becb362fcae179bcfd44746297b",
+            "link": "ee0a8e64bed57ac1fd6560497c2d62f0871a760f8d581f33e92cf9f2654560cd"
+          },
+          {
+            "rule": "I",
+            "path": "LL",
+            "after": "3cd6e29580aa293357c377f90ee5ba490080a29bd878cce97626064c9c148f1a",
+            "link": "4a7d7692f499daf7a6b46c872471363534805149c25c1531c94b9d1f4c922f91"
+          },
+          {
+            "rule": "K",
+            "path": "L",
+            "after": "773d78f663de885e33c137e32da9a48b7914372861b545d41388513975aa3d0b",
+            "link": "c1956b40651d79937a694a3af1bc9fd015df3670262e4a7adbb1cbed75f99d0a"
+          },
+          {
+            "rule": "I",
+            "path": "",
+            "after": "0aa6a7699d78c6365ed79d45acaf67a660ee5960a7247fda7e07693a33365a82",
+            "link": "1152c40fad484bbd2397e6255d8a464b4f9ec20c9fd2331f0a1ce3c5e76f31ff"
+          }
+        ],
+        "final": "effects (effect (door 1) open) (effect (ship s1) thrust east)",
+        "final_digest": "0aa6a7699d78c6365ed79d45acaf67a660ee5960a7247fda7e07693a33365a82",
+        "exhausted": false,
+        "head": "1152c40fad484bbd2397e6255d8a464b4f9ec20c9fd2331f0a1ce3c5e76f31ff"
+      },
+      "rearm": {
+        "term": "K (K (K (K (K (K (B K (C (C I (effects (effect (door 1) close))) (effects (effect (door 1) open) (effect (ship s1) thrust east))))))))) K (K I) (K I) (K I) (K I) (K I) (K I) K",
+        "digest": "a8d078196b0550a434bb1ef7e9b7fd4a9ab2f7523475c1b7cbf5205720edb34a"
+      }
+    },
+    {
+      "tick": 6,
+      "entity": "s1",
+      "decision": "run",
+      "budget": 2000,
+      "slice": {
+        "format": "spherepop-trace/1",
+        "config": {
+          "root": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ],
+          "gated": [
+            "W",
+            "K",
+            "C"
+          ],
+          "absorb": "s",
+          "sc": "settled"
+        },
+        "start": "K (K (K (K (K (K (B K (C (C I (effects (effect (door 1) close))) (effects (effect (door 1) open) (effect (ship s1) thrust east))))))))) K (K I) (K I) (K I) (K I) (K I) (K I) K",
+        "start_digest": "a8d078196b0550a434bb1ef7e9b7fd4a9ab2f7523475c1b7cbf5205720edb34a",
+        "strategy": "lo",
+        "fuel": 2000,
+        "steps": [
+          {
+            "rule": "K",
+            "path": "LLLLLLL",
+            "after": "6c86c07b4c91f949d2ca77bcddc4970c9f5721c57b6e0f625f923ee7073b9d1f",
+            "link": "02cd042a68a0132b66c1989e3282e7b15968574410495ee8e76049df66fbe7a6"
+          },
+          {
+            "rule": "K",
+            "path": "LLLLLL",
+            "after": "68f89965c5ed0f8710e7da23b07c55d30aeedb976cdac4beccb4b3c0185b9cce",
+            "link": "c503fa1f20779440ecd5ae1dd4795badb4999cc2fab59b7f39ebb3e964b6063a"
+          },
+          {
+            "rule": "K",
+            "path": "LLLLL",
+            "after": "f3b57823e01842be3c02a7f91c62050ec573e1a6654fc75088b88a431dc7d87f",
+            "link": "8f4b6f3f120b6441d47e2600661213a9806f1fb12d4d40f31933b6fb64f30bf9"
+          },
+          {
+            "rule": "K",
+            "path": "LLLL",
+            "after": "27fdc609e333cb0372aaf47717f43868b888728a9fbcd5c3c10cb1f58b9d58e9",
+            "link": "c11dac210dc96240b766b121e4bf339c342bf1db48168b2e18147971f33cd401"
+          },
+          {
+            "rule": "K",
+            "path": "LLL",
+            "after": "5fa22cb0989a081a479334c3aa517ee8281c62e58c26dec7454aff0f05455757",
+            "link": "14ce3924c5e7f719efd3f18604b551cae2e4a8ef2bc653607077bebbe8c02c55"
+          },
+          {
+            "rule": "K",
+            "path": "LL",
+            "after": "b1749256e8faa72cf86572261fe0918e00a24b2ba33261d3481873e1955016ef",
+            "link": "8c4bb3538c798e50c7b5f2aa6ec3913a1d9a68479e09984086c6a5584da34f4c"
+          },
+          {
+            "rule": "B",
+            "path": "L",
+            "after": "6262f365eb885740f41f6c0003672bab95a08ccb45eae4f67744712af439187f",
+            "link": "e511c887ed8ce5466cd2e2dec888bed20a1ae7d6895d332ed99abcb0bc19cfdd"
+          },
+          {
+            "rule": "K",
+            "path": "",
+            "after": "9884ebe87890d23403d96eaa60e5bf6832b5fe0aeda4854a28ed4ce54c73ab9e",
+            "link": "0b01a801e6cfdfd67219c95721bddb95aa147d22747b2ebf1fd50d776c093564"
+          },
+          {
+            "rule": "C",
+            "path": "",
+            "after": "8aa7224297b95df5b36370ad931d9c805a7aa215a8099d0d635a4d32afb65ac6",
+            "link": "49546e9f64b930c54895ce45a19f20d1a488ae3c40c7c95a3b9b9ff873e769d2"
+          },
+          {
+            "rule": "C",
+            "path": "L",
+            "after": "9ad1ac35c1c06cc1d5d497cb84bf843338833becb362fcae179bcfd44746297b",
+            "link": "ee0a8e64bed57ac1fd6560497c2d62f0871a760f8d581f33e92cf9f2654560cd"
+          },
+          {
+            "rule": "I",
+            "path": "LL",
+            "after": "3cd6e29580aa293357c377f90ee5ba490080a29bd878cce97626064c9c148f1a",
+            "link": "4a7d7692f499daf7a6b46c872471363534805149c25c1531c94b9d1f4c922f91"
+          },
+          {
+            "rule": "K",
+            "path": "L",
+            "after": "773d78f663de885e33c137e32da9a48b7914372861b545d41388513975aa3d0b",
+            "link": "c1956b40651d79937a694a3af1bc9fd015df3670262e4a7adbb1cbed75f99d0a"
+          },
+          {
+            "rule": "I",
+            "path": "",
+            "after": "0aa6a7699d78c6365ed79d45acaf67a660ee5960a7247fda7e07693a33365a82",
+            "link": "1152c40fad484bbd2397e6255d8a464b4f9ec20c9fd2331f0a1ce3c5e76f31ff"
+          }
+        ],
+        "final": "effects (effect (door 1) open) (effect (ship s1) thrust east)",
+        "final_digest": "0aa6a7699d78c6365ed79d45acaf67a660ee5960a7247fda7e07693a33365a82",
+        "exhausted": false,
+        "head": "1152c40fad484bbd2397e6255d8a464b4f9ec20c9fd2331f0a1ce3c5e76f31ff"
+      },
+      "rearm": {
+        "term": "K (K (K (K (K (K (B K (C (C I (effects (effect (door 1) close))) (effects (effect (door 1) open) (effect (ship s1) thrust east))))))))) K (K I) (K I) (K I) (K I) (K I) (K I) K",
+        "digest": "a8d078196b0550a434bb1ef7e9b7fd4a9ab2f7523475c1b7cbf5205720edb34a"
+      }
+    },
+    {
+      "tick": 7,
+      "entity": "s1",
+      "decision": "run",
+      "budget": 2000,
+      "slice": {
+        "format": "spherepop-trace/1",
+        "config": {
+          "root": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ],
+          "gated": [
+            "W",
+            "K",
+            "C"
+          ],
+          "absorb": "s",
+          "sc": "settled"
+        },
+        "start": "K (K (K (K (K (K (B K (C (C I (effects (effect (door 1) close))) (effects (effect (door 1) open) (effect (ship s1) thrust east))))))))) K (K I) (K I) (K I) (K I) (K I) (K I) K",
+        "start_digest": "a8d078196b0550a434bb1ef7e9b7fd4a9ab2f7523475c1b7cbf5205720edb34a",
+        "strategy": "lo",
+        "fuel": 2000,
+        "steps": [
+          {
+            "rule": "K",
+            "path": "LLLLLLL",
+            "after": "6c86c07b4c91f949d2ca77bcddc4970c9f5721c57b6e0f625f923ee7073b9d1f",
+            "link": "02cd042a68a0132b66c1989e3282e7b15968574410495ee8e76049df66fbe7a6"
+          },
+          {
+            "rule": "K",
+            "path": "LLLLLL",
+            "after": "68f89965c5ed0f8710e7da23b07c55d30aeedb976cdac4beccb4b3c0185b9cce",
+            "link": "c503fa1f20779440ecd5ae1dd4795badb4999cc2fab59b7f39ebb3e964b6063a"
+          },
+          {
+            "rule": "K",
+            "path": "LLLLL",
+            "after": "f3b57823e01842be3c02a7f91c62050ec573e1a6654fc75088b88a431dc7d87f",
+            "link": "8f4b6f3f120b6441d47e2600661213a9806f1fb12d4d40f31933b6fb64f30bf9"
+          },
+          {
+            "rule": "K",
+            "path": "LLLL",
+            "after": "27fdc609e333cb0372aaf47717f43868b888728a9fbcd5c3c10cb1f58b9d58e9",
+            "link": "c11dac210dc96240b766b121e4bf339c342bf1db48168b2e18147971f33cd401"
+          },
+          {
+            "rule": "K",
+            "path": "LLL",
+            "after": "5fa22cb0989a081a479334c3aa517ee8281c62e58c26dec7454aff0f05455757",
+            "link": "14ce3924c5e7f719efd3f18604b551cae2e4a8ef2bc653607077bebbe8c02c55"
+          },
+          {
+            "rule": "K",
+            "path": "LL",
+            "after": "b1749256e8faa72cf86572261fe0918e00a24b2ba33261d3481873e1955016ef",
+            "link": "8c4bb3538c798e50c7b5f2aa6ec3913a1d9a68479e09984086c6a5584da34f4c"
+          },
+          {
+            "rule": "B",
+            "path": "L",
+            "after": "6262f365eb885740f41f6c0003672bab95a08ccb45eae4f67744712af439187f",
+            "link": "e511c887ed8ce5466cd2e2dec888bed20a1ae7d6895d332ed99abcb0bc19cfdd"
+          },
+          {
+            "rule": "K",
+            "path": "",
+            "after": "9884ebe87890d23403d96eaa60e5bf6832b5fe0aeda4854a28ed4ce54c73ab9e",
+            "link": "0b01a801e6cfdfd67219c95721bddb95aa147d22747b2ebf1fd50d776c093564"
+          },
+          {
+            "rule": "C",
+            "path": "",
+            "after": "8aa7224297b95df5b36370ad931d9c805a7aa215a8099d0d635a4d32afb65ac6",
+            "link": "49546e9f64b930c54895ce45a19f20d1a488ae3c40c7c95a3b9b9ff873e769d2"
+          },
+          {
+            "rule": "C",
+            "path": "L",
+            "after": "9ad1ac35c1c06cc1d5d497cb84bf843338833becb362fcae179bcfd44746297b",
+            "link": "ee0a8e64bed57ac1fd6560497c2d62f0871a760f8d581f33e92cf9f2654560cd"
+          },
+          {
+            "rule": "I",
+            "path": "LL",
+            "after": "3cd6e29580aa293357c377f90ee5ba490080a29bd878cce97626064c9c148f1a",
+            "link": "4a7d7692f499daf7a6b46c872471363534805149c25c1531c94b9d1f4c922f91"
+          },
+          {
+            "rule": "K",
+            "path": "L",
+            "after": "773d78f663de885e33c137e32da9a48b7914372861b545d41388513975aa3d0b",
+            "link": "c1956b40651d79937a694a3af1bc9fd015df3670262e4a7adbb1cbed75f99d0a"
+          },
+          {
+            "rule": "I",
+            "path": "",
+            "after": "0aa6a7699d78c6365ed79d45acaf67a660ee5960a7247fda7e07693a33365a82",
+            "link": "1152c40fad484bbd2397e6255d8a464b4f9ec20c9fd2331f0a1ce3c5e76f31ff"
+          }
+        ],
+        "final": "effects (effect (door 1) open) (effect (ship s1) thrust east)",
+        "final_digest": "0aa6a7699d78c6365ed79d45acaf67a660ee5960a7247fda7e07693a33365a82",
+        "exhausted": false,
+        "head": "1152c40fad484bbd2397e6255d8a464b4f9ec20c9fd2331f0a1ce3c5e76f31ff"
+      },
+      "rearm": {
+        "term": "K (K (K (K (K (K (B K (C (C I (effects (effect (door 1) close))) (effects (effect (door 1) open) (effect (ship s1) thrust east))))))))) K (K I) (K I) (K I) (K I) (K I) (K I) K",
+        "digest": "a8d078196b0550a434bb1ef7e9b7fd4a9ab2f7523475c1b7cbf5205720edb34a"
+      }
+    },
+    {
+      "tick": 8,
+      "entity": "s1",
+      "decision": "run",
+      "budget": 2000,
+      "slice": {
+        "format": "spherepop-trace/1",
+        "config": {
+          "root": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ],
+          "gated": [
+            "W",
+            "K",
+            "C"
+          ],
+          "absorb": "s",
+          "sc": "settled"
+        },
+        "start": "K (K (K (K (K (K (B K (C (C I (effects (effect (door 1) close))) (effects (effect (door 1) open) (effect (ship s1) thrust east))))))))) K (K I) (K I) (K I) (K I) (K I) K K",
+        "start_digest": "2dee8754c904d5b9329f316617a119341143e4fdbeadc35e8c054bdccd4874f7",
+        "strategy": "lo",
+        "fuel": 2000,
+        "steps": [
+          {
+            "rule": "K",
+            "path": "LLLLLLL",
+            "after": "3297c7fd7f23aedd7ed1b73daf5a71fc9edb2ac48141b688af847c6417e63c28",
+            "link": "4ed3dec19abd6c96586c4b1a60c30c3a4f17d3e11e53cf655bc38f7e68cef8b8"
+          },
+          {
+            "rule": "K",
+            "path": "LLLLLL",
+            "after": "2ded96f4712a850dbff52ff37d63bc2f49df65321075d7dcec5badf6d8167659",
+            "link": "3e2c8487efb810442445324b95bae59da389bbe6723a655ef104ab5db7967a4c"
+          },
+          {
+            "rule": "K",
+            "path": "LLLLL",
+            "after": "aa887d81c1168ab9dc2029dc3466953197adb502fc6612f7e63ab0967c39146d",
+            "link": "2e0f1928a80cc7f163dd77bdc51203d7a830df0c7b3bdf016dc2eb9d4787727b"
+          },
+          {
+            "rule": "K",
+            "path": "LLLL",
+            "after": "469f14bc87732bd1027278529521e97364c88d588693913162e5a4ef1e7f1417",
+            "link": "96dc33c062252e6dc78601c80f812cb4857101471f03432fd66654594665b3db"
+          },
+          {
+            "rule": "K",
+            "path": "LLL",
+            "after": "8e2bce9bd7dc5ce62d18a165278810f1971c4f2dd849e2d827eecf4100abd0cf",
+            "link": "4f44574d519efce63629b3c6568915ac92f40292b24c6fded4e87bda4a069cec"
+          },
+          {
+            "rule": "K",
+            "path": "LL",
+            "after": "b4fc02c2e137ab4b6d47ddc1d6518497e8e352d1a15e6668b7d3d6746b27e091",
+            "link": "b6ad2c61d2a1a86656d2bd526f8260a297f1acfb10596d9a77cce6f6a5abcac0"
+          },
+          {
+            "rule": "B",
+            "path": "L",
+            "after": "c3cd5078bffd53156d436180a0a642e019f63717f9cafdc794cd23a777227279",
+            "link": "4bd80dcf4a9f124dae0284d541eae1e10f95f6fdd2834ce43724649004378942"
+          },
+          {
+            "rule": "K",
+            "path": "",
+            "after": "d61b156a82ca2fd7eee47b107b8c847c4e163c28c50c5913a44fdfc69fbdeff9",
+            "link": "c06966df72f158d22de8ba64a7434465fb30bb3e3a7d0c0d51b93e542b8ed41b"
+          },
+          {
+            "rule": "C",
+            "path": "",
+            "after": "afcf25d415866db69061a0f47bcf54add3489b009cdd364b28b98a5ea5ecc973",
+            "link": "31fb788011b4ef57e32a255eebe3307dbae95a6edb2a9202105e297bfd2f9973"
+          },
+          {
+            "rule": "C",
+            "path": "L",
+            "after": "2e04a1ad38a9eda39e607e792ecd240ceb642a3bd1b0d4a2e8b7f23a96995a02",
+            "link": "fb623ecc1e4994eb2da9f1a2b0e839834b509cfa4455649990f217a4209901a5"
+          },
+          {
+            "rule": "I",
+            "path": "LL",
+            "after": "8ae1ec44ee8d7f6a18a5b6441f72938462fa57f9602b9f3044908f9672f75c11",
+            "link": "144305b1cff4d69b374d1adfd121c9dcf2cee6619ad45c0c9b18568465524cb1"
+          },
+          {
+            "rule": "K",
+            "path": "",
+            "after": "3fb1f033079bbfb4e858afcaa0cf573332a283dd1fbbde391c5678bfafd01441",
+            "link": "f1c3aeb24adc3839c5a94329f62da418feeb48676d81adef61684e9ac13ba6ef"
+          }
+        ],
+        "final": "effects (effect (door 1) close)",
+        "final_digest": "3fb1f033079bbfb4e858afcaa0cf573332a283dd1fbbde391c5678bfafd01441",
+        "exhausted": false,
+        "head": "f1c3aeb24adc3839c5a94329f62da418feeb48676d81adef61684e9ac13ba6ef"
+      },
+      "rearm": {
+        "term": "K (K (K (K (K (K (B K (C (C I (effects (effect (door 1) close))) (effects (effect (door 1) open) (effect (ship s1) thrust east))))))))) K (K I) (K I) (K I) (K I) (K I) K K",
+        "digest": "2dee8754c904d5b9329f316617a119341143e4fdbeadc35e8c054bdccd4874f7"
+      }
+    },
+    {
+      "tick": 9,
+      "entity": "s1",
+      "decision": "run",
+      "budget": 2000,
+      "slice": {
+        "format": "spherepop-trace/1",
+        "config": {
+          "root": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ],
+          "gated": [
+            "W",
+            "K",
+            "C"
+          ],
+          "absorb": "s",
+          "sc": "settled"
+        },
+        "start": "K (K (K (K (K (K (B K (C (C I (effects (effect (door 1) close))) (effects (effect (door 1) open) (effect (ship s1) thrust east))))))))) K (K I) (K I) (K I) (K I) (K I) K (K I)",
+        "start_digest": "4747c3c00867446b5c41f9085f9c604858a7193477b6963ec6352a9be9c05434",
+        "strategy": "lo",
+        "fuel": 2000,
+        "steps": [
+          {
+            "rule": "K",
+            "path": "LLLLLLL",
+            "after": "b2ddae46584f1efa6050d781352ea6fffe757be947073baa79fa29d50ac37778",
+            "link": "9f707d36438fe23550f9ba329d9cc82b401694ef874523f4646ad31a35c3aeef"
+          },
+          {
+            "rule": "K",
+            "path": "LLLLLL",
+            "after": "d0aaec9499d01a300e5ac83d1a59a15d933b2b23ea15b085a1ed979606715704",
+            "link": "13965a0217fb44c51f6757a441d2706ca700432b0aa40a394a9d6eb3d505cd8d"
+          },
+          {
+            "rule": "K",
+            "path": "LLLLL",
+            "after": "56db4dc99a8126f9e15bd7bb84207574e9d276c0f92848091b8edf2cb6fbfeac",
+            "link": "3193542e6ce10dbb48a0e94af2d9555902fd56e3afd47b8c002d8c4521b81f8b"
+          },
+          {
+            "rule": "K",
+            "path": "LLLL",
+            "after": "bba68f637b6741d356ffbbd9e130f62b2893bf95a738f7668a2d0e63e617b861",
+            "link": "ba7c1637b49cbba575d732c4c5ba9cfd9ceda862fb6a9519f5c329f975dd013d"
+          },
+          {
+            "rule": "K",
+            "path": "LLL",
+            "after": "2b0ec18f9f801481ca241f7571097b8627def102f66db980d2cb5a7f1ad65954",
+            "link": "6f974c636e001e810a94aa99c93c76b97626206764b066ec31f0c582f1a81c1e"
+          },
+          {
+            "rule": "K",
+            "path": "LL",
+            "after": "5285307c800ad3a8987aeafd18658600dfe1db8d806a098ee128548b95a5a4b7",
+            "link": "29c833b939434e970b4b6aaff8b2bd8291cd47e1a87336c7c0db57da26df2284"
+          },
+          {
+            "rule": "B",
+            "path": "L",
+            "after": "50cf6ce88faa45bbd63404e20981180d977dcb068a60105f413337585d02cb12",
+            "link": "d5492b59c3b081438dcc8e580754dcbc40d4828c8c90b62525cc6c6b9bd283c9"
+          },
+          {
+            "rule": "K",
+            "path": "",
+            "after": "d61b156a82ca2fd7eee47b107b8c847c4e163c28c50c5913a44fdfc69fbdeff9",
+            "link": "0845a6948b74a793147eac449d2e2f36d0ed424bfa360349858b185393c8b89c"
+          },
+          {
+            "rule": "C",
+            "path": "",
+            "after": "afcf25d415866db69061a0f47bcf54add3489b009cdd364b28b98a5ea5ecc973",
+            "link": "5af4bc2c7202ccd713918e36cdf3c86fc66000e18b180486a53f9f12d2949d3b"
+          },
+          {
+            "rule": "C",
+            "path": "L",
+            "after": "2e04a1ad38a9eda39e607e792ecd240ceb642a3bd1b0d4a2e8b7f23a96995a02",
+            "link": "dc112895ee0c71ee4dc8f2a34b137301b170f3c221d63271df8cb1057dcec9a5"
+          },
+          {
+            "rule": "I",
+            "path": "LL",
+            "after": "8ae1ec44ee8d7f6a18a5b6441f72938462fa57f9602b9f3044908f9672f75c11",
+            "link": "144cf4f7800b54eb73ad7ae8d95677bd466dc96b41db3d9cc2634efb7af694d4"
+          },
+          {
+            "rule": "K",
+            "path": "",
+            "after": "3fb1f033079bbfb4e858afcaa0cf573332a283dd1fbbde391c5678bfafd01441",
+            "link": "8a4334e4d8386700acf1162c71af93f4b10c404d6c3d5345389fd04989faac73"
+          }
+        ],
+        "final": "effects (effect (door 1) close)",
+        "final_digest": "3fb1f033079bbfb4e858afcaa0cf573332a283dd1fbbde391c5678bfafd01441",
+        "exhausted": false,
+        "head": "8a4334e4d8386700acf1162c71af93f4b10c404d6c3d5345389fd04989faac73"
+      },
+      "rearm": {
+        "term": "K (K (K (K (K (K (B K (C (C I (effects (effect (door 1) close))) (effects (effect (door 1) open) (effect (ship s1) thrust east))))))))) K (K I) (K I) (K I) (K I) (K I) K (K I)",
+        "digest": "4747c3c00867446b5c41f9085f9c604858a7193477b6963ec6352a9be9c05434"
+      }
+    },
+    {
+      "tick": 10,
+      "entity": "s1",
+      "decision": "run",
+      "budget": 2000,
+      "slice": {
+        "format": "spherepop-trace/1",
+        "config": {
+          "root": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ],
+          "gated": [
+            "W",
+            "K",
+            "C"
+          ],
+          "absorb": "s",
+          "sc": "settled"
+        },
+        "start": "K (K (K (K (K (K (B K (C (C I (effects (effect (door 1) close))) (effects (effect (door 1) open) (effect (ship s1) thrust east))))))))) K (K I) (K I) (K I) (K I) (K I) K (K I)",
+        "start_digest": "4747c3c00867446b5c41f9085f9c604858a7193477b6963ec6352a9be9c05434",
+        "strategy": "lo",
+        "fuel": 2000,
+        "steps": [
+          {
+            "rule": "K",
+            "path": "LLLLLLL",
+            "after": "b2ddae46584f1efa6050d781352ea6fffe757be947073baa79fa29d50ac37778",
+            "link": "9f707d36438fe23550f9ba329d9cc82b401694ef874523f4646ad31a35c3aeef"
+          },
+          {
+            "rule": "K",
+            "path": "LLLLLL",
+            "after": "d0aaec9499d01a300e5ac83d1a59a15d933b2b23ea15b085a1ed979606715704",
+            "link": "13965a0217fb44c51f6757a441d2706ca700432b0aa40a394a9d6eb3d505cd8d"
+          },
+          {
+            "rule": "K",
+            "path": "LLLLL",
+            "after": "56db4dc99a8126f9e15bd7bb84207574e9d276c0f92848091b8edf2cb6fbfeac",
+            "link": "3193542e6ce10dbb48a0e94af2d9555902fd56e3afd47b8c002d8c4521b81f8b"
+          },
+          {
+            "rule": "K",
+            "path": "LLLL",
+            "after": "bba68f637b6741d356ffbbd9e130f62b2893bf95a738f7668a2d0e63e617b861",
+            "link": "ba7c1637b49cbba575d732c4c5ba9cfd9ceda862fb6a9519f5c329f975dd013d"
+          },
+          {
+            "rule": "K",
+            "path": "LLL",
+            "after": "2b0ec18f9f801481ca241f7571097b8627def102f66db980d2cb5a7f1ad65954",
+            "link": "6f974c636e001e810a94aa99c93c76b97626206764b066ec31f0c582f1a81c1e"
+          },
+          {
+            "rule": "K",
+            "path": "LL",
+            "after": "5285307c800ad3a8987aeafd18658600dfe1db8d806a098ee128548b95a5a4b7",
+            "link": "29c833b939434e970b4b6aaff8b2bd8291cd47e1a87336c7c0db57da26df2284"
+          },
+          {
+            "rule": "B",
+            "path": "L",
+            "after": "50cf6ce88faa45bbd63404e20981180d977dcb068a60105f413337585d02cb12",
+            "link": "d5492b59c3b081438dcc8e580754dcbc40d4828c8c90b62525cc6c6b9bd283c9"
+          },
+          {
+            "rule": "K",
+            "path": "",
+            "after": "d61b156a82ca2fd7eee47b107b8c847c4e163c28c50c5913a44fdfc69fbdeff9",
+            "link": "0845a6948b74a793147eac449d2e2f36d0ed424bfa360349858b185393c8b89c"
+          },
+          {
+            "rule": "C",
+            "path": "",
+            "after": "afcf25d415866db69061a0f47bcf54add3489b009cdd364b28b98a5ea5ecc973",
+            "link": "5af4bc2c7202ccd713918e36cdf3c86fc66000e18b180486a53f9f12d2949d3b"
+          },
+          {
+            "rule": "C",
+            "path": "L",
+            "after": "2e04a1ad38a9eda39e607e792ecd240ceb642a3bd1b0d4a2e8b7f23a96995a02",
+            "link": "dc112895ee0c71ee4dc8f2a34b137301b170f3c221d63271df8cb1057dcec9a5"
+          },
+          {
+            "rule": "I",
+            "path": "LL",
+            "after": "8ae1ec44ee8d7f6a18a5b6441f72938462fa57f9602b9f3044908f9672f75c11",
+            "link": "144cf4f7800b54eb73ad7ae8d95677bd466dc96b41db3d9cc2634efb7af694d4"
+          },
+          {
+            "rule": "K",
+            "path": "",
+            "after": "3fb1f033079bbfb4e858afcaa0cf573332a283dd1fbbde391c5678bfafd01441",
+            "link": "8a4334e4d8386700acf1162c71af93f4b10c404d6c3d5345389fd04989faac73"
+          }
+        ],
+        "final": "effects (effect (door 1) close)",
+        "final_digest": "3fb1f033079bbfb4e858afcaa0cf573332a283dd1fbbde391c5678bfafd01441",
+        "exhausted": false,
+        "head": "8a4334e4d8386700acf1162c71af93f4b10c404d6c3d5345389fd04989faac73"
+      },
+      "rearm": {
+        "term": "K (K (K (K (K (K (B K (C (C I (effects (effect (door 1) close))) (effects (effect (door 1) open) (effect (ship s1) thrust east))))))))) K (K I) (K I) (K I) (K I) (K I) K (K I)",
+        "digest": "4747c3c00867446b5c41f9085f9c604858a7193477b6963ec6352a9be9c05434"
+      }
+    },
+    {
+      "tick": 11,
+      "entity": "s1",
+      "decision": "run",
+      "budget": 2000,
+      "slice": {
+        "format": "spherepop-trace/1",
+        "config": {
+          "root": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ],
+          "gated": [
+            "W",
+            "K",
+            "C"
+          ],
+          "absorb": "s",
+          "sc": "settled"
+        },
+        "start": "K (K (K (K (K (K (B K (C (C I (effects (effect (door 1) close))) (effects (effect (door 1) open) (effect (ship s1) thrust east))))))))) (K I) (K I) (K I) (K I) (K I) (K I) K (K I)",
+        "start_digest": "4f21bcc0eef126d92b9422c1e1d44ca365b16713194f1e2c57a63979ff0b409d",
+        "strategy": "lo",
+        "fuel": 2000,
+        "steps": [
+          {
+            "rule": "K",
+            "path": "LLLLLLL",
+            "after": "b2ddae46584f1efa6050d781352ea6fffe757be947073baa79fa29d50ac37778",
+            "link": "c2cdd03b9e254e8dd2fd87f46345bea29f16297a760797a90d665d63ec5df7ff"
+          },
+          {
+            "rule": "K",
+            "path": "LLLLLL",
+            "after": "d0aaec9499d01a300e5ac83d1a59a15d933b2b23ea15b085a1ed979606715704",
+            "link": "e87276756167f7f90e22ec9400dcb3361bd90dfccf3d0a56ca934f5dc22800fd"
+          },
+          {
+            "rule": "K",
+            "path": "LLLLL",
+            "after": "56db4dc99a8126f9e15bd7bb84207574e9d276c0f92848091b8edf2cb6fbfeac",
+            "link": "afe5acd7824f9138edfaf1bfd4d1e297990e41865b3713450ac8cd7ee8a19348"
+          },
+          {
+            "rule": "K",
+            "path": "LLLL",
+            "after": "bba68f637b6741d356ffbbd9e130f62b2893bf95a738f7668a2d0e63e617b861",
+            "link": "a065341fd751925fbaade6bcc29fae7dcab204b19884e905947ceec59675af7b"
+          },
+          {
+            "rule": "K",
+            "path": "LLL",
+            "after": "2b0ec18f9f801481ca241f7571097b8627def102f66db980d2cb5a7f1ad65954",
+            "link": "dd6dd31502ae31a5a002e065f89cac32fb7b34ab7172800dd47037d02459bb5a"
+          },
+          {
+            "rule": "K",
+            "path": "LL",
+            "after": "5285307c800ad3a8987aeafd18658600dfe1db8d806a098ee128548b95a5a4b7",
+            "link": "e0f0ef9dcc5f9165ccb5cc1345309f196ddd8200a8ce36d466b79fbd5cdcaa6c"
+          },
+          {
+            "rule": "B",
+            "path": "L",
+            "after": "50cf6ce88faa45bbd63404e20981180d977dcb068a60105f413337585d02cb12",
+            "link": "5bdfd868560d5fd6f5e0fe7898ae9a50153e67cb48a69aa7904c4da21156a62d"
+          },
+          {
+            "rule": "K",
+            "path": "",
+            "after": "d61b156a82ca2fd7eee47b107b8c847c4e163c28c50c5913a44fdfc69fbdeff9",
+            "link": "5c92064cc8bda5595d8d4bb668bdabe605cb96300fe6ca082a00dd5c1a3d0503"
+          },
+          {
+            "rule": "C",
+            "path": "",
+            "after": "afcf25d415866db69061a0f47bcf54add3489b009cdd364b28b98a5ea5ecc973",
+            "link": "3cba68966be7e1d34437550cde783178184049a9e201666c9ba5da08d46c16cf"
+          },
+          {
+            "rule": "C",
+            "path": "L",
+            "after": "2e04a1ad38a9eda39e607e792ecd240ceb642a3bd1b0d4a2e8b7f23a96995a02",
+            "link": "82f22b16f489bb3d9d1b475837477d71833e18e0b1bd0f8ee7dbb5f8717b5977"
+          },
+          {
+            "rule": "I",
+            "path": "LL",
+            "after": "8ae1ec44ee8d7f6a18a5b6441f72938462fa57f9602b9f3044908f9672f75c11",
+            "link": "ec1f364f49355c2dd8a85fa400886fc5c92e23b34dc1a7c0c28eaab2e99862db"
+          },
+          {
+            "rule": "K",
+            "path": "",
+            "after": "3fb1f033079bbfb4e858afcaa0cf573332a283dd1fbbde391c5678bfafd01441",
+            "link": "0446603c63bb444f1f024a8dfe219522db363d9cce382da576387a66699b377c"
+          }
+        ],
+        "final": "effects (effect (door 1) close)",
+        "final_digest": "3fb1f033079bbfb4e858afcaa0cf573332a283dd1fbbde391c5678bfafd01441",
+        "exhausted": false,
+        "head": "0446603c63bb444f1f024a8dfe219522db363d9cce382da576387a66699b377c"
+      },
+      "rearm": {
+        "term": "K (K (K (K (K (K (B K (C (C I (effects (effect (door 1) close))) (effects (effect (door 1) open) (effect (ship s1) thrust east))))))))) (K I) (K I) (K I) (K I) (K I) (K I) K (K I)",
+        "digest": "4f21bcc0eef126d92b9422c1e1d44ca365b16713194f1e2c57a63979ff0b409d"
+      }
+    }
+  ],
+  "final": [
+    {
+      "id": "s1",
+      "term": "effects (effect (door 1) close)",
+      "digest": "3fb1f033079bbfb4e858afcaa0cf573332a283dd1fbbde391c5678bfafd01441",
+      "normal": true
+    }
+  ]
+}

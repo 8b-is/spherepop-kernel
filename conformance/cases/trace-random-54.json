@@ -1,0 +1,77 @@
+{
+  "format": "spherepop-trace/1",
+  "config": {
+    "root": [
+      "W",
+      "K",
+      "C"
+    ],
+    "perm": {
+      "p": [
+        "W",
+        "K"
+      ],
+      "q": [
+        "K",
+        "C"
+      ]
+    },
+    "gated": [
+      "S"
+    ],
+    "absorb": "u",
+    "sc": "settled"
+  },
+  "start": "(sc_p (a)) (x) ((c (B)) (I (x))) (<x>_p (<W>_p) (C))",
+  "start_digest": "573da3837ae3dae19b6b951dd0d29a5777f572b3ca27c5aa13150fa718b63ae1",
+  "strategy": "ro",
+  "fuel": 8,
+  "steps": [
+    {
+      "rule": "Abs",
+      "path": "RL",
+      "after": "1c75f370b96dd37b4b4a3d415b0bce66d78965198f63b538942293b413b2526a",
+      "link": "a992db54ff7c713446d59698226c745eb2d9d7be2ced72cc938f9018204c696b"
+    },
+    {
+      "rule": "Abs",
+      "path": "R",
+      "after": "ab99166e45f7a60d6745f9d3a42b52719c424d48c8551eea2fcdbded13a52f82",
+      "link": "1777c11cce84fe114ca103a307a0352c20c0928a8ccb9b6b03311bc4dd5c1ad1"
+    },
+    {
+      "rule": "I",
+      "path": "LRR",
+      "after": "9e4d0469cb7df5bc6326734daf1ada1d14512c6dceacb8f5e8069b91d202d44e",
+      "link": "83378ffb070c1584f2bd4bb76fd12aeda920b0ea54e917eb8f8d2e98e3e4b2cc"
+    },
+    {
+      "rule": "Sc",
+      "path": "LLL",
+      "after": "3267e018b90e0c4021a887c163dcedf70d268f7a1b2be4f68bea658eb023c092",
+      "link": "d8d72fec9a05d5b0e740629ae754efaaf0908649fa7a7e8ab3b1f98092c876aa"
+    },
+    {
+      "rule": "Abs",
+      "path": "LL",
+      "after": "14d93bc9148e29c1c1e4004e7a41176c0c420f1c0e552d99067e4f17381509a1",
+      "link": "7d462711337fe59f5a0ab3b3dbc2188510cff29f8bdd5d52f6d337fb3625ff15"
+    },
+    {
+      "rule": "Abs",
+      "path": "L",
+      "after": "7e343aad3e334de68e83425297e616d4dcd26f6e26cd4f8942436e125a720b2e",
+      "link": "554a9310fee030e23c024c36e1337d3e08f8abd392ddf05e47ab69152ad30670"
+    },
+    {
+      "rule": "Abs",
+      "path": "",
+      "after": "0899ad801d45acdb5d0623ad9092b3b132095e8b739c2ad9ff5cfddb182ae2dd",
+      "link": "9eee43304ee121e6e8d70e33305c695742b3a270a726ffab6fda4671924a6b95"
+    }
+  ],
+  "final": "<a x (c B x) <x <W>_p C>_p>_p",
+  "final_digest": "0899ad801d45acdb5d0623ad9092b3b132095e8b739c2ad9ff5cfddb182ae2dd",
+  "exhausted": false,
+  "head": "9eee43304ee121e6e8d70e33305c695742b3a270a726ffab6fda4671924a6b95"
+}

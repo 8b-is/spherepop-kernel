@@ -255,3 +255,67 @@ func TestTruncatedRunCannotClaimExhaustion(t *testing.T) {
 	}
 	wantViolation(t, short, Options{Fuel: 25}, ErrStatusMismatch)
 }
+
+// A label whose permission is empty must be written as [] and read back by
+// the strict decoder; the first version wrote null and rejected its own output.
+func TestEmptyLabelPermissionRoundTripsThroughStrictDecoding(t *testing.T) {
+	cfg := reduce.DefaultConfig()
+	cfg.Perm = map[string]reduce.PermSet{"p": 0, "q": reduce.PermAll}
+	start, err := term.Parse("<K a b>_p (<I c>_q d)")
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, doc, err := Record(cfg, start, reduce.LeftmostOutermost, 20)
+	if err != nil {
+		t.Fatal(err)
+	}
+	b, err := Marshal(doc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(b), `"p": []`) {
+		t.Fatalf("empty permission not written as []:\n%s", b)
+	}
+	back, err := Unmarshal(b)
+	if err != nil {
+		t.Fatalf("own output rejected: %v", err)
+	}
+	if _, err := Check(back, Options{RequireStrategy: true}); err != nil {
+		t.Fatal(err)
+	}
+}
+
+// An execution boundary ends a run: a trace that carries on from a stopped
+// term is rejected when the checker is given the boundary, and accepted when
+// it is not, because the steps are all authorised by the rules.
+func TestStepFromAStoppedTermIsRejectedOnlyUnderTheBoundary(t *testing.T) {
+	cfg := reduce.DefaultConfig()
+	start := term.MustParse("yield (K a b)")
+	_, doc, err := Record(cfg, start, reduce.LeftmostOutermost, 10) // ignores the boundary
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(doc.Steps) != 1 {
+		t.Fatalf("setup: %d steps", len(doc.Steps))
+	}
+	stop := func(x *term.Term) bool {
+		return x.Kind() == term.KindApp && x.Fun().Kind() == term.KindAtom && x.Fun().Name() == "yield"
+	}
+	if _, err := Check(doc, Options{RequireStrategy: true}); err != nil {
+		t.Fatalf("without a boundary: %v", err)
+	}
+	if _, err := Check(doc, Options{RequireStrategy: true, Stop: stop}); !errors.Is(err, ErrStepAfterStop) {
+		t.Fatalf("with the boundary: %v", err)
+	}
+	// The honest run stops at once and is accepted, with a redex still inside.
+	_, doc2, err := RecordUntil(cfg, start, reduce.LeftmostOutermost, 10, stop)
+	if err != nil || len(doc2.Steps) != 0 || doc2.Exhausted {
+		t.Fatalf("stopped run: %v %+v", err, doc2)
+	}
+	if _, err := Check(doc2, Options{RequireStrategy: true, Stop: stop}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Check(doc2, Options{RequireStrategy: true}); !errors.Is(err, ErrStatusMismatch) {
+		t.Fatalf("a stopped trace must not pass as a finished one: %v", err)
+	}
+}

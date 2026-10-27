@@ -1,0 +1,3601 @@
+{
+ "format": "spherepop-conformance/1",
+ "cases": [
+  {
+   "id": "trace-valid-scoped",
+   "kind": "trace",
+   "file": "cases/trace-valid-scoped.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   }
+  },
+  {
+   "id": "trace-valid-seed-go_ski",
+   "kind": "trace",
+   "file": "cases/trace-valid-seed-go_ski.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   }
+  },
+  {
+   "id": "trace-valid-seed-go_scoped",
+   "kind": "trace",
+   "file": "cases/trace-valid-seed-go_scoped.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   }
+  },
+  {
+   "id": "trace-valid-seed-go_gated",
+   "kind": "trace",
+   "file": "cases/trace-valid-seed-go_gated.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   }
+  },
+  {
+   "id": "trace-valid-seed-go_exhausted",
+   "kind": "trace",
+   "file": "cases/trace-valid-seed-go_exhausted.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   }
+  },
+  {
+   "id": "trace-valid-zero-steps",
+   "kind": "trace",
+   "file": "cases/trace-valid-zero-steps.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   }
+  },
+  {
+   "id": "trace-valid-exhausted",
+   "kind": "trace",
+   "file": "cases/trace-valid-exhausted.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true,
+    "fuel": 4
+   }
+  },
+  {
+   "id": "trace-exhausted-agreed-fuel-differs",
+   "kind": "trace",
+   "file": "cases/trace-exhausted-agreed-fuel-differs.json",
+   "expect": "invalid",
+   "class": "status-mismatch",
+   "options": {
+    "fuel": 5
+   }
+  },
+  {
+   "id": "trace-valid-noncanonical-start-text",
+   "kind": "trace",
+   "file": "cases/trace-valid-noncanonical-start-text.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   }
+  },
+  {
+   "id": "trace-valid-larger-fuel-than-needed",
+   "kind": "trace",
+   "file": "cases/trace-valid-larger-fuel-than-needed.json",
+   "expect": "valid"
+  },
+  {
+   "id": "trace-fuel-larger-than-agreed",
+   "kind": "trace",
+   "file": "cases/trace-fuel-larger-than-agreed.json",
+   "expect": "invalid",
+   "class": "status-mismatch",
+   "options": {
+    "fuel": 50
+   }
+  },
+  {
+   "id": "trace-stop-at-start-valid",
+   "kind": "trace",
+   "file": "cases/trace-stop-at-start-valid.json",
+   "expect": "valid",
+   "options": {
+    "stop": true,
+    "require_strategy": true
+   }
+  },
+  {
+   "id": "trace-stop-ignored-without-option",
+   "kind": "trace",
+   "file": "cases/trace-stop-ignored-without-option.json",
+   "expect": "invalid",
+   "class": "status-mismatch",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "a stopped trace is not a finished one unless the checker is told about the boundary"
+  },
+  {
+   "id": "trace-stop-after-one-step-valid",
+   "kind": "trace",
+   "file": "cases/trace-stop-after-one-step-valid.json",
+   "expect": "valid",
+   "options": {
+    "stop": true,
+    "require_strategy": true
+   }
+  },
+  {
+   "id": "trace-stop-innermost-reduces-argument-first",
+   "kind": "trace",
+   "file": "cases/trace-stop-innermost-reduces-argument-first.json",
+   "expect": "valid",
+   "options": {
+    "stop": true,
+    "require_strategy": true
+   },
+   "note": "the residual continuation depends on the strategy: yield a"
+  },
+  {
+   "id": "trace-stop-yield-with-two-arguments-is-not-a-boundary",
+   "kind": "trace",
+   "file": "cases/trace-stop-yield-with-two-arguments-is-not-a-boundary.json",
+   "expect": "valid",
+   "options": {
+    "stop": true,
+    "require_strategy": true
+   }
+  },
+  {
+   "id": "trace-stop-discarded-yield-never-stops",
+   "kind": "trace",
+   "file": "cases/trace-stop-discarded-yield-never-stops.json",
+   "expect": "valid",
+   "options": {
+    "stop": true,
+    "require_strategy": true
+   }
+  },
+  {
+   "id": "trace-step-after-stop",
+   "kind": "trace",
+   "file": "cases/trace-step-after-stop.json",
+   "expect": "invalid",
+   "class": "step-after-stop",
+   "options": {
+    "stop": true,
+    "require_strategy": true
+   }
+  },
+  {
+   "id": "trace-step-past-yield-accepted-without-boundary",
+   "kind": "trace",
+   "file": "cases/trace-step-past-yield-accepted-without-boundary.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   }
+  },
+  {
+   "id": "trace-stop-fuel-spent-exactly-at-the-root-yield",
+   "kind": "trace",
+   "file": "cases/trace-stop-fuel-spent-exactly-at-the-root-yield.json",
+   "expect": "valid",
+   "options": {
+    "stop": true,
+    "require_strategy": true
+   }
+  },
+  {
+   "id": "trace-stop-claims-exhausted",
+   "kind": "trace",
+   "file": "cases/trace-stop-claims-exhausted.json",
+   "expect": "invalid",
+   "class": "status-mismatch",
+   "options": {
+    "stop": true,
+    "require_strategy": true
+   }
+  },
+  {
+   "id": "trace-bad-format-string",
+   "kind": "trace",
+   "file": "cases/trace-bad-format-string.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-empty-format-string",
+   "kind": "trace",
+   "file": "cases/trace-empty-format-string.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-missing-format",
+   "kind": "trace",
+   "file": "cases/trace-missing-format.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-null-format",
+   "kind": "trace",
+   "file": "cases/trace-null-format.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-missing-config",
+   "kind": "trace",
+   "file": "cases/trace-missing-config.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-null-config",
+   "kind": "trace",
+   "file": "cases/trace-null-config.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-missing-start",
+   "kind": "trace",
+   "file": "cases/trace-missing-start.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-null-start",
+   "kind": "trace",
+   "file": "cases/trace-null-start.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-missing-start_digest",
+   "kind": "trace",
+   "file": "cases/trace-missing-start_digest.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-null-start_digest",
+   "kind": "trace",
+   "file": "cases/trace-null-start_digest.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-missing-strategy",
+   "kind": "trace",
+   "file": "cases/trace-missing-strategy.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-null-strategy",
+   "kind": "trace",
+   "file": "cases/trace-null-strategy.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-missing-fuel",
+   "kind": "trace",
+   "file": "cases/trace-missing-fuel.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-null-fuel",
+   "kind": "trace",
+   "file": "cases/trace-null-fuel.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-missing-steps",
+   "kind": "trace",
+   "file": "cases/trace-missing-steps.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-null-steps",
+   "kind": "trace",
+   "file": "cases/trace-null-steps.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-missing-final",
+   "kind": "trace",
+   "file": "cases/trace-missing-final.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-null-final",
+   "kind": "trace",
+   "file": "cases/trace-null-final.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-missing-final_digest",
+   "kind": "trace",
+   "file": "cases/trace-missing-final_digest.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-null-final_digest",
+   "kind": "trace",
+   "file": "cases/trace-null-final_digest.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-missing-exhausted",
+   "kind": "trace",
+   "file": "cases/trace-missing-exhausted.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-null-exhausted",
+   "kind": "trace",
+   "file": "cases/trace-null-exhausted.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-missing-head",
+   "kind": "trace",
+   "file": "cases/trace-missing-head.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-null-head",
+   "kind": "trace",
+   "file": "cases/trace-null-head.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-unknown-member",
+   "kind": "trace",
+   "file": "cases/trace-unknown-member.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-unknown-member-in-step",
+   "kind": "trace",
+   "file": "cases/trace-unknown-member-in-step.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-unknown-member-in-config",
+   "kind": "trace",
+   "file": "cases/trace-unknown-member-in-config.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-missing-member-in-step",
+   "kind": "trace",
+   "file": "cases/trace-missing-member-in-step.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-missing-config-gated",
+   "kind": "trace",
+   "file": "cases/trace-missing-config-gated.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-null-in-step",
+   "kind": "trace",
+   "file": "cases/trace-null-in-step.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-fuel-is-string",
+   "kind": "trace",
+   "file": "cases/trace-fuel-is-string.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-fuel-negative",
+   "kind": "trace",
+   "file": "cases/trace-fuel-negative.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-fuel-2pow64",
+   "kind": "trace",
+   "file": "cases/trace-fuel-2pow64.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-exhausted-is-int",
+   "kind": "trace",
+   "file": "cases/trace-exhausted-is-int.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-steps-is-object",
+   "kind": "trace",
+   "file": "cases/trace-steps-is-object.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-config-is-array",
+   "kind": "trace",
+   "file": "cases/trace-config-is-array.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-optional-perm-empty-object",
+   "kind": "trace",
+   "file": "cases/trace-optional-perm-empty-object.json",
+   "expect": "invalid",
+   "class": "format",
+   "note": "an optional member present with its zero value has a second spelling"
+  },
+  {
+   "id": "trace-capitalised-member",
+   "kind": "trace",
+   "file": "cases/trace-capitalised-member.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-not-an-object",
+   "kind": "trace",
+   "file": "cases/trace-not-an-object.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-fuel-fraction",
+   "kind": "trace",
+   "file": "cases/trace-fuel-fraction.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-fuel-exponent",
+   "kind": "trace",
+   "file": "cases/trace-fuel-exponent.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-duplicate-member",
+   "kind": "trace",
+   "file": "cases/trace-duplicate-member.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-trailing-data",
+   "kind": "trace",
+   "file": "cases/trace-trailing-data.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-nan",
+   "kind": "trace",
+   "file": "cases/trace-nan.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-empty-file",
+   "kind": "trace",
+   "file": "cases/trace-empty-file.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-not-json",
+   "kind": "trace",
+   "file": "cases/trace-not-json.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-truncated-0",
+   "kind": "trace",
+   "file": "cases/trace-truncated-0.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-truncated-1",
+   "kind": "trace",
+   "file": "cases/trace-truncated-1.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-truncated-2",
+   "kind": "trace",
+   "file": "cases/trace-truncated-2.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-truncated-3",
+   "kind": "trace",
+   "file": "cases/trace-truncated-3.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-truncated-4",
+   "kind": "trace",
+   "file": "cases/trace-truncated-4.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-config-unknown-absorb",
+   "kind": "trace",
+   "file": "cases/trace-config-unknown-absorb.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-config-unknown-sc",
+   "kind": "trace",
+   "file": "cases/trace-config-unknown-sc.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-config-bad-permission-name",
+   "kind": "trace",
+   "file": "cases/trace-config-bad-permission-name.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-config-lowercase-permission-name",
+   "kind": "trace",
+   "file": "cases/trace-config-lowercase-permission-name.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-config-repeated-permission",
+   "kind": "trace",
+   "file": "cases/trace-config-repeated-permission.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-config-repeated-in-label",
+   "kind": "trace",
+   "file": "cases/trace-config-repeated-in-label.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-config-label-with-underscore",
+   "kind": "trace",
+   "file": "cases/trace-config-label-with-underscore.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-config-empty-label",
+   "kind": "trace",
+   "file": "cases/trace-config-empty-label.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-config-label-with-quote",
+   "kind": "trace",
+   "file": "cases/trace-config-label-with-quote.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-config-label-non-ascii",
+   "kind": "trace",
+   "file": "cases/trace-config-label-non-ascii.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-config-gated-bad-name",
+   "kind": "trace",
+   "file": "cases/trace-config-gated-bad-name.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-valid-root-order-reordered-and-resealed",
+   "kind": "trace",
+   "file": "cases/trace-valid-root-order-reordered-and-resealed.json",
+   "expect": "valid"
+  },
+  {
+   "id": "trace-root-order-reordered-not-resealed",
+   "kind": "trace",
+   "file": "cases/trace-root-order-reordered-not-resealed.json",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "trace-start-text-changed",
+   "kind": "trace",
+   "file": "cases/trace-start-text-changed.json",
+   "expect": "invalid",
+   "class": "start-mismatch"
+  },
+  {
+   "id": "trace-start-syntax-error",
+   "kind": "trace",
+   "file": "cases/trace-start-syntax-error.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-start-digest-uppercase",
+   "kind": "trace",
+   "file": "cases/trace-start-digest-uppercase.json",
+   "expect": "invalid",
+   "class": "start-mismatch"
+  },
+  {
+   "id": "trace-start-digest-short",
+   "kind": "trace",
+   "file": "cases/trace-start-digest-short.json",
+   "expect": "invalid",
+   "class": "start-mismatch"
+  },
+  {
+   "id": "trace-start-label-without-entry",
+   "kind": "trace",
+   "file": "cases/trace-start-label-without-entry.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-start-juxtaposed-constants",
+   "kind": "trace",
+   "file": "cases/trace-start-juxtaposed-constants.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-start-empty-scope-label",
+   "kind": "trace",
+   "file": "cases/trace-start-empty-scope-label.json",
+   "expect": "invalid",
+   "class": "format"
+  },
+  {
+   "id": "trace-unknown-strategy-not-required",
+   "kind": "trace",
+   "file": "cases/trace-unknown-strategy-not-required.json",
+   "expect": "valid"
+  },
+  {
+   "id": "trace-unknown-strategy-required",
+   "kind": "trace",
+   "file": "cases/trace-unknown-strategy-required.json",
+   "expect": "invalid",
+   "class": "format",
+   "options": {
+    "require_strategy": true
+   }
+  },
+  {
+   "id": "trace-declared-strategy-wrong",
+   "kind": "trace",
+   "file": "cases/trace-declared-strategy-wrong.json",
+   "expect": "invalid",
+   "class": "strategy-deviation",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "the steps are lo steps; whether ro would also take them depends on the term"
+  },
+  {
+   "id": "trace-declared-strategy-wrong-not-required",
+   "kind": "trace",
+   "file": "cases/trace-declared-strategy-wrong-not-required.json",
+   "expect": "valid"
+  },
+  {
+   "id": "trace-nonstrategy-steps-not-required",
+   "kind": "trace",
+   "file": "cases/trace-nonstrategy-steps-not-required.json",
+   "expect": "valid"
+  },
+  {
+   "id": "trace-nonstrategy-steps-required",
+   "kind": "trace",
+   "file": "cases/trace-nonstrategy-steps-required.json",
+   "expect": "invalid",
+   "class": "strategy-deviation",
+   "options": {
+    "require_strategy": true
+   }
+  },
+  {
+   "id": "trace-max-steps-exceeded",
+   "kind": "trace",
+   "file": "cases/trace-max-steps-exceeded.json",
+   "expect": "invalid",
+   "class": "format",
+   "options": {
+    "max_steps": 2
+   }
+  },
+  {
+   "id": "trace-max-steps-equal",
+   "kind": "trace",
+   "file": "cases/trace-max-steps-equal.json",
+   "expect": "valid",
+   "options": {
+    "max_steps": 8
+   }
+  },
+  {
+   "id": "trace-link-altered",
+   "kind": "trace",
+   "file": "cases/trace-link-altered.json",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "trace-link-uppercase",
+   "kind": "trace",
+   "file": "cases/trace-link-uppercase.json",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "trace-after-altered",
+   "kind": "trace",
+   "file": "cases/trace-after-altered.json",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "trace-rule-altered",
+   "kind": "trace",
+   "file": "cases/trace-rule-altered.json",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "trace-path-altered",
+   "kind": "trace",
+   "file": "cases/trace-path-altered.json",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "trace-head-altered",
+   "kind": "trace",
+   "file": "cases/trace-head-altered.json",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "trace-head-empty",
+   "kind": "trace",
+   "file": "cases/trace-head-empty.json",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "trace-steps-swapped",
+   "kind": "trace",
+   "file": "cases/trace-steps-swapped.json",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "trace-step-deleted",
+   "kind": "trace",
+   "file": "cases/trace-step-deleted.json",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "trace-step-duplicated",
+   "kind": "trace",
+   "file": "cases/trace-step-duplicated.json",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "trace-last-step-dropped",
+   "kind": "trace",
+   "file": "cases/trace-last-step-dropped.json",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "trace-steps-emptied",
+   "kind": "trace",
+   "file": "cases/trace-steps-emptied.json",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "trace-resealed-rule-changed",
+   "kind": "trace",
+   "file": "cases/trace-resealed-rule-changed.json",
+   "expect": "invalid",
+   "class": "step-rejected"
+  },
+  {
+   "id": "trace-resealed-rule-unknown",
+   "kind": "trace",
+   "file": "cases/trace-resealed-rule-unknown.json",
+   "expect": "invalid",
+   "class": "step-rejected"
+  },
+  {
+   "id": "trace-resealed-rule-lowercase",
+   "kind": "trace",
+   "file": "cases/trace-resealed-rule-lowercase.json",
+   "expect": "invalid",
+   "class": "step-rejected"
+  },
+  {
+   "id": "trace-resealed-rule-empty",
+   "kind": "trace",
+   "file": "cases/trace-resealed-rule-empty.json",
+   "expect": "invalid",
+   "class": "step-rejected"
+  },
+  {
+   "id": "trace-resealed-path-bad-character",
+   "kind": "trace",
+   "file": "cases/trace-resealed-path-bad-character.json",
+   "expect": "invalid",
+   "class": "step-rejected"
+  },
+  {
+   "id": "trace-resealed-path-too-long",
+   "kind": "trace",
+   "file": "cases/trace-resealed-path-too-long.json",
+   "expect": "invalid",
+   "class": "step-rejected"
+  },
+  {
+   "id": "trace-resealed-path-lowercase",
+   "kind": "trace",
+   "file": "cases/trace-resealed-path-lowercase.json",
+   "expect": "invalid",
+   "class": "step-rejected"
+  },
+  {
+   "id": "trace-resealed-after-wrong",
+   "kind": "trace",
+   "file": "cases/trace-resealed-after-wrong.json",
+   "expect": "invalid",
+   "class": "digest-mismatch"
+  },
+  {
+   "id": "trace-resealed-after-uppercase",
+   "kind": "trace",
+   "file": "cases/trace-resealed-after-uppercase.json",
+   "expect": "invalid",
+   "class": "digest-mismatch"
+  },
+  {
+   "id": "trace-resealed-after-of-step-before",
+   "kind": "trace",
+   "file": "cases/trace-resealed-after-of-step-before.json",
+   "expect": "invalid",
+   "class": "digest-mismatch"
+  },
+  {
+   "id": "trace-resealed-final-text-changed",
+   "kind": "trace",
+   "file": "cases/trace-resealed-final-text-changed.json",
+   "expect": "invalid",
+   "class": "final-mismatch"
+  },
+  {
+   "id": "trace-resealed-final-digest-changed",
+   "kind": "trace",
+   "file": "cases/trace-resealed-final-digest-changed.json",
+   "expect": "invalid",
+   "class": "final-mismatch"
+  },
+  {
+   "id": "trace-resealed-final-noncanonical-text",
+   "kind": "trace",
+   "file": "cases/trace-resealed-final-noncanonical-text.json",
+   "expect": "invalid",
+   "class": "final-mismatch",
+   "note": "final must equal the canonical text, unlike start"
+  },
+  {
+   "id": "trace-resealed-exhausted-flipped",
+   "kind": "trace",
+   "file": "cases/trace-resealed-exhausted-flipped.json",
+   "expect": "invalid",
+   "class": "status-mismatch"
+  },
+  {
+   "id": "trace-resealed-fuel-below-steps",
+   "kind": "trace",
+   "file": "cases/trace-resealed-fuel-below-steps.json",
+   "expect": "invalid",
+   "class": "status-mismatch"
+  },
+  {
+   "id": "trace-exhausted-with-steps-not-equal-fuel",
+   "kind": "trace",
+   "file": "cases/trace-exhausted-with-steps-not-equal-fuel.json",
+   "expect": "invalid",
+   "class": "status-mismatch"
+  },
+  {
+   "id": "trace-exhausted-claimed-normal",
+   "kind": "trace",
+   "file": "cases/trace-exhausted-claimed-normal.json",
+   "expect": "invalid",
+   "class": "status-mismatch"
+  },
+  {
+   "id": "trace-cut-short-claims-normal",
+   "kind": "trace",
+   "file": "cases/trace-cut-short-claims-normal.json",
+   "expect": "invalid",
+   "class": "final-mismatch"
+  },
+  {
+   "id": "trace-valid-gated-k-untouched",
+   "kind": "trace",
+   "file": "cases/trace-valid-gated-k-untouched.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   }
+  },
+  {
+   "id": "trace-gated-constant-not-permitted-in-bracket",
+   "kind": "trace",
+   "file": "cases/trace-gated-constant-not-permitted-in-bracket.json",
+   "expect": "invalid",
+   "class": "step-rejected"
+  },
+  {
+   "id": "trace-ungated-constant-always-permitted",
+   "kind": "trace",
+   "file": "cases/trace-ungated-constant-always-permitted.json",
+   "expect": "valid"
+  },
+  {
+   "id": "trace-gated-constant-permitted-in-bracket",
+   "kind": "trace",
+   "file": "cases/trace-gated-constant-permitted-in-bracket.json",
+   "expect": "valid"
+  },
+  {
+   "id": "trace-abs-contractible-arg-mode-off",
+   "kind": "trace",
+   "file": "cases/trace-abs-contractible-arg-mode-off.json",
+   "expect": "invalid",
+   "class": "step-rejected"
+  },
+  {
+   "id": "trace-abs-contractible-arg-mode-any",
+   "kind": "trace",
+   "file": "cases/trace-abs-contractible-arg-mode-any.json",
+   "expect": "valid"
+  },
+  {
+   "id": "trace-abs-contractible-arg-mode-nf",
+   "kind": "trace",
+   "file": "cases/trace-abs-contractible-arg-mode-nf.json",
+   "expect": "invalid",
+   "class": "step-rejected"
+  },
+  {
+   "id": "trace-abs-contractible-arg-mode-s",
+   "kind": "trace",
+   "file": "cases/trace-abs-contractible-arg-mode-s.json",
+   "expect": "invalid",
+   "class": "step-rejected"
+  },
+  {
+   "id": "trace-abs-contractible-arg-mode-u",
+   "kind": "trace",
+   "file": "cases/trace-abs-contractible-arg-mode-u.json",
+   "expect": "invalid",
+   "class": "step-rejected"
+  },
+  {
+   "id": "trace-abs-settled-arg-mode-off",
+   "kind": "trace",
+   "file": "cases/trace-abs-settled-arg-mode-off.json",
+   "expect": "invalid",
+   "class": "step-rejected"
+  },
+  {
+   "id": "trace-abs-settled-arg-mode-any",
+   "kind": "trace",
+   "file": "cases/trace-abs-settled-arg-mode-any.json",
+   "expect": "valid"
+  },
+  {
+   "id": "trace-abs-settled-arg-mode-nf",
+   "kind": "trace",
+   "file": "cases/trace-abs-settled-arg-mode-nf.json",
+   "expect": "valid"
+  },
+  {
+   "id": "trace-abs-settled-arg-mode-s",
+   "kind": "trace",
+   "file": "cases/trace-abs-settled-arg-mode-s.json",
+   "expect": "valid"
+  },
+  {
+   "id": "trace-abs-settled-arg-mode-u",
+   "kind": "trace",
+   "file": "cases/trace-abs-settled-arg-mode-u.json",
+   "expect": "valid"
+  },
+  {
+   "id": "trace-abs-bracket-headed-arg-mode-nf",
+   "kind": "trace",
+   "file": "cases/trace-abs-bracket-headed-arg-mode-nf.json",
+   "expect": "valid",
+   "note": "u accepts it because the argument is insensitive only if no gated constant occurs: none does here"
+  },
+  {
+   "id": "trace-abs-bracket-headed-arg-mode-s",
+   "kind": "trace",
+   "file": "cases/trace-abs-bracket-headed-arg-mode-s.json",
+   "expect": "invalid",
+   "class": "step-rejected",
+   "note": "u accepts it because the argument is insensitive only if no gated constant occurs: none does here"
+  },
+  {
+   "id": "trace-abs-bracket-headed-arg-mode-u",
+   "kind": "trace",
+   "file": "cases/trace-abs-bracket-headed-arg-mode-u.json",
+   "expect": "valid",
+   "note": "u accepts it because the argument is insensitive only if no gated constant occurs: none does here"
+  },
+  {
+   "id": "trace-abs-blocked-gated-in-bracket-arg-mode-nf",
+   "kind": "trace",
+   "file": "cases/trace-abs-blocked-gated-in-bracket-arg-mode-nf.json",
+   "expect": "valid"
+  },
+  {
+   "id": "trace-abs-blocked-gated-in-bracket-arg-mode-s",
+   "kind": "trace",
+   "file": "cases/trace-abs-blocked-gated-in-bracket-arg-mode-s.json",
+   "expect": "invalid",
+   "class": "step-rejected"
+  },
+  {
+   "id": "trace-abs-blocked-gated-in-bracket-arg-mode-u",
+   "kind": "trace",
+   "file": "cases/trace-abs-blocked-gated-in-bracket-arg-mode-u.json",
+   "expect": "invalid",
+   "class": "step-rejected"
+  },
+  {
+   "id": "trace-sc-contractible-arg-mode-any",
+   "kind": "trace",
+   "file": "cases/trace-sc-contractible-arg-mode-any.json",
+   "expect": "valid"
+  },
+  {
+   "id": "trace-sc-contractible-arg-mode-safe",
+   "kind": "trace",
+   "file": "cases/trace-sc-contractible-arg-mode-safe.json",
+   "expect": "invalid",
+   "class": "step-rejected"
+  },
+  {
+   "id": "trace-sc-contractible-arg-mode-settled",
+   "kind": "trace",
+   "file": "cases/trace-sc-contractible-arg-mode-settled.json",
+   "expect": "invalid",
+   "class": "step-rejected"
+  },
+  {
+   "id": "trace-sc-settled-arg-mode-any",
+   "kind": "trace",
+   "file": "cases/trace-sc-settled-arg-mode-any.json",
+   "expect": "valid"
+  },
+  {
+   "id": "trace-sc-settled-arg-mode-safe",
+   "kind": "trace",
+   "file": "cases/trace-sc-settled-arg-mode-safe.json",
+   "expect": "valid"
+  },
+  {
+   "id": "trace-sc-settled-arg-mode-settled",
+   "kind": "trace",
+   "file": "cases/trace-sc-settled-arg-mode-settled.json",
+   "expect": "valid"
+  },
+  {
+   "id": "trace-sc-bracket-headed-arg-mode-any",
+   "kind": "trace",
+   "file": "cases/trace-sc-bracket-headed-arg-mode-any.json",
+   "expect": "valid"
+  },
+  {
+   "id": "trace-sc-bracket-headed-arg-mode-safe",
+   "kind": "trace",
+   "file": "cases/trace-sc-bracket-headed-arg-mode-safe.json",
+   "expect": "valid"
+  },
+  {
+   "id": "trace-sc-bracket-headed-arg-mode-settled",
+   "kind": "trace",
+   "file": "cases/trace-sc-bracket-headed-arg-mode-settled.json",
+   "expect": "invalid",
+   "class": "step-rejected"
+  },
+  {
+   "id": "trace-sc-blocked-gated-arg-mode-any",
+   "kind": "trace",
+   "file": "cases/trace-sc-blocked-gated-arg-mode-any.json",
+   "expect": "valid"
+  },
+  {
+   "id": "trace-sc-blocked-gated-arg-mode-safe",
+   "kind": "trace",
+   "file": "cases/trace-sc-blocked-gated-arg-mode-safe.json",
+   "expect": "invalid",
+   "class": "step-rejected"
+  },
+  {
+   "id": "trace-sc-blocked-gated-arg-mode-settled",
+   "kind": "trace",
+   "file": "cases/trace-sc-blocked-gated-arg-mode-settled.json",
+   "expect": "invalid",
+   "class": "step-rejected"
+  },
+  {
+   "id": "trace-random-00",
+   "kind": "trace",
+   "file": "cases/trace-random-00.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "lo nf/settled"
+  },
+  {
+   "id": "trace-random-01",
+   "kind": "trace",
+   "file": "cases/trace-random-01.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "li any/safe"
+  },
+  {
+   "id": "trace-random-02",
+   "kind": "trace",
+   "file": "cases/trace-random-02.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "ro u/any"
+  },
+  {
+   "id": "trace-random-03",
+   "kind": "trace",
+   "file": "cases/trace-random-03.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "li nf/settled"
+  },
+  {
+   "id": "trace-random-04",
+   "kind": "trace",
+   "file": "cases/trace-random-04.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "li off/settled"
+  },
+  {
+   "id": "trace-random-05",
+   "kind": "trace",
+   "file": "cases/trace-random-05.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "ri nf/any"
+  },
+  {
+   "id": "trace-random-06",
+   "kind": "trace",
+   "file": "cases/trace-random-06.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "li nf/settled"
+  },
+  {
+   "id": "trace-random-07",
+   "kind": "trace",
+   "file": "cases/trace-random-07.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "ro off/safe"
+  },
+  {
+   "id": "trace-random-08",
+   "kind": "trace",
+   "file": "cases/trace-random-08.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "ro off/settled"
+  },
+  {
+   "id": "trace-random-09",
+   "kind": "trace",
+   "file": "cases/trace-random-09.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "lo any/settled"
+  },
+  {
+   "id": "trace-random-10",
+   "kind": "trace",
+   "file": "cases/trace-random-10.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "li nf/any"
+  },
+  {
+   "id": "trace-random-11",
+   "kind": "trace",
+   "file": "cases/trace-random-11.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "lo nf/safe"
+  },
+  {
+   "id": "trace-random-12",
+   "kind": "trace",
+   "file": "cases/trace-random-12.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "ro off/any"
+  },
+  {
+   "id": "trace-random-13",
+   "kind": "trace",
+   "file": "cases/trace-random-13.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "li any/settled"
+  },
+  {
+   "id": "trace-random-14",
+   "kind": "trace",
+   "file": "cases/trace-random-14.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "li nf/safe"
+  },
+  {
+   "id": "trace-random-15",
+   "kind": "trace",
+   "file": "cases/trace-random-15.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "ri any/safe"
+  },
+  {
+   "id": "trace-random-16",
+   "kind": "trace",
+   "file": "cases/trace-random-16.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "li s/any"
+  },
+  {
+   "id": "trace-random-17",
+   "kind": "trace",
+   "file": "cases/trace-random-17.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "li u/settled"
+  },
+  {
+   "id": "trace-random-18",
+   "kind": "trace",
+   "file": "cases/trace-random-18.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "ro off/any"
+  },
+  {
+   "id": "trace-random-19",
+   "kind": "trace",
+   "file": "cases/trace-random-19.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "ri s/any"
+  },
+  {
+   "id": "trace-random-20",
+   "kind": "trace",
+   "file": "cases/trace-random-20.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "lo s/any"
+  },
+  {
+   "id": "trace-random-21",
+   "kind": "trace",
+   "file": "cases/trace-random-21.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "ri any/settled"
+  },
+  {
+   "id": "trace-random-22",
+   "kind": "trace",
+   "file": "cases/trace-random-22.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "lo s/settled"
+  },
+  {
+   "id": "trace-random-23",
+   "kind": "trace",
+   "file": "cases/trace-random-23.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "lo nf/safe"
+  },
+  {
+   "id": "trace-random-24",
+   "kind": "trace",
+   "file": "cases/trace-random-24.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "lo nf/any"
+  },
+  {
+   "id": "trace-random-25",
+   "kind": "trace",
+   "file": "cases/trace-random-25.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "lo any/settled"
+  },
+  {
+   "id": "trace-random-26",
+   "kind": "trace",
+   "file": "cases/trace-random-26.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "ro off/any"
+  },
+  {
+   "id": "trace-random-27",
+   "kind": "trace",
+   "file": "cases/trace-random-27.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "ri s/any"
+  },
+  {
+   "id": "trace-random-28",
+   "kind": "trace",
+   "file": "cases/trace-random-28.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "lo s/safe"
+  },
+  {
+   "id": "trace-random-29",
+   "kind": "trace",
+   "file": "cases/trace-random-29.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "lo nf/safe"
+  },
+  {
+   "id": "trace-random-30",
+   "kind": "trace",
+   "file": "cases/trace-random-30.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "lo u/any"
+  },
+  {
+   "id": "trace-random-31",
+   "kind": "trace",
+   "file": "cases/trace-random-31.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "li nf/settled"
+  },
+  {
+   "id": "trace-random-32",
+   "kind": "trace",
+   "file": "cases/trace-random-32.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "ro u/any"
+  },
+  {
+   "id": "trace-random-33",
+   "kind": "trace",
+   "file": "cases/trace-random-33.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "lo nf/safe"
+  },
+  {
+   "id": "trace-random-34",
+   "kind": "trace",
+   "file": "cases/trace-random-34.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "ri nf/any"
+  },
+  {
+   "id": "trace-random-35",
+   "kind": "trace",
+   "file": "cases/trace-random-35.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "ro any/settled"
+  },
+  {
+   "id": "trace-random-36",
+   "kind": "trace",
+   "file": "cases/trace-random-36.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "ri s/any"
+  },
+  {
+   "id": "trace-random-37",
+   "kind": "trace",
+   "file": "cases/trace-random-37.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "ri u/settled"
+  },
+  {
+   "id": "trace-random-38",
+   "kind": "trace",
+   "file": "cases/trace-random-38.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "ro s/safe"
+  },
+  {
+   "id": "trace-random-39",
+   "kind": "trace",
+   "file": "cases/trace-random-39.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "li any/safe"
+  },
+  {
+   "id": "trace-random-40",
+   "kind": "trace",
+   "file": "cases/trace-random-40.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "ro u/settled"
+  },
+  {
+   "id": "trace-random-41",
+   "kind": "trace",
+   "file": "cases/trace-random-41.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "ri s/any"
+  },
+  {
+   "id": "trace-random-42",
+   "kind": "trace",
+   "file": "cases/trace-random-42.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "lo s/settled"
+  },
+  {
+   "id": "trace-random-43",
+   "kind": "trace",
+   "file": "cases/trace-random-43.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "ri any/settled"
+  },
+  {
+   "id": "trace-random-44",
+   "kind": "trace",
+   "file": "cases/trace-random-44.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "li s/any"
+  },
+  {
+   "id": "trace-random-45",
+   "kind": "trace",
+   "file": "cases/trace-random-45.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "ri any/settled"
+  },
+  {
+   "id": "trace-random-46",
+   "kind": "trace",
+   "file": "cases/trace-random-46.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "lo off/safe"
+  },
+  {
+   "id": "trace-random-47",
+   "kind": "trace",
+   "file": "cases/trace-random-47.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "li s/any"
+  },
+  {
+   "id": "trace-random-48",
+   "kind": "trace",
+   "file": "cases/trace-random-48.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "ri u/any"
+  },
+  {
+   "id": "trace-random-49",
+   "kind": "trace",
+   "file": "cases/trace-random-49.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "li nf/settled"
+  },
+  {
+   "id": "trace-random-50",
+   "kind": "trace",
+   "file": "cases/trace-random-50.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "ri off/any"
+  },
+  {
+   "id": "trace-random-51",
+   "kind": "trace",
+   "file": "cases/trace-random-51.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "lo nf/settled"
+  },
+  {
+   "id": "trace-random-52",
+   "kind": "trace",
+   "file": "cases/trace-random-52.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "li any/settled"
+  },
+  {
+   "id": "trace-random-53",
+   "kind": "trace",
+   "file": "cases/trace-random-53.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "li any/settled"
+  },
+  {
+   "id": "trace-random-54",
+   "kind": "trace",
+   "file": "cases/trace-random-54.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "ro u/settled"
+  },
+  {
+   "id": "trace-random-55",
+   "kind": "trace",
+   "file": "cases/trace-random-55.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "ro u/any"
+  },
+  {
+   "id": "trace-random-56",
+   "kind": "trace",
+   "file": "cases/trace-random-56.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "li u/safe"
+  },
+  {
+   "id": "trace-random-57",
+   "kind": "trace",
+   "file": "cases/trace-random-57.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "ro u/any"
+  },
+  {
+   "id": "trace-random-58",
+   "kind": "trace",
+   "file": "cases/trace-random-58.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "li any/any"
+  },
+  {
+   "id": "trace-random-59",
+   "kind": "trace",
+   "file": "cases/trace-random-59.json",
+   "expect": "valid",
+   "options": {
+    "require_strategy": true
+   },
+   "note": "lo s/any"
+  },
+  {
+   "id": "sched-valid-with-skips-and-rearms",
+   "kind": "sched",
+   "file": "cases/sched-valid-with-skips-and-rearms.json",
+   "expect": "valid"
+  },
+  {
+   "id": "sched-valid-seed-go_arena_sched",
+   "kind": "sched",
+   "file": "cases/sched-valid-seed-go_arena_sched.json",
+   "expect": "valid"
+  },
+  {
+   "id": "sched-valid-seed-go_sim_sched",
+   "kind": "sched",
+   "file": "cases/sched-valid-seed-go_sim_sched.json",
+   "expect": "valid"
+  },
+  {
+   "id": "sched-valid-no-entities",
+   "kind": "sched",
+   "file": "cases/sched-valid-no-entities.json",
+   "expect": "valid"
+  },
+  {
+   "id": "sched-valid-one-entity-finished-immediately",
+   "kind": "sched",
+   "file": "cases/sched-valid-one-entity-finished-immediately.json",
+   "expect": "valid"
+  },
+  {
+   "id": "sched-valid-zero-ticks",
+   "kind": "sched",
+   "file": "cases/sched-valid-zero-ticks.json",
+   "expect": "valid"
+  },
+  {
+   "id": "sched-bad-format",
+   "kind": "sched",
+   "file": "cases/sched-bad-format.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-missing-format",
+   "kind": "sched",
+   "file": "cases/sched-missing-format.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-null-format",
+   "kind": "sched",
+   "file": "cases/sched-null-format.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-missing-config",
+   "kind": "sched",
+   "file": "cases/sched-missing-config.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-null-config",
+   "kind": "sched",
+   "file": "cases/sched-null-config.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-missing-policy",
+   "kind": "sched",
+   "file": "cases/sched-missing-policy.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-null-policy",
+   "kind": "sched",
+   "file": "cases/sched-null-policy.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-missing-initial",
+   "kind": "sched",
+   "file": "cases/sched-missing-initial.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-null-initial",
+   "kind": "sched",
+   "file": "cases/sched-null-initial.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-missing-events",
+   "kind": "sched",
+   "file": "cases/sched-missing-events.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-null-events",
+   "kind": "sched",
+   "file": "cases/sched-null-events.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-missing-final",
+   "kind": "sched",
+   "file": "cases/sched-missing-final.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-null-final",
+   "kind": "sched",
+   "file": "cases/sched-null-final.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-unknown-member",
+   "kind": "sched",
+   "file": "cases/sched-unknown-member.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-unknown-member-in-policy",
+   "kind": "sched",
+   "file": "cases/sched-unknown-member-in-policy.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-unknown-member-in-event",
+   "kind": "sched",
+   "file": "cases/sched-unknown-member-in-event.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-unknown-member-in-initial",
+   "kind": "sched",
+   "file": "cases/sched-unknown-member-in-initial.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-initial-normal-false-present",
+   "kind": "sched",
+   "file": "cases/sched-initial-normal-false-present.json",
+   "expect": "invalid",
+   "class": "log-rejected",
+   "note": "optional member present with its zero value"
+  },
+  {
+   "id": "sched-initial-normal-true",
+   "kind": "sched",
+   "file": "cases/sched-initial-normal-true.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-tick-is-string",
+   "kind": "sched",
+   "file": "cases/sched-tick-is-string.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-budget-zero-in-policy",
+   "kind": "sched",
+   "file": "cases/sched-budget-zero-in-policy.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-policy-strategy-unknown",
+   "kind": "sched",
+   "file": "cases/sched-policy-strategy-unknown.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-config-invalid-absorb",
+   "kind": "sched",
+   "file": "cases/sched-config-invalid-absorb.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-trailing-data",
+   "kind": "sched",
+   "file": "cases/sched-trailing-data.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-truncated-0",
+   "kind": "sched",
+   "file": "cases/sched-truncated-0.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-truncated-1",
+   "kind": "sched",
+   "file": "cases/sched-truncated-1.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-truncated-2",
+   "kind": "sched",
+   "file": "cases/sched-truncated-2.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-empty-file",
+   "kind": "sched",
+   "file": "cases/sched-empty-file.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-valid-suspensions",
+   "kind": "sched",
+   "file": "cases/sched-valid-suspensions.json",
+   "expect": "valid"
+  },
+  {
+   "id": "sched-valid-seed-go-sim-yield",
+   "kind": "sched",
+   "file": "cases/sched-valid-seed-go-sim-yield.json",
+   "expect": "valid"
+  },
+  {
+   "id": "sched-valid-ends-suspended",
+   "kind": "sched",
+   "file": "cases/sched-valid-ends-suspended.json",
+   "expect": "valid"
+  },
+  {
+   "id": "sched-valid-rearm-of-suspended-entity-is-not-a-resume",
+   "kind": "sched",
+   "file": "cases/sched-valid-rearm-of-suspended-entity-is-not-a-resume.json",
+   "expect": "valid"
+  },
+  {
+   "id": "sched-suspended-entity-never-resumed",
+   "kind": "sched",
+   "file": "cases/sched-suspended-entity-never-resumed.json",
+   "expect": "invalid",
+   "class": "log-rejected",
+   "note": "the slice repeats the suspension instead of resuming; only the resumed flag rule rejects it"
+  },
+  {
+   "id": "sched-resumed-flag-dropped",
+   "kind": "sched",
+   "file": "cases/sched-resumed-flag-dropped.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-resumed-on-running-entity",
+   "kind": "sched",
+   "file": "cases/sched-resumed-on-running-entity.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-resumed-together-with-rearm",
+   "kind": "sched",
+   "file": "cases/sched-resumed-together-with-rearm.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-resume-slice-starts-at-the-yield",
+   "kind": "sched",
+   "file": "cases/sched-resume-slice-starts-at-the-yield.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-suspended-entity-skipped",
+   "kind": "sched",
+   "file": "cases/sched-suspended-entity-skipped.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-final-suspended-flag-dropped",
+   "kind": "sched",
+   "file": "cases/sched-final-suspended-flag-dropped.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-final-suspended-entity-marked-normal",
+   "kind": "sched",
+   "file": "cases/sched-final-suspended-entity-marked-normal.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-final-suspended-and-normal",
+   "kind": "sched",
+   "file": "cases/sched-final-suspended-and-normal.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-final-suspended-on-finished-entity",
+   "kind": "sched",
+   "file": "cases/sched-final-suspended-on-finished-entity.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-initial-suspended-flag",
+   "kind": "sched",
+   "file": "cases/sched-initial-suspended-flag.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-suspended-present-with-false",
+   "kind": "sched",
+   "file": "cases/sched-suspended-present-with-false.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-slice-carries-on-past-the-yield",
+   "kind": "sched",
+   "file": "cases/sched-slice-carries-on-past-the-yield.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-slice-stops-before-the-boundary-and-before-fuel",
+   "kind": "sched",
+   "file": "cases/sched-slice-stops-before-the-boundary-and-before-fuel.json",
+   "expect": "invalid",
+   "class": "log-rejected",
+   "note": "neither exhausted nor finished: the claimed status is wrong"
+  },
+  {
+   "id": "sched-valid-two-entities-no-events",
+   "kind": "sched",
+   "file": "cases/sched-valid-two-entities-no-events.json",
+   "expect": "valid"
+  },
+  {
+   "id": "sched-isolated-config-invalid",
+   "kind": "sched",
+   "file": "cases/sched-isolated-config-invalid.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-isolated-policy-zero-budget",
+   "kind": "sched",
+   "file": "cases/sched-isolated-policy-zero-budget.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-isolated-policy-unknown-strategy",
+   "kind": "sched",
+   "file": "cases/sched-isolated-policy-unknown-strategy.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-isolated-initial-empty-id",
+   "kind": "sched",
+   "file": "cases/sched-isolated-initial-empty-id.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-isolated-initial-duplicate-id",
+   "kind": "sched",
+   "file": "cases/sched-isolated-initial-duplicate-id.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-isolated-initial-unsorted",
+   "kind": "sched",
+   "file": "cases/sched-isolated-initial-unsorted.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-isolated-initial-unknown-label",
+   "kind": "sched",
+   "file": "cases/sched-isolated-initial-unknown-label.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-isolated-initial-digest-wrong",
+   "kind": "sched",
+   "file": "cases/sched-isolated-initial-digest-wrong.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-isolated-initial-term-syntax-error",
+   "kind": "sched",
+   "file": "cases/sched-isolated-initial-term-syntax-error.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-isolated-initial-normal",
+   "kind": "sched",
+   "file": "cases/sched-isolated-initial-normal.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-rearm-unknown-label",
+   "kind": "sched",
+   "file": "cases/sched-rearm-unknown-label.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-rearm-digest-names-another-term",
+   "kind": "sched",
+   "file": "cases/sched-rearm-digest-names-another-term.json",
+   "expect": "invalid",
+   "class": "log-rejected",
+   "note": "the slice starts at I z, the digest says I z, the text says I y"
+  },
+  {
+   "id": "sched-rearm-text-unparsable-digest-real",
+   "kind": "sched",
+   "file": "cases/sched-rearm-text-unparsable-digest-real.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-valid-rearm-isolated",
+   "kind": "sched",
+   "file": "cases/sched-valid-rearm-isolated.json",
+   "expect": "valid"
+  },
+  {
+   "id": "sched-final-term-unparsable-digest-real",
+   "kind": "sched",
+   "file": "cases/sched-final-term-unparsable-digest-real.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-slice-wrong-start-same-end",
+   "kind": "sched",
+   "file": "cases/sched-slice-wrong-start-same-end.json",
+   "expect": "invalid",
+   "class": "log-rejected",
+   "note": "only the start-digest check can reject this; the final states agree"
+  },
+  {
+   "id": "sched-initial-duplicate-id",
+   "kind": "sched",
+   "file": "cases/sched-initial-duplicate-id.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-initial-empty-id",
+   "kind": "sched",
+   "file": "cases/sched-initial-empty-id.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-initial-unsorted",
+   "kind": "sched",
+   "file": "cases/sched-initial-unsorted.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-initial-digest-wrong",
+   "kind": "sched",
+   "file": "cases/sched-initial-digest-wrong.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-initial-term-changed",
+   "kind": "sched",
+   "file": "cases/sched-initial-term-changed.json",
+   "expect": "invalid",
+   "class": "log-rejected",
+   "note": "the digest no longer matches the term text"
+  },
+  {
+   "id": "sched-initial-term-syntax-error",
+   "kind": "sched",
+   "file": "cases/sched-initial-term-syntax-error.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-initial-unknown-label",
+   "kind": "sched",
+   "file": "cases/sched-initial-unknown-label.json",
+   "expect": "invalid",
+   "class": "log-rejected",
+   "note": "term and digest agree; the label has no entry in the configuration"
+  },
+  {
+   "id": "sched-events-not-whole-ticks",
+   "kind": "sched",
+   "file": "cases/sched-events-not-whole-ticks.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-events-reordered",
+   "kind": "sched",
+   "file": "cases/sched-events-reordered.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-event-wrong-tick",
+   "kind": "sched",
+   "file": "cases/sched-event-wrong-tick.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-event-wrong-entity",
+   "kind": "sched",
+   "file": "cases/sched-event-wrong-entity.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-event-skip-instead-of-run",
+   "kind": "sched",
+   "file": "cases/sched-event-skip-instead-of-run.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-run-without-slice",
+   "kind": "sched",
+   "file": "cases/sched-run-without-slice.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-run-without-budget",
+   "kind": "sched",
+   "file": "cases/sched-run-without-budget.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-run-with-wrong-budget",
+   "kind": "sched",
+   "file": "cases/sched-run-with-wrong-budget.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-decision-unknown",
+   "kind": "sched",
+   "file": "cases/sched-decision-unknown.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-skip-with-budget",
+   "kind": "sched",
+   "file": "cases/sched-skip-with-budget.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-skip-becomes-run",
+   "kind": "sched",
+   "file": "cases/sched-skip-becomes-run.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-slice-from-another-entity",
+   "kind": "sched",
+   "file": "cases/sched-slice-from-another-entity.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-slice-strategy-differs",
+   "kind": "sched",
+   "file": "cases/sched-slice-strategy-differs.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-slice-configuration-differs",
+   "kind": "sched",
+   "file": "cases/sched-slice-configuration-differs.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-slice-config-array-reordered",
+   "kind": "sched",
+   "file": "cases/sched-slice-config-array-reordered.json",
+   "expect": "invalid",
+   "class": "log-rejected",
+   "note": "canonical texts differ, so the configurations differ"
+  },
+  {
+   "id": "sched-slice-step-tampered",
+   "kind": "sched",
+   "file": "cases/sched-slice-step-tampered.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-slice-step-resealed-wrong-rule",
+   "kind": "sched",
+   "file": "cases/sched-slice-step-resealed-wrong-rule.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-slice-fuel-differs",
+   "kind": "sched",
+   "file": "cases/sched-slice-fuel-differs.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-slice-format-wrong",
+   "kind": "sched",
+   "file": "cases/sched-slice-format-wrong.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-slice-exhausted-flag-flipped",
+   "kind": "sched",
+   "file": "cases/sched-slice-exhausted-flag-flipped.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-rearm-preempted-flag-dropped",
+   "kind": "sched",
+   "file": "cases/sched-rearm-preempted-flag-dropped.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-rearm-digest-wrong",
+   "kind": "sched",
+   "file": "cases/sched-rearm-digest-wrong.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-rearm-term-syntax-error",
+   "kind": "sched",
+   "file": "cases/sched-rearm-term-syntax-error.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-rearm-slice-not-from-replacement",
+   "kind": "sched",
+   "file": "cases/sched-rearm-slice-not-from-replacement.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-final-missing-entity",
+   "kind": "sched",
+   "file": "cases/sched-final-missing-entity.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-final-extra-entity",
+   "kind": "sched",
+   "file": "cases/sched-final-extra-entity.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-final-digest-wrong",
+   "kind": "sched",
+   "file": "cases/sched-final-digest-wrong.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-final-term-changed",
+   "kind": "sched",
+   "file": "cases/sched-final-term-changed.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-final-normal-flag-flipped",
+   "kind": "sched",
+   "file": "cases/sched-final-normal-flag-flipped.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-final-id-wrong",
+   "kind": "sched",
+   "file": "cases/sched-final-id-wrong.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-final-swapped",
+   "kind": "sched",
+   "file": "cases/sched-final-swapped.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "sched-no-entities-but-final",
+   "kind": "sched",
+   "file": "cases/sched-no-entities-but-final.json",
+   "expect": "invalid",
+   "class": "log-rejected",
+   "note": "the Go implementation returned early here without comparing final"
+  },
+  {
+   "id": "sched-no-entities-but-events",
+   "kind": "sched",
+   "file": "cases/sched-no-entities-but-events.json",
+   "expect": "invalid",
+   "class": "log-rejected"
+  },
+  {
+   "id": "effects-valid-all-dispositions",
+   "kind": "effects",
+   "file": "cases/effects-valid-all-dispositions.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   },
+   "note": "includes quotes, backslash, newline, tab, <, &, U+2028 and non-ASCII in strings"
+  },
+  {
+   "id": "effects-valid-no-schema",
+   "kind": "effects",
+   "file": "cases/effects-valid-no-schema.jsonl",
+   "expect": "valid"
+  },
+  {
+   "id": "effects-valid-seed-arena",
+   "kind": "effects",
+   "file": "cases/effects-valid-seed-arena.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-valid-empty-log",
+   "kind": "effects",
+   "file": "cases/effects-valid-empty-log.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-valid-empty-log-genesis-anchor",
+   "kind": "effects",
+   "file": "cases/effects-valid-empty-log-genesis-anchor.jsonl",
+   "expect": "valid",
+   "options": {
+    "anchor": "cf3ce2db7ead61aaf4cc515e314bf5175125f93aeed75f57144976840a2b60e7"
+   }
+  },
+  {
+   "id": "effects-empty-log-wrong-anchor",
+   "kind": "effects",
+   "file": "cases/effects-empty-log-wrong-anchor.jsonl",
+   "expect": "invalid",
+   "class": "anchor",
+   "options": {
+    "anchor": "0000000000000000000000000000000000000000000000000000000000000000"
+   }
+  },
+  {
+   "id": "effects-valid-anchor-matches",
+   "kind": "effects",
+   "file": "cases/effects-valid-anchor-matches.jsonl",
+   "expect": "valid",
+   "options": {
+    "anchor": "0a5f47e38d235fff286b97a3652c2824b40a7b2971d411f961ce00c59733550e",
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-anchor-wrong",
+   "kind": "effects",
+   "file": "cases/effects-anchor-wrong.jsonl",
+   "expect": "invalid",
+   "class": "anchor",
+   "options": {
+    "anchor": "0000000000000000000000000000000000000000000000000000000000000000"
+   }
+  },
+  {
+   "id": "effects-anchor-uppercase",
+   "kind": "effects",
+   "file": "cases/effects-anchor-uppercase.jsonl",
+   "expect": "invalid",
+   "class": "anchor",
+   "options": {
+    "anchor": "0A5F47E38D235FFF286B97A3652C2824B40A7B2971D411F961CE00C59733550E"
+   }
+  },
+  {
+   "id": "effects-truncated-tail-without-anchor",
+   "kind": "effects",
+   "file": "cases/effects-truncated-tail-without-anchor.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   },
+   "note": "a bare chain cannot detect a removed tail"
+  },
+  {
+   "id": "effects-truncated-tail-with-anchor",
+   "kind": "effects",
+   "file": "cases/effects-truncated-tail-with-anchor.jsonl",
+   "expect": "invalid",
+   "class": "anchor",
+   "options": {
+    "anchor": "0a5f47e38d235fff286b97a3652c2824b40a7b2971d411f961ce00c59733550e"
+   }
+  },
+  {
+   "id": "effects-truncated-head-entry-removed",
+   "kind": "effects",
+   "file": "cases/effects-truncated-head-entry-removed.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-middle-entry-removed",
+   "kind": "effects",
+   "file": "cases/effects-middle-entry-removed.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-entries-swapped",
+   "kind": "effects",
+   "file": "cases/effects-entries-swapped.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-entry-duplicated",
+   "kind": "effects",
+   "file": "cases/effects-entry-duplicated.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-valid-blank-lines",
+   "kind": "effects",
+   "file": "cases/effects-valid-blank-lines.jsonl",
+   "expect": "valid"
+  },
+  {
+   "id": "effects-valid-crlf",
+   "kind": "effects",
+   "file": "cases/effects-valid-crlf.jsonl",
+   "expect": "valid"
+  },
+  {
+   "id": "effects-valid-no-final-newline",
+   "kind": "effects",
+   "file": "cases/effects-valid-no-final-newline.jsonl",
+   "expect": "valid"
+  },
+  {
+   "id": "effects-valid-reordered-members",
+   "kind": "effects",
+   "file": "cases/effects-valid-reordered-members.jsonl",
+   "expect": "valid",
+   "note": "member order in the JSON text does not matter"
+  },
+  {
+   "id": "effects-valid-spaced-json",
+   "kind": "effects",
+   "file": "cases/effects-valid-spaced-json.jsonl",
+   "expect": "valid"
+  },
+  {
+   "id": "effects-last-line-cut",
+   "kind": "effects",
+   "file": "cases/effects-last-line-cut.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-not-json",
+   "kind": "effects",
+   "file": "cases/effects-not-json.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-tampered-tick",
+   "kind": "effects",
+   "file": "cases/effects-tampered-tick.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-tampered-subject",
+   "kind": "effects",
+   "file": "cases/effects-tampered-subject.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-tampered-ref",
+   "kind": "effects",
+   "file": "cases/effects-tampered-ref.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-tampered-index",
+   "kind": "effects",
+   "file": "cases/effects-tampered-index.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-tampered-request",
+   "kind": "effects",
+   "file": "cases/effects-tampered-request.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-tampered-disposition",
+   "kind": "effects",
+   "file": "cases/effects-tampered-disposition.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-tampered-reason",
+   "kind": "effects",
+   "file": "cases/effects-tampered-reason.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-tampered-seq",
+   "kind": "effects",
+   "file": "cases/effects-tampered-seq.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-tampered-prev",
+   "kind": "effects",
+   "file": "cases/effects-tampered-prev.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-tampered-hash",
+   "kind": "effects",
+   "file": "cases/effects-tampered-hash.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-hash-uppercase",
+   "kind": "effects",
+   "file": "cases/effects-hash-uppercase.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-last-entry-tampered",
+   "kind": "effects",
+   "file": "cases/effects-last-entry-tampered.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-optional-ref-removed",
+   "kind": "effects",
+   "file": "cases/effects-optional-ref-removed.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-optional-reason-added",
+   "kind": "effects",
+   "file": "cases/effects-optional-reason-added.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-missing-seq",
+   "kind": "effects",
+   "file": "cases/effects-missing-seq.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-null-seq",
+   "kind": "effects",
+   "file": "cases/effects-null-seq.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-missing-tick",
+   "kind": "effects",
+   "file": "cases/effects-missing-tick.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-null-tick",
+   "kind": "effects",
+   "file": "cases/effects-null-tick.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-missing-subject",
+   "kind": "effects",
+   "file": "cases/effects-missing-subject.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-null-subject",
+   "kind": "effects",
+   "file": "cases/effects-null-subject.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-missing-index",
+   "kind": "effects",
+   "file": "cases/effects-missing-index.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-null-index",
+   "kind": "effects",
+   "file": "cases/effects-null-index.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-missing-disposition",
+   "kind": "effects",
+   "file": "cases/effects-missing-disposition.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-null-disposition",
+   "kind": "effects",
+   "file": "cases/effects-null-disposition.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-missing-prev",
+   "kind": "effects",
+   "file": "cases/effects-missing-prev.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-null-prev",
+   "kind": "effects",
+   "file": "cases/effects-null-prev.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-missing-hash",
+   "kind": "effects",
+   "file": "cases/effects-missing-hash.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-null-hash",
+   "kind": "effects",
+   "file": "cases/effects-null-hash.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-unknown-member",
+   "kind": "effects",
+   "file": "cases/effects-unknown-member.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-capitalised-member",
+   "kind": "effects",
+   "file": "cases/effects-capitalised-member.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-ref-empty-string-present",
+   "kind": "effects",
+   "file": "cases/effects-ref-empty-string-present.jsonl",
+   "expect": "invalid",
+   "class": "chain",
+   "note": "optional member present with its zero value"
+  },
+  {
+   "id": "effects-request-empty-string-present",
+   "kind": "effects",
+   "file": "cases/effects-request-empty-string-present.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-seq-is-float",
+   "kind": "effects",
+   "file": "cases/effects-seq-is-float.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-seq-is-negative",
+   "kind": "effects",
+   "file": "cases/effects-seq-is-negative.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-seq-2pow64",
+   "kind": "effects",
+   "file": "cases/effects-seq-2pow64.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-tick-is-string",
+   "kind": "effects",
+   "file": "cases/effects-tick-is-string.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-index-below-minus-one",
+   "kind": "effects",
+   "file": "cases/effects-index-below-minus-one.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-tick-beyond-int64",
+   "kind": "effects",
+   "file": "cases/effects-tick-beyond-int64.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-gap-in-seq",
+   "kind": "effects",
+   "file": "cases/effects-gap-in-seq.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-prev-of-first-not-genesis",
+   "kind": "effects",
+   "file": "cases/effects-prev-of-first-not-genesis.jsonl",
+   "expect": "invalid",
+   "class": "chain"
+  },
+  {
+   "id": "effects-valid-extreme-ticks",
+   "kind": "effects",
+   "file": "cases/effects-valid-extreme-ticks.jsonl",
+   "expect": "valid"
+  },
+  {
+   "id": "effects-unknown-disposition",
+   "kind": "effects",
+   "file": "cases/effects-unknown-disposition.jsonl",
+   "expect": "invalid",
+   "class": "log-entry",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-unknown-disposition-whole-output",
+   "kind": "effects",
+   "file": "cases/effects-unknown-disposition-whole-output.jsonl",
+   "expect": "invalid",
+   "class": "log-entry",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   },
+   "note": "index -1 and no request, so only the disposition list can reject it"
+  },
+  {
+   "id": "effects-committed-flipped-to-malformed",
+   "kind": "effects",
+   "file": "cases/effects-committed-flipped-to-malformed.jsonl",
+   "expect": "invalid",
+   "class": "log-entry",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-malformed-flipped-to-committed",
+   "kind": "effects",
+   "file": "cases/effects-malformed-flipped-to-committed.jsonl",
+   "expect": "invalid",
+   "class": "log-entry",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-denied-for-undecodable-request",
+   "kind": "effects",
+   "file": "cases/effects-denied-for-undecodable-request.jsonl",
+   "expect": "invalid",
+   "class": "log-entry",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-committed-with-syntax-error",
+   "kind": "effects",
+   "file": "cases/effects-committed-with-syntax-error.jsonl",
+   "expect": "invalid",
+   "class": "log-entry",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-committed-without-request",
+   "kind": "effects",
+   "file": "cases/effects-committed-without-request.jsonl",
+   "expect": "invalid",
+   "class": "log-entry",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-committed-with-index-minus-one",
+   "kind": "effects",
+   "file": "cases/effects-committed-with-index-minus-one.jsonl",
+   "expect": "invalid",
+   "class": "log-entry",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-no-output-with-index",
+   "kind": "effects",
+   "file": "cases/effects-no-output-with-index.jsonl",
+   "expect": "invalid",
+   "class": "log-entry",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-no-output-with-request",
+   "kind": "effects",
+   "file": "cases/effects-no-output-with-request.jsonl",
+   "expect": "invalid",
+   "class": "log-entry",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-exhausted-with-index",
+   "kind": "effects",
+   "file": "cases/effects-exhausted-with-index.jsonl",
+   "expect": "invalid",
+   "class": "log-entry",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-truncated-with-request",
+   "kind": "effects",
+   "file": "cases/effects-truncated-with-request.jsonl",
+   "expect": "invalid",
+   "class": "log-entry",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-request-noncanonical-text",
+   "kind": "effects",
+   "file": "cases/effects-request-noncanonical-text.jsonl",
+   "expect": "invalid",
+   "class": "log-entry",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   },
+   "note": "parses and decodes, but is not the canonical text of what it parses to"
+  },
+  {
+   "id": "effects-request-redundant-parentheses",
+   "kind": "effects",
+   "file": "cases/effects-request-redundant-parentheses.jsonl",
+   "expect": "invalid",
+   "class": "log-entry",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-malformed-but-decodes",
+   "kind": "effects",
+   "file": "cases/effects-malformed-but-decodes.jsonl",
+   "expect": "invalid",
+   "class": "log-entry",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-decode-int-zero",
+   "kind": "effects",
+   "file": "cases/effects-decode-int-zero.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-decode-int-max",
+   "kind": "effects",
+   "file": "cases/effects-decode-int-max.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-decode-int-above-max",
+   "kind": "effects",
+   "file": "cases/effects-decode-int-above-max.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-decode-int-above-max-committed",
+   "kind": "effects",
+   "file": "cases/effects-decode-int-above-max-committed.jsonl",
+   "expect": "invalid",
+   "class": "log-entry",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-decode-int-leading-zero-malformed",
+   "kind": "effects",
+   "file": "cases/effects-decode-int-leading-zero-malformed.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-decode-int-leading-zero-committed",
+   "kind": "effects",
+   "file": "cases/effects-decode-int-leading-zero-committed.jsonl",
+   "expect": "invalid",
+   "class": "log-entry",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-decode-sym-uppercase-malformed",
+   "kind": "effects",
+   "file": "cases/effects-decode-sym-uppercase-malformed.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-decode-sym-uppercase-committed",
+   "kind": "effects",
+   "file": "cases/effects-decode-sym-uppercase-committed.jsonl",
+   "expect": "invalid",
+   "class": "log-entry",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   },
+   "note": "an uppercase identifier is a syntax error, so the request does not even parse"
+  },
+  {
+   "id": "effects-decode-sym-with-digits-and-quote",
+   "kind": "effects",
+   "file": "cases/effects-decode-sym-with-digits-and-quote.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-decode-sym-starting-with-digit-committed",
+   "kind": "effects",
+   "file": "cases/effects-decode-sym-starting-with-digit-committed.jsonl",
+   "expect": "invalid",
+   "class": "log-entry",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-decode-sym-digits-only",
+   "kind": "effects",
+   "file": "cases/effects-decode-sym-digits-only.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   },
+   "note": "12 is an atom but not a symbol"
+  },
+  {
+   "id": "effects-decode-int-given-sym",
+   "kind": "effects",
+   "file": "cases/effects-decode-int-given-sym.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-decode-too-many-args",
+   "kind": "effects",
+   "file": "cases/effects-decode-too-many-args.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-decode-too-few-args",
+   "kind": "effects",
+   "file": "cases/effects-decode-too-few-args.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-decode-no-verb",
+   "kind": "effects",
+   "file": "cases/effects-decode-no-verb.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-decode-unknown-kind",
+   "kind": "effects",
+   "file": "cases/effects-decode-unknown-kind.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-decode-unknown-verb",
+   "kind": "effects",
+   "file": "cases/effects-decode-unknown-verb.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-decode-verb-of-other-kind",
+   "kind": "effects",
+   "file": "cases/effects-decode-verb-of-other-kind.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-decode-target-not-applied",
+   "kind": "effects",
+   "file": "cases/effects-decode-target-not-applied.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-decode-target-too-deep",
+   "kind": "effects",
+   "file": "cases/effects-decode-target-too-deep.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-decode-target-id-is-compound",
+   "kind": "effects",
+   "file": "cases/effects-decode-target-id-is-compound.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-decode-head-not-effect",
+   "kind": "effects",
+   "file": "cases/effects-decode-head-not-effect.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-decode-head-is-constant",
+   "kind": "effects",
+   "file": "cases/effects-decode-head-is-constant.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-decode-argument-is-constant",
+   "kind": "effects",
+   "file": "cases/effects-decode-argument-is-constant.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-decode-argument-is-bracket",
+   "kind": "effects",
+   "file": "cases/effects-decode-argument-is-bracket.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-decode-argument-is-scope",
+   "kind": "effects",
+   "file": "cases/effects-decode-argument-is-scope.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-request-redundant-parentheses-malformed",
+   "kind": "effects",
+   "file": "cases/effects-request-redundant-parentheses-malformed.jsonl",
+   "expect": "invalid",
+   "class": "log-entry",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   },
+   "note": "the canonical text of '(open)' is 'open', so even a malformed request must be recorded canonically if it parses"
+  },
+  {
+   "id": "effects-decode-effect-alone",
+   "kind": "effects",
+   "file": "cases/effects-decode-effect-alone.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-decode-empty-schema-everything-malformed",
+   "kind": "effects",
+   "file": "cases/effects-decode-empty-schema-everything-malformed.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_empty.json"
+   }
+  },
+  {
+   "id": "effects-decode-empty-schema-committed",
+   "kind": "effects",
+   "file": "cases/effects-decode-empty-schema-committed.jsonl",
+   "expect": "invalid",
+   "class": "log-entry",
+   "options": {
+    "schema": "seeds/schema_empty.json"
+   }
+  },
+  {
+   "id": "effects-group-committed",
+   "kind": "effects",
+   "file": "cases/effects-group-committed.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-group-denied",
+   "kind": "effects",
+   "file": "cases/effects-group-denied.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-group-failed",
+   "kind": "effects",
+   "file": "cases/effects-group-failed.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-group-of-one",
+   "kind": "effects",
+   "file": "cases/effects-group-of-one.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-group-empty-malformed",
+   "kind": "effects",
+   "file": "cases/effects-group-empty-malformed.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-group-empty-committed",
+   "kind": "effects",
+   "file": "cases/effects-group-empty-committed.jsonl",
+   "expect": "invalid",
+   "class": "log-entry",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-group-member-undecodable-malformed",
+   "kind": "effects",
+   "file": "cases/effects-group-member-undecodable-malformed.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-group-member-undecodable-committed",
+   "kind": "effects",
+   "file": "cases/effects-group-member-undecodable-committed.jsonl",
+   "expect": "invalid",
+   "class": "log-entry",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-group-decodable-recorded-malformed",
+   "kind": "effects",
+   "file": "cases/effects-group-decodable-recorded-malformed.jsonl",
+   "expect": "invalid",
+   "class": "log-entry",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-group-nested-malformed",
+   "kind": "effects",
+   "file": "cases/effects-group-nested-malformed.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-group-nested-committed",
+   "kind": "effects",
+   "file": "cases/effects-group-nested-committed.jsonl",
+   "expect": "invalid",
+   "class": "log-entry",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-group-member-not-request-malformed",
+   "kind": "effects",
+   "file": "cases/effects-group-member-not-request-malformed.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-group-as-effect-argument-malformed",
+   "kind": "effects",
+   "file": "cases/effects-group-as-effect-argument-malformed.jsonl",
+   "expect": "invalid",
+   "class": "log-entry",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   },
+   "note": "not canonical text: the parentheses around a single atom are redundant"
+  },
+  {
+   "id": "effects-group-noncanonical-text",
+   "kind": "effects",
+   "file": "cases/effects-group-noncanonical-text.jsonl",
+   "expect": "invalid",
+   "class": "log-entry",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-group-with-schema-less-kind",
+   "kind": "effects",
+   "file": "cases/effects-group-with-schema-less-kind.jsonl",
+   "expect": "invalid",
+   "class": "log-entry",
+   "options": {
+    "schema": "seeds/schema_arena.json"
+   }
+  },
+  {
+   "id": "effects-decode-custom-schema",
+   "kind": "effects",
+   "file": "cases/effects-decode-custom-schema.jsonl",
+   "expect": "valid",
+   "options": {
+    "schema": "seeds/schema_custom.json"
+   }
+  }
+ ]
+}

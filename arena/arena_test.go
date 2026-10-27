@@ -5,6 +5,7 @@ import (
 
 	"github.com/standardgalactic/spherepop-kernel/driver"
 	"github.com/standardgalactic/spherepop-kernel/effects"
+	"github.com/standardgalactic/spherepop-kernel/encode"
 	"github.com/standardgalactic/spherepop-kernel/lambda"
 	"github.com/standardgalactic/spherepop-kernel/reduce"
 	"github.com/standardgalactic/spherepop-kernel/sched"
@@ -225,5 +226,94 @@ func TestRegisterBounds(t *testing.T) {
 	}
 	if err := w.Commit(effects.Request{Kind: "ship", ID: "s1", Verb: "set", Args: []string{"64"}}); err != nil {
 		t.Fatal(err)
+	}
+}
+
+// The observer is the only way a program learns about the world, so its
+// content is tested directly: each Boolean, in order, in several situations.
+func TestObserverReportsGoalDirectionsDoorAndRegister(t *testing.T) {
+	w := level(t)
+	obs := Observer{W: w, GoalCell: "b", Door: 1, Registers: true}
+	want := func(name string, bools []bool, reg uint32) {
+		t.Helper()
+		got, err := obs.Observe("s1", 0)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(got) != len(bools)+1 {
+			t.Fatalf("%s: %d observations, want %d", name, len(got), len(bools)+1)
+		}
+		for i, b := range bools {
+			if !term.Equal(got[i], encode.Bool(b)) {
+				t.Errorf("%s: observation %d is %s, want Bool(%t)", name, i, got[i], b)
+			}
+		}
+		n, _ := encode.Nat(reg)
+		if !term.Equal(got[len(bools)], n) {
+			t.Errorf("%s: register observation is %s, want %s", name, got[len(bools)], n)
+		}
+	}
+	// Order: east, west, north, south, up, down, in goal cell, door open.
+	// Goal centre is (60,10,10); the ship starts at (10,10,10).
+	want("start", []bool{true, false, false, false, false, false, false, false}, 0)
+
+	w.ships["s1"].Pos = Vec{10, 4, 16}
+	w.SetDoor(1, true)
+	w.ships["s1"].Reg = 7
+	want("off axis, door open", []bool{true, false, true, false, false, true, false, true}, 7)
+
+	w.ships["s1"].Cell, w.ships["s1"].Pos = "b", Vec{70, 16, 4}
+	want("in goal cell past the centre", []bool{false, true, false, true, true, false, true, true}, 7)
+
+	// Registers off: eight observations only.
+	obs.Registers = false
+	got, _ := obs.Observe("s1", 0)
+	if len(got) != 8 {
+		t.Fatalf("without registers there should be 8 observations, got %d", len(got))
+	}
+	if _, err := obs.Observe("nobody", 0); err == nil {
+		t.Fatal("an unknown ship was observed")
+	}
+}
+
+func TestCommitAllIsAtomic(t *testing.T) {
+	w, err := Demo()
+	if err != nil {
+		t.Fatal(err)
+	}
+	req := func(kind, id, verb string, args ...string) effects.Request {
+		return effects.Request{Kind: kind, ID: id, Verb: verb, Args: args}
+	}
+	// A group whose last member names no such door changes nothing.
+	err = w.CommitAll([]effects.Request{
+		req("door", "1", "open"),
+		req("ship", DemoShip, "set", "7"),
+		req("ship", DemoShip, "thrust", "east"),
+		req("door", "99", "open"),
+	})
+	if err == nil {
+		t.Fatal("group with a bad member committed")
+	}
+	if open, _ := w.DoorOpen(1); open {
+		t.Fatal("door opened by a failed group")
+	}
+	if s, _ := w.Ship(DemoShip); s.Reg != 0 {
+		t.Fatalf("register changed by a failed group: %d", s.Reg)
+	}
+	before, _ := w.Ship(DemoShip)
+	w.Step()
+	after, _ := w.Ship(DemoShip)
+	if after.Vel != before.Vel {
+		t.Fatalf("thrust survived a failed group: %v", after.Vel)
+	}
+	// The same group without the bad member commits as a whole.
+	if err := w.CommitAll([]effects.Request{req("door", "1", "open"), req("ship", DemoShip, "set", "7")}); err != nil {
+		t.Fatal(err)
+	}
+	if open, _ := w.DoorOpen(1); !open {
+		t.Fatal("door not opened")
+	}
+	if s, _ := w.Ship(DemoShip); s.Reg != 7 {
+		t.Fatalf("register %d", s.Reg)
 	}
 }

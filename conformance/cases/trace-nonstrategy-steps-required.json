@@ -1,0 +1,111 @@
+{
+  "format": "spherepop-trace/1",
+  "config": {
+    "root": [
+      "W",
+      "K",
+      "C",
+      "S"
+    ],
+    "perm": {
+      "p": [
+        "W",
+        "K",
+        "C",
+        "S"
+      ],
+      "q": [
+        "S"
+      ]
+    },
+    "gated": [
+      "W",
+      "K",
+      "C"
+    ],
+    "absorb": "s",
+    "sc": "settled"
+  },
+  "start": "sc_p (K a b) d (<K c e>_q (S I I x)) (K u v) (K w z)",
+  "start_digest": "8be1c04a7be95481ec4277b0b65bbb7e777a158081f5c545a4d6e9123ec3e2f7",
+  "strategy": "lo",
+  "fuel": 50,
+  "steps": [
+    {
+      "rule": "S",
+      "path": "LLRR",
+      "after": "1b74d777b7175e62037a92a7b0fd1faa8f703e79da4b8b647d75cfadce814968",
+      "link": "76488ff316173b92d13624a669ec9dca91068df0642e7caa0536b9a5090e4769"
+    },
+    {
+      "rule": "I",
+      "path": "LLRRL",
+      "after": "261effd8fa7e828abe62bfbc837c0a6dc0ae2a809e2f6ffa64189c9f263f76a3",
+      "link": "b16d1cd27be4ef9b581d7e5704cc9752377934527b9a5d606ee0f7b49c349bd3"
+    },
+    {
+      "rule": "I",
+      "path": "LLRRR",
+      "after": "2a5b0400d4b01407562314da2e0a08a012f6ee65002ac0bcf1369c4c0dd39b20",
+      "link": "4b84c9de92faeba5734ca18bff158142eab24dda0c572dd6a39e408d51237eee"
+    },
+    {
+      "rule": "Abs",
+      "path": "LLR",
+      "after": "2d662bf3474a30f2f25ed4756f805f3ed71dfaf4802dfa5f05265eda713e09ac",
+      "link": "8af9ac493640dc5aecfac1079bbf8d68f02af66499e0f6a73c030bf7075eec97"
+    },
+    {
+      "rule": "K",
+      "path": "LR",
+      "after": "db9e15048903bba689f0dc6ef37af88d9b1cb9a8fff525ed207f451ba02d54af",
+      "link": "959373b22ca24f48871656c6f811c4d6f0996937f3486694c2d84aa38efff1ce"
+    },
+    {
+      "rule": "K",
+      "path": "R",
+      "after": "2da9f7064e243838e038e5b261f2678d65d71f9fd4d46c840825d6a0723bd200",
+      "link": "3d9a703ec2cf68a365f8de15bb99eda70412a197c40e8112c121a2c7420a97ff"
+    },
+    {
+      "rule": "K",
+      "path": "LLLLR",
+      "after": "e67ffd96eaea82974490d3a167821ae079c329f6a5bb6e14c2854f1704c96524",
+      "link": "0a0885594f935b18e67ed3f77b29621ec8568c49914689c5d554ae0d21b1a4c2"
+    },
+    {
+      "rule": "Sc",
+      "path": "LLLL",
+      "after": "7707ed2727e5d988652e5a44342f3d15bfafee4b7f519422f34ba491e726b24b",
+      "link": "9ad64cec5527e4b42a12003a6a0592755e21aa0be63683c483fc0ec4d28e4701"
+    },
+    {
+      "rule": "Abs",
+      "path": "LLL",
+      "after": "8d9beb006f7ce5f317b6c46b2402a25245ac51fad0a6c12f5b3fcb0afc35c5b3",
+      "link": "275dfa68cfe4191a16a449b86d53070b6558ea25f43587046079df4eadac5e49"
+    },
+    {
+      "rule": "Abs",
+      "path": "LL",
+      "after": "40c3a686c86a89338511ddcc501be3b0a6653e9068ce4e126701060c113c6e87",
+      "link": "42d50ab60c045de73d32b39c9a54e1b045b66b4fc8b622b051137aea9849c876"
+    },
+    {
+      "rule": "Abs",
+      "path": "L",
+      "after": "c1ce362ece261687ace0a5c1bdb0cee14c87d00450ecad1718b951784ab5de23",
+      "link": "0039297191859de6c44d7908e3d0aa6821d5aab74dc90bf139a13d8b8adb9f74"
+    },
+    {
+      "rule": "Abs",
+      "path": "",
+      "after": "fef9c46ebfb0ce6e61ba0402678512811431849dcce5615e6541e69b368ba670",
+      "link": "d0d9ef12bab8fad590863424ca920cb7275d43e3691214379024d6f12d54e3b6"
+    }
+  ],
+  "final": "<a d <K c e (x x)>_q u w>_p",
+  "final_digest": "fef9c46ebfb0ce6e61ba0402678512811431849dcce5615e6541e69b368ba670",
+  "exhausted": false,
+  "head": "d0d9ef12bab8fad590863424ca920cb7275d43e3691214379024d6f12d54e3b6"
+}

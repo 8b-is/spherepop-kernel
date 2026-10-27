@@ -1,0 +1,51 @@
+{
+  "format": "spherepop-trace/1",
+  "config": {
+    "root": [
+      "W",
+      "K",
+      "C",
+      "S"
+    ],
+    "perm": {
+      "p": [
+        "W",
+        "K",
+        "C",
+        "S"
+      ],
+      "q": [
+        "S"
+      ]
+    },
+    "gated": [
+      "W",
+      "K",
+      "C"
+    ],
+    "absorb": "s",
+    "sc": "settled"
+  },
+  "start": "I (I (yield z))",
+  "start_digest": "a8e94ffde680bdb69e804430c8d50e7c99f50e8de4d2546441997076cebd31f2",
+  "strategy": "lo",
+  "fuel": 2,
+  "steps": [
+    {
+      "rule": "I",
+      "path": "",
+      "after": "e88eae596bcb2a777e97e617e2bdf8cec10ee9e20f5eb080f917e94d2c9e6122",
+      "link": "8c2caee3d0615a12824ab7d9db588dc560749c5a93d25dbae54cf592452a4246"
+    },
+    {
+      "rule": "I",
+      "path": "",
+      "after": "e0811f135fef0e6402240a04648dae0290ec9513158b64568f125827f6ccfa33",
+      "link": "3071068b134e9b456d4863f3c5edce3d60ba9648738b2b59a79c4e416429cde9"
+    }
+  ],
+  "final": "yield z",
+  "final_digest": "e0811f135fef0e6402240a04648dae0290ec9513158b64568f125827f6ccfa33",
+  "exhausted": false,
+  "head": "3071068b134e9b456d4863f3c5edce3d60ba9648738b2b59a79c4e416429cde9"
+}

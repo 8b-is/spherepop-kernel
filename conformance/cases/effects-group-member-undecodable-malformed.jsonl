@@ -1,0 +1,1 @@
+{"seq":0,"tick":0,"subject":"s1","index":0,"request":"atomic (effect (door 1) open) (effect (door x) open)","disposition":"malformed","prev":"cf3ce2db7ead61aaf4cc515e314bf5175125f93aeed75f57144976840a2b60e7","hash":"640a46b026a3c29fe383bf1d8c9c6913c36c76d51604dd4a53200e7f917e15d0"}

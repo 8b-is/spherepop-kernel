@@ -1,0 +1,75 @@
+{
+  "format": "spherepop-trace/1",
+  "config": {
+    "root": [
+      "W",
+      "K",
+      "C",
+      "S"
+    ],
+    "perm": {
+      "p": [
+        "C",
+        "S"
+      ],
+      "q": [
+        "W",
+        "K",
+        "S"
+      ]
+    },
+    "gated": [
+      "W",
+      "C",
+      "S"
+    ],
+    "absorb": "u",
+    "sc": "any"
+  },
+  "start": "sc_q (sc_p (x)) (<C (x)>_q) (a (K))",
+  "start_digest": "8c41a99a2280a2e6ddbb69b1d6769ec8ba4c45ea83ccd1dec78cc65f8df1ef11",
+  "strategy": "ri",
+  "fuel": 8,
+  "steps": [
+    {
+      "rule": "Sc",
+      "path": "LLR",
+      "after": "79e666d84c8dec9c9897cbd6c8ff9b31e1841eb75ceb82865ab3bff8029a223d",
+      "link": "ab750798e4f7f0f7faa12a6f758818921320b9e4bcfddd0d59b4e121f9e8a3b5"
+    },
+    {
+      "rule": "Sc",
+      "path": "LL",
+      "after": "1a8f210512ec4f3eddfd7826e6f6612e5c5c1c81d990b691bb0166bac334c707",
+      "link": "fe9e8d270368cbb2e5f244bc7f3156338295de580f66f6ba9693675a5a1cba14"
+    },
+    {
+      "rule": "Abs",
+      "path": "L",
+      "after": "6f212ae17978c6fb9b416ffcf26f34320ed0a45d2249bd8e376b0b1591c394a1",
+      "link": "e2f1316c987a316e20aa22f5e2cfd753675104f9b9d14e759e2390160294aeae"
+    },
+    {
+      "rule": "Abs",
+      "path": "LB",
+      "after": "850cd0f5a9f8c357fcb54c874a27faa90e26cf32a55ef8046169fd924da9a2ff",
+      "link": "aa0f452d52bd615154e99383f31c44d5b5346398ed01b493a7f564fd265dd9e3"
+    },
+    {
+      "rule": "Abs",
+      "path": "",
+      "after": "a262086c1e1780e88f2cc12c547d033a34021614a78b81a91966fc37fa9816e2",
+      "link": "5e7c604e6e0df88cfedf66c018b76eafd696bb710e8d489dc108a876a63a84c9"
+    },
+    {
+      "rule": "Abs",
+      "path": "B",
+      "after": "f7f6e64476822d036d2ddf08f9c1d9b3723c0c3189d4a0465264f2307b4912b0",
+      "link": "461a852bd82a6ecb0512083e1af3a6224b2347b66ae345dc1ec26c1893938c57"
+    }
+  ],
+  "final": "<<x <C x>_q (a K)>_p>_q",
+  "final_digest": "f7f6e64476822d036d2ddf08f9c1d9b3723c0c3189d4a0465264f2307b4912b0",
+  "exhausted": false,
+  "head": "461a852bd82a6ecb0512083e1af3a6224b2347b66ae345dc1ec26c1893938c57"
+}
