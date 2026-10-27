@@ -216,6 +216,145 @@ test "SPEC §4 & §17: scoped bracket and safe-scope witness digests (sc_x (<I>_
 
 pub const GATE_0X62: u8 = 0x62;
 pub const FRAME_ABI_V1: u8 = 0x01;
+pub const QUANT_QT55: u8 = 0x55;
+pub const FOLD_0XE1034E575C371AB0: u64 = 0xe1034e575c371ab0;
+
+pub const Trit = enum(i8) {
+    neg = -1,
+    zero = 0,
+    pos = 1,
+};
+
+pub const Bfp64Pair = struct {
+    pos: u64,
+    neg: u64,
+};
+
+pub const RationalDensity = struct {
+    num: i64,
+    den: i64,
+    state: Trit,
+};
+
+pub fn bfp64AndKleene(pos_a: u64, neg_a: u64, pos_b: u64, neg_b: u64) Bfp64Pair {
+    const neg_out = neg_a | neg_b;
+    const pos_out = (pos_a & pos_b) & ~neg_out;
+    return .{ .pos = pos_out, .neg = neg_out };
+}
+
+pub fn bfp64NandKleene(pos_a: u64, neg_a: u64, pos_b: u64, neg_b: u64) Bfp64Pair {
+    const and_pair = bfp64AndKleene(pos_a, neg_a, pos_b, neg_b);
+    return .{ .pos = and_pair.neg, .neg = and_pair.pos };
+}
+
+pub fn qtBroadcastMask(qt: u8) u64 {
+    return @as(u64, qt) *% 0x0101_0101_0101_0101;
+}
+
+pub fn packFoldBfp64(fold: u64, qt: u8) Bfp64Pair {
+    const mask = qtBroadcastMask(qt);
+    return .{
+        .pos = fold & mask,
+        .neg = fold & ~mask,
+    };
+}
+
+pub fn unpackFoldBfp64(pos: u64, neg: u64, qt: u8) ?u64 {
+    if ((pos & neg) != 0) return null;
+    const mask = qtBroadcastMask(qt);
+    if ((pos & ~mask) != 0) return null;
+    if ((neg & mask) != 0) return null;
+    return pos | neg;
+}
+
+fn gcdI128(a_in: i128, b_in: i128) i128 {
+    var a = if (a_in < 0) -a_in else a_in;
+    var b = if (b_in < 0) -b_in else b_in;
+    while (b != 0) {
+        const r = @rem(a, b);
+        a = b;
+        b = r;
+    }
+    return if (a == 0) 1 else a;
+}
+
+pub fn checkRationalDensity(num: i64, den: i64) ?RationalDensity {
+    if (den <= 0 or num < 0) return null;
+    const g = gcdI128(@as(i128, num), @as(i128, den));
+    const r_num: i64 = @intCast(@divExact(@as(i128, num), g));
+    const r_den: i64 = @intCast(@divExact(@as(i128, den), g));
+    const state: Trit = if (r_num > r_den)
+        .pos
+    else if (r_num < r_den)
+        .neg
+    else
+        .zero;
+    return .{
+        .num = r_num,
+        .den = r_den,
+        .state = state,
+    };
+}
+
+pub fn verifyUltrabackyardLoopHierarchy(
+    base_num: i64,
+    base_den: i64,
+    qt: u8,
+    gate: u8,
+    fold: u64,
+    levels: u32,
+) bool {
+    if (gate != GATE_0X62 or qt != QUANT_QT55 or levels == 0) return false;
+    const base = checkRationalDensity(base_num, base_den) orelse return false;
+    if (base.num != 123 or base.den != 115 or base.state != .pos) return false;
+
+    var cur_fold = fold;
+    var level: u32 = 1;
+    while (level <= levels) : (level += 1) {
+        const scale = std.math.mul(i64, @as(i64, level), @as(i64, qt)) catch return false;
+        const scaled_num = std.math.mul(i64, base.num, scale) catch return false;
+        const scaled_den = std.math.mul(i64, base.den, scale) catch return false;
+        const reduced = checkRationalDensity(scaled_num, scaled_den) orelse return false;
+        if (reduced.num != 123 or reduced.den != 115 or reduced.state != .pos) return false;
+
+        const planes = packFoldBfp64(cur_fold, qt);
+        const and_plane = bfp64AndKleene(planes.pos, 0, planes.pos, 0);
+        const nand_plane = bfp64NandKleene(planes.neg, 0, planes.neg, 0);
+        if (and_plane.pos != planes.pos or and_plane.neg != 0) return false;
+        if (nand_plane.pos != 0 or nand_plane.neg != planes.neg) return false;
+
+        const recovered = unpackFoldBfp64(and_plane.pos, nand_plane.neg, qt) orelse return false;
+        if (recovered != cur_fold) return false;
+        cur_fold = std.math.rotl(u64, recovered ^ (@as(u64, gate) << 8) ^ @as(u64, qt), 7);
+    }
+    return true;
+}
+
+comptime {
+    const all_ones: u64 = std.math.maxInt(u64);
+    const and_all = bfp64AndKleene(all_ones, 0, all_ones, 0);
+    if (and_all.pos != all_ones or and_all.neg != 0) {
+        @compileError("comptime +AND=1 verification failed");
+    }
+    const nand_all = bfp64NandKleene(all_ones, 0, all_ones, 0);
+    if (nand_all.pos != 0 or nand_all.neg != all_ones) {
+        @compileError("comptime ~NAND=-1 verification failed");
+    }
+    const packed_fold = packFoldBfp64(FOLD_0XE1034E575C371AB0, QUANT_QT55);
+    const unpacked_fold = unpackFoldBfp64(packed_fold.pos, packed_fold.neg, QUANT_QT55) orelse
+        @compileError("comptime BFP-64 fold unpack failed");
+    if (unpacked_fold != FOLD_0XE1034E575C371AB0) {
+        @compileError("comptime 0xe1034e575c371ab0 fold mismatch");
+    }
+    const ratio = checkRationalDensity(123, 115) orelse
+        @compileError("comptime 123/115 density invalid");
+    if (ratio.num != 123 or ratio.den != 115 or ratio.state != .pos) {
+        @compileError("comptime 123/115 density mismatch");
+    }
+    if (!verifyUltrabackyardLoopHierarchy(123, 115, QUANT_QT55, GATE_0X62, FOLD_0XE1034E575C371AB0, 8)) {
+        @compileError("comptime ULTRABACKYARDLOOP hierarchy verification failed");
+    }
+}
 
 pub fn xorFoldScalar(bytes: []const u8) u64 {
     var acc: u64 = 0;
@@ -285,4 +424,29 @@ test "32B 0x62-gate frame seal over trace links and 3761/3314 payload" {
 
     frame[31] ^= 0x01;
     try std.testing.expect(!checkFrame32B(&frame, &raw, &packed_bytes, GATE_0X62));
+}
+
+test "0x62 gate +AND=1 ~NAND=-1 BFP-64 fold 0xe1034e575c371ab0 and 123/115 at qt:55 across ULTRABACKYARDLOOP" {
+    const planes = packFoldBfp64(FOLD_0XE1034E575C371AB0, QUANT_QT55);
+    try std.testing.expectEqual(@as(u64, 0), planes.pos & planes.neg);
+
+    const unpacked = unpackFoldBfp64(planes.pos, planes.neg, QUANT_QT55);
+    try std.testing.expectEqual(@as(?u64, FOLD_0XE1034E575C371AB0), unpacked);
+
+    // Bit leakage across qt:55 mask boundary must be rejected.
+    try std.testing.expectEqual(@as(?u64, null), unpackFoldBfp64(planes.pos | 0x02, planes.neg, QUANT_QT55));
+
+    // Verify checked p/q 123/115 density and ULTRABACKYARDLOOP hierarchy scaling.
+    const d = checkRationalDensity(123 * 55, 115 * 55).?;
+    try std.testing.expectEqual(@as(i64, 123), d.num);
+    try std.testing.expectEqual(@as(i64, 115), d.den);
+    try std.testing.expectEqual(Trit.pos, d.state);
+    try std.testing.expect(verifyUltrabackyardLoopHierarchy(
+        123,
+        115,
+        QUANT_QT55,
+        GATE_0X62,
+        FOLD_0XE1034E575C371AB0,
+        16,
+    ));
 }

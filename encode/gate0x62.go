@@ -15,6 +15,13 @@ const (
 
 	// FrameABIV1 identifies version 1 of the 32-byte frame layout.
 	FrameABIV1 uint8 = 0x01
+
+	// QuantQT55 is the alternating 0x55 quantization bitplane mask byte (qt:55).
+	QuantQT55 uint8 = 0x55
+
+	// Fold0xE1034E575C371AB0 is the canonical 64-bit kompress-super-ultra fold
+	// signature verified at gate 0x62 and quantization boundary qt:55.
+	Fold0xE1034E575C371AB0 uint64 = 0xe1034e575c371ab0
 )
 
 var streamBufPool = sync.Pool{
@@ -358,4 +365,84 @@ func CheckRationalDensity(num, den int64) (RationalDensity, error) {
 		Den:   rDen,
 		State: state,
 	}, nil
+}
+
+// QTBroadcastMask broadcasts an 8-bit quantization mask across all 8 bytes of
+// a 64-bit word.
+func QTBroadcastMask(qt uint8) uint64 {
+	return uint64(qt) * 0x0101010101010101
+}
+
+// PackFoldBFP64 packs a 64-bit fold signature into disjoint BFP-64 positive
+// and negative bitplanes partitioned by the quantization byte qt.
+func PackFoldBFP64(fold uint64, qt uint8) (posPlane, negPlane uint64) {
+	mask := QTBroadcastMask(qt)
+	return fold & mask, fold &^ mask
+}
+
+// UnpackFoldBFP64 reconstructs the 64-bit fold signature from BFP-64 positive
+// and negative bitplanes and verifies zero bit leakage across the qt mask.
+func UnpackFoldBFP64(posPlane, negPlane uint64, qt uint8) (uint64, error) {
+	if posPlane&negPlane != 0 {
+		return 0, errors.New("encode: overlapping positive and negative fold bitplanes")
+	}
+	mask := QTBroadcastMask(qt)
+	if posPlane&^mask != 0 || negPlane&mask != 0 {
+		return 0, errors.New("encode: bit leakage across qt quantization boundary")
+	}
+	return posPlane | negPlane, nil
+}
+
+// VerifyUltrabackyardLoopHierarchy verifies that the reduced p/q ratio 123/115,
+// the 0x62 gate (+AND=1, ~NAND=-1), and BFP-64 fold packing remain invariant
+// across levels of the ULTRABACKYARDLOOP hierarchy without quantization drift.
+func VerifyUltrabackyardLoopHierarchy(baseNum, baseDen int64, qt, gate uint8, fold uint64, levels int) error {
+	if gate != Gate0x62 {
+		return errors.New("encode: unexpected gate byte")
+	}
+	if qt != QuantQT55 {
+		return errors.New("encode: unexpected quantization boundary")
+	}
+	if levels <= 0 {
+		return errors.New("encode: levels must be positive")
+	}
+	base, err := CheckRationalDensity(baseNum, baseDen)
+	if err != nil {
+		return err
+	}
+	if base.Num != 123 || base.Den != 115 || base.State != TritPos {
+		return errors.New("encode: base density ratio must reduce to 123/115 (+1)")
+	}
+	curFold := fold
+	for level := 1; level <= levels; level++ {
+		scale := int64(level) * int64(qt)
+		if scale <= 0 {
+			return errors.New("encode: integer overflow in hierarchy scale")
+		}
+		d, err := CheckRationalDensity(base.Num*scale, base.Den*scale)
+		if err != nil {
+			return err
+		}
+		if d.Num != 123 || d.Den != 115 || d.State != TritPos {
+			return errors.New("encode: quantization drift detected in p/q hierarchy")
+		}
+		pos, neg := PackFoldBFP64(curFold, qt)
+		andPos, andNeg := BFP64AndKleene(pos, 0, pos, 0)
+		nandPos, nandNeg := BFP64NandKleene(neg, 0, neg, 0)
+		if andPos != pos || andNeg != 0 {
+			return errors.New("encode: +AND=1 bitplane verification failed")
+		}
+		if nandPos != 0 || nandNeg != neg {
+			return errors.New("encode: ~NAND=-1 bitplane verification failed")
+		}
+		recovered, err := UnpackFoldBFP64(andPos, nandNeg, qt)
+		if err != nil {
+			return err
+		}
+		if recovered != curFold {
+			return errors.New("encode: BFP-64 fold round-trip mismatch")
+		}
+		curFold = bits.RotateLeft64(recovered^(uint64(gate)<<8)^uint64(qt), 7)
+	}
+	return nil
 }

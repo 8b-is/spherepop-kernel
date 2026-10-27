@@ -157,3 +157,23 @@ func TestCheckRationalDensityAndIsqrtU64(t *testing.T) {
 		}
 	}
 }
+
+func TestFold0xE1034E575C371AB0AtQT55AndUltrabackyardLoop(t *testing.T) {
+	pos, neg := PackFoldBFP64(Fold0xE1034E575C371AB0, QuantQT55)
+	if pos&neg != 0 {
+		t.Fatalf("PackFoldBFP64 planes overlap: pos=%#x neg=%#x", pos, neg)
+	}
+	got, err := UnpackFoldBFP64(pos, neg, QuantQT55)
+	if err != nil {
+		t.Fatalf("UnpackFoldBFP64: %v", err)
+	}
+	if got != Fold0xE1034E575C371AB0 {
+		t.Fatalf("UnpackFoldBFP64 = %#x, want %#x", got, Fold0xE1034E575C371AB0)
+	}
+	if _, err := UnpackFoldBFP64(pos|0x02, neg, QuantQT55); err == nil {
+		t.Fatal("UnpackFoldBFP64 accepted bit leakage across qt:55 mask")
+	}
+	if err := VerifyUltrabackyardLoopHierarchy(123, 115, QuantQT55, Gate0x62, Fold0xE1034E575C371AB0, 16); err != nil {
+		t.Fatalf("VerifyUltrabackyardLoopHierarchy: %v", err)
+	}
+}
