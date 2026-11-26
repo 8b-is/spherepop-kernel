@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://standardgalactic.github.io/spherepop-kernel/spec/authorization/authorization.json",
+  "$id": "https://standardgalactic.github.io/spherepop-kernel/spec/authorization/authorization.schema.json",
   "title": "Spherepop Authorization Model",
   "description": "Capability-based authorization held against current head. From Spherepop Development Protocol §5.3.",
   "type": "object",

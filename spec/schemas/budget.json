@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://standardgalactic.github.io/spherepop-kernel/spec/schemas/budget.json",
   "title": "Spherepop Maintenance Budget",
-  "description": "Maintenance budget allocation and enforcement. From Spherepop Development Protocol §12.",
+  "description": "Maintenance budget allocation and exact rational p/q enforcement. From Spherepop Development Protocol §12.",
   "type": "object",
   "required": ["project", "total_budget", "units", "updated_at"],
   "properties": {
@@ -50,6 +50,16 @@
         "additionalProperties": false
       },
       "description": "Maintenance units (modules, subsystems) with their budget allocations"
+    },
+    "utilization_ratio": {
+      "type": "object",
+      "required": ["p", "q"],
+      "properties": {
+        "p": { "type": "integer", "minimum": 0 },
+        "q": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false,
+      "description": "Canonical reduced rational p/q of total projected load over allocated budget"
     },
     "updated_at": {
       "type": "string",

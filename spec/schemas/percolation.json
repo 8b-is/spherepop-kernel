@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://standardgalactic.github.io/spherepop-kernel/spec/schemas/percolation.json",
   "title": "Spherepop Shadow Graph Percolation Invariant",
-  "description": "Molloy–Reed κ check on cross-boundary dependencies. From UltraGraph §1.2.",
+  "description": "Exact rational p/q Molloy–Reed κ check on cross-boundary dependencies. From UltraGraph §1.2.",
   "type": "object",
-  "required": ["graph_cid", "vertices", "shadow_edges", "kappa", "regime", "checked_at"],
+  "required": ["graph_cid", "vertices", "shadow_edges", "kappa_ratio", "mean_degree_ratio", "regime", "transitive_risk", "checked_at"],
   "properties": {
     "graph_cid": {
       "type": "string",
@@ -21,15 +21,30 @@
       "minimum": 0,
       "description": "Number of cross-boundary edges |E_SHADOW|"
     },
-    "mean_degree": {
-      "type": "number",
-      "minimum": 0,
-      "description": "Mean degree c = 2|E|/|V|"
+    "mean_degree_ratio": {
+      "type": "object",
+      "required": ["p", "q"],
+      "properties": {
+        "p": { "type": "integer", "minimum": 0 },
+        "q": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false,
+      "description": "Exact reduced rational mean degree c = 2|E|/|V| as p/q"
     },
-    "kappa": {
-      "type": "number",
-      "minimum": 0,
-      "description": "Molloy–Reed percolation ratio κ = ⟨k²⟩/⟨k⟩"
+    "kappa_ratio": {
+      "type": "object",
+      "required": ["p", "q"],
+      "properties": {
+        "p": { "type": "integer", "minimum": 0 },
+        "q": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false,
+      "description": "Exact reduced rational Molloy–Reed percolation ratio κ = (∑ d_v²) / (∑ d_v) as p/q"
+    },
+    "resonance_trit": {
+      "type": "integer",
+      "enum": [-1, 0, 1],
+      "description": "Solar Phylogenetic Octad trit: +1 at Rung 0 Bonobo resonance (κ = 3/2), 0 subcritical/critical, -1 supercritical (κ > 2)"
     },
     "regime": {
       "type": "string",
@@ -43,7 +58,7 @@
     },
     "transitive_risk": {
       "type": "boolean",
-      "description": "True if κ > 2 (giant component exists)"
+      "description": "True iff κ > 2 (giant component exists)"
     }
   },
   "additionalProperties": false

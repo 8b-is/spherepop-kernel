@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://standardgalactic.github.io/spherepop-kernel/spec/schemas/governance.json",
   "title": "Spherepop Governance Amendment",
-  "description": "Governance amendment procedure with quorum, veto, and emergency path. From Spherepop Development Protocol §10.",
+  "description": "Governance amendment procedure with exact rational p/q quorum, veto, and emergency path. From Spherepop Development Protocol §10.",
   "type": "object",
-  "required": ["proposal_id", "rationale", "patch", "quorum", "veto_holders", "emergency", "status"],
+  "required": ["proposal_id", "rationale", "patch", "quorum_ratio", "veto_holders", "emergency", "status"],
   "properties": {
     "proposal_id": {
       "type": "string",
@@ -27,7 +27,8 @@
             "required": ["op", "path"],
             "properties": {
               "op": { "type": "string", "enum": ["add", "remove", "replace", "move", "copy", "test"] },
-              "path": { "type": "string", "pattern": "^/.*$" },
+              "path": { "type": "string", "pattern": "^(/.*)?$" },
+              "from": { "type": "string", "pattern": "^(/.*)?$" },
               "value": {}
             },
             "additionalProperties": false
@@ -36,20 +37,29 @@
       },
       "additionalProperties": false
     },
-    "quorum": {
-      "type": "number",
-      "minimum": 0.5,
-      "maximum": 1.0,
-      "description": "Fraction of recorded authorizations required (default 0.67)"
+    "quorum_ratio": {
+      "type": "object",
+      "required": ["p", "q"],
+      "properties": {
+        "p": { "type": "integer", "minimum": 1 },
+        "q": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false,
+      "description": "Exact reduced rational p/q quorum required (default 67/100; emergency 1/2)"
     },
     "veto_holders": {
       "type": "array",
       "items": { "type": "string", "pattern": "^did:key:z[a-zA-Z0-9]+$" },
       "description": "DIDs of parties holding veto power"
     },
+    "authorizers": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^did:key:z[a-zA-Z0-9]+$" },
+      "description": "DIDs of the current governance voting body"
+    },
     "emergency": {
       "type": "boolean",
-      "description": "If true, uses emergency path: all veto holders + 50% quorum"
+      "description": "If true, uses emergency path: unanimous veto holder acceptance + 1/2 quorum"
     },
     "status": {
       "type": "string",
@@ -65,6 +75,10 @@
       "additionalProperties": false
     },
     "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
       "type": "string",
       "format": "date-time"
     },

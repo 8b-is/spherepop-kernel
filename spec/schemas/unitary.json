@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://standardgalactic.github.io/spherepop-kernel/spec/schemas/unitary.json",
   "title": "Spherepop WaveMemory Unitary Step",
-  "description": "Kohn–Sham / Strang-split unitary evolution. From UltraGraph §3.1.",
+  "description": "Zero-float Kohn–Sham / Strang-split unitary evolution (Q16.16 + p/q). From UltraGraph §3.1.",
   "type": "object",
-  "required": ["step_id", "hamiltonian_cid", "delta_t_q16", "half_step", "entanglement_coupling", "checked_at"],
+  "required": ["step_id", "hamiltonian_cid", "delta_t_q16", "half_step", "entanglement_ratio", "entanglement_q16", "checked_at"],
   "properties": {
     "step_id": {
       "type": "string",
@@ -25,11 +25,21 @@
       "enum": [1, 2],
       "description": "Strang half-step: 1=e⁻ⁱᴴ⁰Δᵗ/², 2=e⁻ⁱⱽᴷˢΔᵗ"
     },
-    "entanglement_coupling": {
-      "type": "number",
+    "entanglement_ratio": {
+      "type": "object",
+      "required": ["p", "q"],
+      "properties": {
+        "p": { "type": "integer", "minimum": 0 },
+        "q": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false,
+      "description": "Exact reduced rational Shadow Entanglement Coupling P̂C = |dT - dR| / (dT + dR) as p/q (threshold 9/10)"
+    },
+    "entanglement_q16": {
+      "type": "integer",
       "minimum": 0,
-      "maximum": 1,
-      "description": "P̂C (Shadow Entanglement Coupling), threshold 0.90"
+      "maximum": 65536,
+      "description": "Shadow Entanglement Coupling P̂C in Q16.16 fixed-point"
     },
     "forward_degree": {
       "type": "integer",
@@ -41,10 +51,10 @@
       "minimum": 0,
       "description": "Reverse reference degree dR"
     },
-    "salience_nats": {
-      "type": "number",
+    "salience_q16": {
+      "type": "integer",
       "minimum": 0,
-      "description": "Λ(C) salience in nats (Flyxion)"
+      "description": "Λ(C) salience in Q16.16 fixed-point nats (Flyxion)"
     },
     "checked_at": {
       "type": "string",

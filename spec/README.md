@@ -1,114 +1,102 @@
-# Spherepop Kernel — P0 Specification Artifacts
+# Spherepop Kernel — P0 Specification & UltraGraph Integration Artifacts
 
-This directory contains the machine-readable schemas, conformance vectors, and authorization/budget/footprint/governance models specified in the Spherepop Development Protocol review.
+This directory contains the machine-readable Draft 2020-12 JSON schemas, 24 conformance test vectors, Zero-Float $p/q$ + `Q16.16` Go reference implementations, and formal verification / architecture guides for the Spherepop Kernel × Erdős–Lódri UltraGraph × FASM-TYCOON stack.
 
 ## Directory Structure
 
-```
+```text
 spec/
-├── schemas/
-│   ├── term.json          # spherepop-term/1 — content-addressed immutable terms
-│   ├── config.json        # spherepop-config/1 — permission structure & absorption modes
-│   ├── trace.json         # spherepop-trace/1 — hash-chained execution traces
-│   ├── budget.json        # Maintenance budget allocation & enforcement
-│   ├── footprint.json     # Environment footprint with subsumption
-│   └── governance.json    # Governance amendment procedure
+├── README.md                          # Artifact index & verification commands
+├── ADA_SPARK_ASM.md                   # SPARK Ada 2022 contracts, SIMD/SHA-NI ASM & AND/OR confluence
+├── INTEGRATION.md                     # Spherepop × UltraGraph × FASM-TYCOON cross-layer mapping
+├── authorization/
+│   ├── authorization.schema.json      # Head-bound capability authorization schema (Protocol §5.3)
+│   ├── authorization.go               # Ed25519 signature, head-match, expiry & replay-nonce verifier
+│   ├── authorization_test.go          # Cryptographic & replay-protection unit tests
+│   └── example-commit.json            # Deterministic Ed25519-signed commit:sphere fixture
 ├── conformance/
-│   ├── vectors.schema.json  # JSON Schema for conformance vectors
-│   ├── vectors.json         # 20 conformance test vectors (pop, bind, compose, fuel, error)
-│   └── conformance_test.go  # Go reference kernel test runner
-└── authorization/
-    ├── authorization.schema.json  # Capability-based authorization (head-bound)
-    ├── authorization.go           # Verification logic (head-check, expiry, nonce, sig)
-    └── example-commit.json        # Example authorization for collapse
+│   ├── vectors.schema.json            # Conformance vector suite schema (base + UltraGraph)
+│   ├── vectors.json                   # 24 verified vectors (19 base + 5 UltraGraph) with real SHA-256 digests
+│   └── conformance_test.go            # Kernel, trace interop, schema & Zero-Float AST test runner
+└── schemas/
+    ├── term.json                      # spherepop-term/1 — content-addressed Merkle DAG terms
+    ├── config.json                    # spherepop-config/1 — canonical permission & boundary config
+    ├── trace.json                     # spherepop-trace/1 — null-delimited SHA-256 execution trace
+    ├── budget.json / budget.go        # Maintenance budget & waiver enforcement (Protocol §12)
+    ├── footprint.json / footprint.go  # Environment footprint subsumption evidence ⊑ current (Protocol §14)
+    ├── governance.json / governance.go# Exact rational p/q quorum, veto, emergency & RFC 6902 patch (Protocol §10)
+    ├── percolation.json / percolation.go # Exact rational p/q Molloy–Reed κ gate & Rung 0 Bonobo resonance
+    ├── lod.json / lod.go              # Zero-float Szemerédi ε-regular [SNCP]+w partition & Steiner hub Z(G)
+    ├── unitary.json / unitary.go      # Q16.16 + ℤ/(2³²ℤ) Kohn–Sham / Strang-split WaveMemory stepper
+    └── schemas_test.go                # Unit tests for all 6 schema models & p/q invariants
 ```
 
-## Schemas
+## JSON Schemas (11)
 
-### term.json
-Canonical term representation with Merkle digests. Matches SPEC.md §2.
-- Kinds: `atom`, `const`, `scope`, `app`, `bracket`
-- Each node carries SHA-256 digest computed per ARCHITECTURE.md §3.1
+| Schema | Domain / Protocol Ref | Key Invariants |
+|--------|-----------------------|----------------|
+| `schemas/term.json` | `spherepop-term/1` (SPEC §2) | `atom`, `const`, `scope`, `app`, `bracket` with 64-hex SHA-256 Merkle digests |
+| `schemas/config.json` | `spherepop-config/1` (SPEC §3, §5) | Canonical `root`, `perm`, `gated`, `absorb`, `sc` matching `reduce.ConfigSpec` |
+| `schemas/trace.json` | `spherepop-trace/1` (SPEC §8) | Null-separated SHA-256 genesis/step chain, `^[LRB]*$` redex paths, independent replay |
+| `schemas/budget.json` | Protocol §12 | Per-unit `allocated`/`consumed`/`estimated_upkeep`, reduced `utilization_ratio` ($p/q$), waivers |
+| `schemas/footprint.json` | Protocol §14 | Arch, OS, libc, semver runtimes, accelerators, manifest CID (`evidence ⊑ current`) |
+| `schemas/governance.json` | Protocol §10 | RFC 6902 patch, exact `quorum_ratio` ($p/q$), veto holders, emergency path ($1/2$ + unanimous veto) |
+| `authorization/authorization.schema.json` | Protocol §5.3 | Head-bound Ed25519 capability (`commit:sphere`, `pop:sphere`, `verify:evidence`, `govern:policy`) |
+| `schemas/percolation.json` | UltraGraph §1.2 | Exact reduced `kappa_ratio` ($\sum d_v^2 / \sum d_v$), Rung 0 Bonobo trit (`+1` at $3/2$), $\kappa > 2$ refusal |
+| `schemas/lod.json` | UltraGraph §2 | Zero-float `epsilon_ratio`, `Q16.16` super-node centroids, `weight_ratio` ($p/q$), Steiner hub `Z(G)` |
+| `schemas/unitary.json` | UltraGraph §3.1 | `Q16.16` Strang half-steps, exact `entanglement_ratio` ($|d_T - d_R|/(d_T + d_R)$), salience |
+| `conformance/vectors.schema.json` | Conformance Suite | Validates both `vectors` (19 base) and `ultragraph_vectors` (5 extended) |
 
-### config.json
-Permission structure and absorption/sc modes. Matches SPEC.md §3, §5.
-- `root_permission`: pi(ε)
-- `label_permissions`: pi(l) per label
-- `gated_constants`: which constants require permission
-- `absorption_mode`: off | any | nf | s | u
-- `scope_mode`: any | safe | settled
+## Conformance Vectors (24 Total)
 
-### trace.json
-Hash-chained execution trace. Matches SPEC.md §8, ARCHITECTURE.md §3.2.
-- `format`: "spherepop-trace/1"
-- Null-delimited SHA-256 hash chain
-- Independent checker replays every step
+### Base Kernel Vectors (19)
 
-### budget.json
-Maintenance budget per Spherepop Development Protocol §12.
-- Per-unit allocation/consumption/estimated_upkeep
-- Governance waivers for BUDGET_EXCEEDED override
-- Kernel MUST refuse collapse if projected > allocated (unless waiver)
+| ID | Category | Start Term | Strategy / Fuel | Expected Outcome |
+|----|----------|------------|-----------------|------------------|
+| `pop-001` | pop | `I a` | `lo` / 10 | `a` (1 step, embedded trace) |
+| `pop-002` | pop | `K a b` | `lo` / 10 | `a` (1 step, embedded trace) |
+| `pop-003` | pop | `K a b` (`K` denied) | `lo` / 10 | `K a b` (0 steps) |
+| `pop-004` | pop | `B I I a` | `lo` / 10 | `a` (3 steps) |
+| `pop-005` | pop | `C I a b` | `lo` / 10 | `b a` (2 steps) |
+| `pop-006` | pop | `W I a` | `lo` / 10 | `a a` (2 steps) |
+| `pop-007` | pop | `S I I a` | `lo` / 10 | `a a` (3 steps, embedded trace) |
+| `pop-008` | pop | `K a (W S S (W S S))` | `lo` / 10 | `a` (1 step) |
+| `pop-009` | pop | `K a (W S S (W S S))` | `li` / 10 | `exhausted` (10 steps) |
+| `bind-001` | bind | `sc_x a` | `lo` / 10 | `<a>_x` (1 step, embedded trace) |
+| `bind-002` | bind | `<I>_x a` | `lo` / 10 | `<a>_x` (2 steps, embedded trace) |
+| `bind-003` | bind | `<I>_x (K a b)` (`AbsU`) | `lo` / 10 | `<I>_x (K a b)` (0 steps, Theorem 4.9 guard) |
+| `bind-004` | bind | `sc_x (K a b)` (`safe`) | `lo` / 10 | `<a>_x` (2 steps) |
+| `bind-005` | bind | `sc_x (K a b)` (`settled`) | `lo` / 10 | `sc_x (K a b)` (0 steps) |
+| `compose-001` | compose | `sc_y (sc_x a)` | `lo` / 10 | `<<a>_x>_y` (2 steps) |
+| `compose-002` | compose | `sc_x (W I a)` | `lo` / 10 | `<W I a>_x` (1 step, permission shadowing) |
+| `fuel-001` | fuel | `S I I a` | `lo` / 2 | `exhausted` (2 steps) |
+| `fuel-002` | fuel | `S I I a` | `lo` / 3 | `a a` (3 steps) |
+| `error-001` | error | `sc_unknown a` | `lo` / 10 | `error` (`ErrUnknownLabel`) |
 
-### footprint.json
-Environment footprint per Spherepop Development Protocol §14.
-- Arch, OS, libc, runtime versions, accelerators, manifest CID
-- Subsumption: evidence ⊑ current (not equality)
+### UltraGraph Extension Vectors (5)
 
-### governance.json
-Governance amendment per Spherepop Development Protocol §10.
-- RFC 6902 JSON Patch against policy
-- Quorum (default 67%), veto holders, emergency path (50% + all veto)
+| ID | Gate / Invariant | Verification Target |
+|----|------------------|---------------------|
+| `percolation-001` | Molloy–Reed $\kappa = 3/2$ (`trit = +1`) | Subcritical Rung 0 Bonobo resonance permits collapse (`sc_s (K a b) -> <a>_s`) |
+| `percolation-002` | Molloy–Reed $\kappa = 3/1 > 2/1$ (`trit = -1`) | Supercritical $K_4$ shadow graph refuses collapse with `ErrPercolationRisk` |
+| `lod-001` | Szemerédi LOD ($\varepsilon = 1/10$) | 2-component triangle graph compresses to 2 `[SNCP]+w` pods + deterministic `Z(G)` |
+| `unitary-001` | Strang Unitary + Entanglement $\hat{P}_C = 23/25$ | `64×64` `Q16.16` WaveMemory Strang step + `S K K state -> state` |
+| `zero-float-001` | `Q16.16` Exact Fixed-Point | `0x00018000 * 0x00020000 == 0x00030000` (`196608`) + AST Zero-Float enforcement |
 
-## Conformance Vectors (20)
+## Running Verification
 
-| ID | Category | Description |
-|----|----------|-------------|
-| pop-001 | pop | I contraction |
-| pop-002 | pop | K contraction (permission granted) |
-| pop-003 | pop | K contraction (permission denied) |
-| pop-004 | pop | B contraction |
-| pop-005 | pop | C contraction |
-| pop-006 | pop | W contraction |
-| pop-007 | pop | S contraction |
-| pop-008 | pop | Strategy: K a Omega under lo |
-| pop-009 | pop | Strategy: K a Omega under li (cycles) |
-| bind-001 | bind | Sc boundary |
-| bind-002 | bind | Abs boundary (v settled) |
-| bind-003 | bind | Abs blocked (v not R-normal) |
-| bind-004 | bind | Sc safe mode blocked |
-| bind-005 | bind | Sc settled mode blocked |
-| compose-001 | compose | Nested sc_y (sc_x a) |
-| compose-002 | compose | Permission shadowing |
-| fuel-001 | fuel | Fuel exhaustion |
-| fuel-002 | fuel | Exact fuel → normal_form |
-| error-001 | error | Unknown label |
+```bash
+# Run all Go kernel, spec, schema, authorization & conformance tests
+go vet ./...
+go test -v ./spec/...
+go test ./...
 
-Run: `go test ./spec/conformance/...`
-
-## Authorization Model
-
-Capability-based authorization held against current head (Protocol §5.3).
-
-```go
-// Critical rule: authorization.head MUST match kernel's current head at collapse
-func (a *Authorization) Verify(currentHead string, usedNonces map[string]bool) error
+# Run independent Rust & Zig trace verifiers
+cargo test --manifest-path verifiers/rust/Cargo.toml
+zig test verifiers/zig/src/verifier.zig
 ```
 
-Capabilities: `commit:sphere`, `pop:sphere`, `verify:evidence`, `govern:policy`
+## Formal Proof & Architecture Guides
 
-## ADA/Spark Verification & Assembly Suggestions
-
-See [ADA_SPARK_ASM.md](ADA_SPARK_ASM.md) for:
-- SPARK Ada proofs for kernel invariants
-- Assembly optimizations for hot paths (term digest, hash chain, reduction loop)
-- AND/OR graph algorithms for confluence exploration
-
-## Multi-Language Verification
-
-All schemas are implementation-language agnostic. The four verification lanes (Go, Zig, Rust, Idris 2) consume the same JSON schemas and conformance vectors.
-
-- Go: Reference kernel (`term/`, `reduce/`, `trace/`, `sched/`)
-- Zig: `verifiers/zig/src/verifier.zig` — bit-exact trace replay
-- Rust: `verifiers/rust/src/lib.rs` — zero-dep FIPS 180-4 verifier
-- Idris 2: `verifiers/idris/Spherepop.idr` — QTT multiplicity proofs
+- [ADA_SPARK_ASM.md](ADA_SPARK_ASM.md) — SPARK Ada 2022 contracts (`No_Allocators`), SHA-NI/AVX2 assembly hot paths, and AND/OR confluence closure.
+- [INTEGRATION.md](INTEGRATION.md) — Unified architecture mapping Spherepop Kernel × Erdős–Lódri UltraGraph × FASM-TYCOON.

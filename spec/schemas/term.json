@@ -17,7 +17,7 @@
       "required": ["kind", "name", "digest"],
       "properties": {
         "kind": { "const": "atom" },
-        "name": { "type": "string", "pattern": "^[a-z][a-z0-9_']*$|^[0-9]+$" },
+        "name": { "type": "string", "pattern": "^[a-z][A-Za-z0-9_']*$|^[0-9]+$" },
         "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
       },
       "additionalProperties": false
@@ -37,7 +37,7 @@
       "required": ["kind", "label", "digest"],
       "properties": {
         "kind": { "const": "scope" },
-        "label": { "type": "string", "pattern": "^[a-z][a-z0-9]*$" },
+        "label": { "type": "string", "pattern": "^[A-Za-z0-9]+$" },
         "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
       },
       "additionalProperties": false
@@ -58,7 +58,7 @@
       "required": ["kind", "label", "body", "digest"],
       "properties": {
         "kind": { "const": "bracket" },
-        "label": { "type": "string", "pattern": "^[a-z][a-z0-9]*$" },
+        "label": { "type": "string", "pattern": "^[A-Za-z0-9]+$" },
         "body": { "$ref": "#" },
         "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
       },
