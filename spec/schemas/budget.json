@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://standardgalactic.github.io/spherepop-kernel/spec/schemas/budget.json",
+  "title": "Spherepop Maintenance Budget",
+  "description": "Maintenance budget allocation and enforcement. From Spherepop Development Protocol §12.",
+  "type": "object",
+  "required": ["project", "total_budget", "units", "updated_at"],
+  "properties": {
+    "project": {
+      "type": "string",
+      "pattern": "^cid:[a-z0-9]+$",
+      "description": "Project this budget applies to"
+    },
+    "total_budget": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total maintenance budget units (e.g., person-hours per month)"
+    },
+    "units": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["unit_id", "name", "allocated", "consumed", "estimated_upkeep"],
+        "properties": {
+          "unit_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$",
+            "description": "Stable identifier for this maintenance unit"
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable name (e.g., 'core/kernel', 'arena/world', 'verifiers/zig')"
+          },
+          "allocated": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Budget units allocated to this unit"
+          },
+          "consumed": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Budget units already consumed (committed spheres)"
+          },
+          "estimated_upkeep": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Estimated ongoing upkeep per period"
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "Maintenance units (modules, subsystems) with their budget allocations"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this budget was last updated"
+    },
+    "governance_waivers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["waiver_id", "unit_id", "granted_at", "expires_at", "authorizer"],
+        "properties": {
+          "waiver_id": { "type": "string", "pattern": "^cid:[a-z0-9]+$" },
+          "unit_id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "granted_at": { "type": "string", "format": "date-time" },
+          "expires_at": { "type": "string", "format": "date-time" },
+          "authorizer": { "type": "string", "pattern": "^did:key:z[a-zA-Z0-9]+$" },
+          "reason": { "type": "string" }
+        },
+        "additionalProperties": false
+      },
+      "description": "Governance-approved budget waivers (RefusalReason.BUDGET_EXCEEDED override)"
+    }
+  },
+  "additionalProperties": false
+}

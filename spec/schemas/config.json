@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://standardgalactic.github.io/spherepop-kernel/spec/schemas/config.json",
+  "title": "Spherepop Configuration (spherepop-config/1)",
+  "description": "Permission structure and absorption/sc modes. Canonical form from SPEC.md §3, §5.",
+  "type": "object",
+  "required": ["root_permission", "label_permissions", "gated_constants", "absorption_mode", "scope_mode"],
+  "properties": {
+    "root_permission": {
+      "type": "array",
+      "items": { "enum": ["W", "K", "C", "S"] },
+      "uniqueItems": true,
+      "description": "Permissions at the empty chain (pi(eps))"
+    },
+    "label_permissions": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-z][a-z0-9]*$": {
+          "type": "array",
+          "items": { "enum": ["W", "K", "C", "S"] },
+          "uniqueItems": true,
+          "description": "Permissions for label l (pi(l))"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Map from label to its permission set"
+    },
+    "gated_constants": {
+      "type": "array",
+      "items": { "enum": ["W", "K", "C", "S"] },
+      "uniqueItems": true,
+      "default": ["W", "K", "C"],
+      "description": "Constants that require permission to contract"
+    },
+    "absorption_mode": {
+      "type": "string",
+      "enum": ["off", "any", "nf", "s", "u"],
+      "description": "Abs rule side condition: off=never, any=always, nf=R-normal, s=settled, u=R-normal and (settled or insensitive)"
+    },
+    "scope_mode": {
+      "type": "string",
+      "enum": ["any", "safe", "settled"],
+      "description": "Sc rule side condition: any=always, safe=Safe criterion, settled=settled at effective permission"
+    }
+  },
+  "additionalProperties": false
+}

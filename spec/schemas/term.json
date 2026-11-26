@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://standardgalactic.github.io/spherepop-kernel/spec/schemas/term.json",
+  "title": "Spherepop Term (spherepop-term/1)",
+  "description": "Content-addressed immutable term with Merkle digest. Canonical form from SPEC.md §2.",
+  "type": "object",
+  "oneOf": [
+    { "$ref": "#/$defs/Atom" },
+    { "$ref": "#/$defs/Const" },
+    { "$ref": "#/$defs/Scope" },
+    { "$ref": "#/$defs/App" },
+    { "$ref": "#/$defs/Bracket" }
+  ],
+  "$defs": {
+    "Atom": {
+      "type": "object",
+      "required": ["kind", "name", "digest"],
+      "properties": {
+        "kind": { "const": "atom" },
+        "name": { "type": "string", "pattern": "^[a-z][a-z0-9_']*$|^[0-9]+$" },
+        "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      },
+      "additionalProperties": false
+    },
+    "Const": {
+      "type": "object",
+      "required": ["kind", "name", "digest"],
+      "properties": {
+        "kind": { "const": "const" },
+        "name": { "enum": ["S", "K", "I", "B", "C", "W"] },
+        "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      },
+      "additionalProperties": false
+    },
+    "Scope": {
+      "type": "object",
+      "required": ["kind", "label", "digest"],
+      "properties": {
+        "kind": { "const": "scope" },
+        "label": { "type": "string", "pattern": "^[a-z][a-z0-9]*$" },
+        "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      },
+      "additionalProperties": false
+    },
+    "App": {
+      "type": "object",
+      "required": ["kind", "function", "argument", "digest"],
+      "properties": {
+        "kind": { "const": "app" },
+        "function": { "$ref": "#" },
+        "argument": { "$ref": "#" },
+        "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      },
+      "additionalProperties": false
+    },
+    "Bracket": {
+      "type": "object",
+      "required": ["kind", "label", "body", "digest"],
+      "properties": {
+        "kind": { "const": "bracket" },
+        "label": { "type": "string", "pattern": "^[a-z][a-z0-9]*$" },
+        "body": { "$ref": "#" },
+        "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

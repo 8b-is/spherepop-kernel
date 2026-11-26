@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://standardgalactic.github.io/spherepop-kernel/spec/authorization/authorization.json",
+  "title": "Spherepop Authorization Model",
+  "description": "Capability-based authorization held against current head. From Spherepop Development Protocol §5.3.",
+  "type": "object",
+  "required": ["authorization_id", "subject", "capability", "scope", "head", "issued_at", "expires_at", "signature"],
+  "properties": {
+    "authorization_id": {
+      "type": "string",
+      "pattern": "^cid:[a-z0-9]+$",
+      "description": "Content-addressed ID of this authorization (CID of canonical JSON)"
+    },
+    "subject": {
+      "type": "string",
+      "pattern": "^(did:key:z[a-zA-Z0-9]+|github:[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+#(maintainers|admins|owners))$",
+      "description": "DID key or GitHub team/org reference"
+    },
+    "capability": {
+      "type": "string",
+      "enum": ["commit:sphere", "pop:sphere", "verify:evidence", "govern:policy"],
+      "description": "Capability type being granted"
+    },
+    "scope": {
+      "type": "string",
+      "pattern": "^project:cid:[a-z0-9]+$",
+      "description": "Project this authorization applies to (CID of project manifest)"
+    },
+    "head": {
+      "type": "string",
+      "pattern": "^event:cid:[a-z0-9]+$",
+      "description": "Event head this authorization is bound to (MUST match kernel's current head at collapse time)"
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "RFC 3339 timestamp when authorization was issued"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "RFC 3339 timestamp when authorization expires"
+    },
+    "signature": {
+      "type": "object",
+      "required": ["algorithm", "public_key", "value"],
+      "properties": {
+        "algorithm": {
+          "type": "string",
+          "const": "ed25519"
+        },
+        "public_key": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9+/]+={0,2}$",
+          "description": "Base64-encoded Ed25519 public key"
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9+/]+={0,2}$",
+          "description": "Base64-encoded Ed25519 signature over canonical authorization (excluding this signature field)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "nonce": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 nonce preventing replay (kernel tracks used nonces)"
+    }
+  },
+  "additionalProperties": false
+}

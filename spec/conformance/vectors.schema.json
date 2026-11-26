@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://standardgalactic.github.io/spherepop-kernel/spec/conformance/vectors.schema.json",
+  "title": "Spherepop Conformance Test Vector",
+  "description": "Machine-readable conformance vectors for spherepop kernel implementations.",
+  "type": "object",
+  "required": ["vector_id", "description", "config", "start_term", "fuel", "strategy", "expected"],
+  "properties": {
+    "vector_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "description": "Stable identifier (e.g., pop-001, bind-003, compose-001)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of what this vector tests"
+    },
+    "config": { "$ref": "../schemas/config.json" },
+    "start_term": {
+      "type": "string",
+      "description": "Start term in concrete syntax"
+    },
+    "fuel": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "strategy": {
+      "type": "string",
+      "enum": ["lo", "ro", "li", "ri"]
+    },
+    "expected": {
+      "type": "object",
+      "required": ["outcome"],
+      "properties": {
+        "outcome": {
+          "type": "string",
+          "enum": ["normal_form", "exhausted", "error"],
+          "description": "Expected reduction outcome"
+        },
+        "normal_form": {
+          "type": "string",
+          "description": "Expected normal form term (if outcome=normal_form)"
+        },
+        "normal_form_digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "Expected normal form digest"
+        },
+        "steps": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Expected number of steps taken"
+        },
+        "error_code": {
+          "type": "string",
+          "enum": ["ErrUnknownLabel", "ErrPermissionDenied", "ErrFuelExhausted", "ErrSyntax"],
+          "description": "Expected error code (if outcome=error)"
+        }
+      },
+      "additionalProperties": false,
+      "if": { "properties": { "outcome": { "const": "normal_form" } } },
+      "then": { "required": ["normal_form", "normal_form_digest", "steps"] },
+      "else": { "required": ["steps"] }
+    },
+    "trace": {
+      "type": "object",
+      "description": "Expected trace document (optional, for trace verification testing)",
+      "$ref": "../schemas/trace.json"
+    }
+  },
+  "additionalProperties": false
+}

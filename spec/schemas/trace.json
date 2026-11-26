@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://standardgalactic.github.io/spherepop-kernel/spec/schemas/trace.json",
+  "title": "Spherepop Execution Trace (spherepop-trace/1)",
+  "description": "Hash-chained execution trace with independent checker. Canonical form from SPEC.md §8.",
+  "type": "object",
+  "required": ["format", "config", "start", "start_digest", "strategy", "fuel", "steps", "final", "final_digest", "exhausted", "head"],
+  "properties": {
+    "format": {
+      "type": "string",
+      "const": "spherepop-trace/1"
+    },
+    "config": { "$ref": "config.json" },
+    "start": {
+      "type": "string",
+      "description": "Start term in concrete syntax (term.Parse input)"
+    },
+    "start_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "Merkle digest of start term (spherepop-term/1)"
+    },
+    "strategy": {
+      "type": "string",
+      "enum": ["lo", "ro", "li", "ri"],
+      "description": "Reduction strategy used"
+    },
+    "fuel": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Fuel budget claimed by worker"
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["rule", "path", "after", "link"],
+        "properties": {
+          "rule": {
+            "type": "string",
+            "enum": ["I", "B", "C", "K", "W", "S", "Sc", "Abs"],
+            "description": "Rule identifier from rule table"
+          },
+          "path": {
+            "type": "string",
+            "pattern": "^([LRB]|)$",
+            "description": "Path from root: L=function child, R=argument, B=bracket body, empty=root"
+          },
+          "after": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$",
+            "description": "Merkle digest of whole term after this step"
+          },
+          "link": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$",
+            "description": "Hash chain link: sum(prev_link, rule, path, after)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "final": {
+      "type": "string",
+      "description": "Final term in concrete syntax"
+    },
+    "final_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "Merkle digest of final term"
+    },
+    "exhausted": {
+      "type": "boolean",
+      "description": "True iff fuel was fully consumed and a step remained"
+    },
+    "head": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "Final hash chain link (anchor for tamper evidence)"
+    }
+  },
+  "additionalProperties": false
+}

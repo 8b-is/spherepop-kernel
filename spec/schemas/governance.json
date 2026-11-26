@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://standardgalactic.github.io/spherepop-kernel/spec/schemas/governance.json",
+  "title": "Spherepop Governance Amendment",
+  "description": "Governance amendment procedure with quorum, veto, and emergency path. From Spherepop Development Protocol §10.",
+  "type": "object",
+  "required": ["proposal_id", "rationale", "patch", "quorum", "veto_holders", "emergency", "status"],
+  "properties": {
+    "proposal_id": {
+      "type": "string",
+      "pattern": "^cid:[a-z0-9]+$",
+      "description": "Content-addressed ID of this proposal"
+    },
+    "rationale": {
+      "type": "string",
+      "description": "Human-readable justification for the amendment"
+    },
+    "patch": {
+      "type": "object",
+      "description": "JSON Patch (RFC 6902) diff against current GovernancePolicy",
+      "required": ["operations"],
+      "properties": {
+        "operations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["op", "path"],
+            "properties": {
+              "op": { "type": "string", "enum": ["add", "remove", "replace", "move", "copy", "test"] },
+              "path": { "type": "string", "pattern": "^/.*$" },
+              "value": {}
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "quorum": {
+      "type": "number",
+      "minimum": 0.5,
+      "maximum": 1.0,
+      "description": "Fraction of recorded authorizations required (default 0.67)"
+    },
+    "veto_holders": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^did:key:z[a-zA-Z0-9]+$" },
+      "description": "DIDs of parties holding veto power"
+    },
+    "emergency": {
+      "type": "boolean",
+      "description": "If true, uses emergency path: all veto holders + 50% quorum"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "accepted", "rejected", "expired"],
+      "description": "Current status of the proposal"
+    },
+    "votes": {
+      "type": "object",
+      "description": "Map from voter DID to vote (accept/reject/abstain)",
+      "patternProperties": {
+        "^did:key:z[a-zA-Z0-9]+$": { "type": "string", "enum": ["accept", "reject", "abstain"] }
+      },
+      "additionalProperties": false
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "resolved_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false
+}

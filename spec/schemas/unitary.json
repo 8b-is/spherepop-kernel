@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://standardgalactic.github.io/spherepop-kernel/spec/schemas/unitary.json",
+  "title": "Spherepop WaveMemory Unitary Step",
+  "description": "Kohn–Sham / Strang-split unitary evolution. From UltraGraph §3.1.",
+  "type": "object",
+  "required": ["step_id", "hamiltonian_cid", "delta_t_q16", "half_step", "entanglement_coupling", "checked_at"],
+  "properties": {
+    "step_id": {
+      "type": "string",
+      "pattern": "^cid:[a-z0-9]+$",
+      "description": "Content-addressed ID of this unitary step"
+    },
+    "hamiltonian_cid": {
+      "type": "string",
+      "pattern": "^cid:[a-z0-9]+$",
+      "description": "CID of the Hamiltonian matrix"
+    },
+    "delta_t_q16": {
+      "type": "integer",
+      "description": "Δt in Q16.16 fixed-point (32-bit signed)"
+    },
+    "half_step": {
+      "type": "integer",
+      "enum": [1, 2],
+      "description": "Strang half-step: 1=e⁻ⁱᴴ⁰Δᵗ/², 2=e⁻ⁱⱽᴷˢΔᵗ"
+    },
+    "entanglement_coupling": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "P̂C (Shadow Entanglement Coupling), threshold 0.90"
+    },
+    "forward_degree": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Forward transitive target degree dT"
+    },
+    "reverse_degree": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Reverse reference degree dR"
+    },
+    "salience_nats": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Λ(C) salience in nats (Flyxion)"
+    },
+    "checked_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this step was verified"
+    }
+  },
+  "additionalProperties": false
+}

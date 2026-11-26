@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://standardgalactic.github.io/spherepop-kernel/spec/schemas/lod.json",
+  "title": "Spherepop Szemerédi LOD Super-Node",
+  "description": "Szemerédi Regularity partition as Universe LOD Shader. From UltraGraph §2.",
+  "type": "object",
+  "required": ["partition_id", "epsilon", "super_nodes", "steiner_hub", "checked_at"],
+  "properties": {
+    "partition_id": {
+      "type": "string",
+      "pattern": "^cid:[a-z0-9]+$",
+      "description": "Content-addressed ID of the partition"
+    },
+    "epsilon": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "ε-regularity parameter"
+    },
+    "super_nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["sncp_id", "centroid", "weight", "partition_class"],
+        "properties": {
+          "sncp_id": {
+            "type": "string",
+            "pattern": "^cid:[a-z0-9]+$",
+            "description": "Super Node Centroid Pod ID"
+          },
+          "centroid": {
+            "type": "array",
+            "items": { "type": "number" },
+            "minItems": 2,
+            "maxItems": 2,
+            "description": "Centroid coordinates (x, y) in embedding space"
+          },
+          "weight": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Pod weight (wavefield amplitude)"
+          },
+          "partition_class": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 4,
+            "description": "V1=mem8::wave, V2=regularity::oracle, V3=felix_asm::simd, V4=phoenix::capsule"
+          },
+          "wavefield": {
+            "type": "array",
+            "items": { "type": "number" },
+            "description": "Continuous wavefield coupling coefficients"
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "Array of Super Node Centroid Pods [SNCP]+w"
+    },
+    "steiner_hub": {
+      "type": "string",
+      "pattern": "^cid:[a-z0-9]+$",
+      "description": "Erdős–Steiner center Z(G) for zero-copy routing"
+    },
+    "checked_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this partition was computed"
+    }
+  },
+  "additionalProperties": false
+}

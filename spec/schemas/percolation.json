@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://standardgalactic.github.io/spherepop-kernel/spec/schemas/percolation.json",
+  "title": "Spherepop Shadow Graph Percolation Invariant",
+  "description": "Molloy–Reed κ check on cross-boundary dependencies. From UltraGraph §1.2.",
+  "type": "object",
+  "required": ["graph_cid", "vertices", "shadow_edges", "kappa", "regime", "checked_at"],
+  "properties": {
+    "graph_cid": {
+      "type": "string",
+      "pattern": "^cid:[a-z0-9]+$",
+      "description": "Content-addressed ID of the shadow graph"
+    },
+    "vertices": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of vertices |V|"
+    },
+    "shadow_edges": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of cross-boundary edges |E_SHADOW|"
+    },
+    "mean_degree": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Mean degree c = 2|E|/|V|"
+    },
+    "kappa": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Molloy–Reed percolation ratio κ = ⟨k²⟩/⟨k⟩"
+    },
+    "regime": {
+      "type": "string",
+      "enum": ["subcritical", "critical", "supercritical"],
+      "description": "Erdős–Rényi phase regime"
+    },
+    "checked_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this check was performed"
+    },
+    "transitive_risk": {
+      "type": "boolean",
+      "description": "True if κ > 2 (giant component exists)"
+    }
+  },
+  "additionalProperties": false
+}
