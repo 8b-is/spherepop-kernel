@@ -16,3 +16,7 @@ verifiers/idris/build/
 *.ibc
 *.ttc
 *.ttm
+
+# Ada / SPARK GNATprove build artifacts
+verifiers/ada/obj/
+

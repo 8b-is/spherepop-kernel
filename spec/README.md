@@ -91,9 +91,11 @@ go vet ./...
 go test -v ./spec/...
 go test ./...
 
-# Run independent Rust & Zig trace verifiers
+# Run independent Rust, Zig, Idris 2 & SPARK Ada 2022 verifiers
 cargo test --manifest-path verifiers/rust/Cargo.toml
 zig test verifiers/zig/src/verifier.zig
+idris2 --source-dir verifiers/idris --check verifiers/idris/Spherepop.idr
+gnatprove -P verifiers/ada/spherepop.gpr --level=2 --warnings=error
 ```
 
 ## Formal Proof & Architecture Guides

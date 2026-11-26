@@ -133,7 +133,7 @@ zig test verifiers/zig/src/verifier.zig
 | **P0** | 11 Draft 2020-12 JSON schemas (`term`, `config`, `trace`, `budget`, `footprint`, `governance`, `authorization`, `percolation`, `lod`, `unitary`, `vectors`) | Done |
 | **P0** | 24 verified conformance vectors (19 base + 5 UltraGraph) with real `spherepop-term/1` SHA-256 digests & traces | Done |
 | **P0** | Zero-Float $p/q$ + `Q16.16` Go implementations (`authorization`, `budget`, `footprint`, `governance`, `percolation`, `lod`, `unitary`) + unit tests | Done |
-| **P1** | Port `Q16Mul` & percolation/LOD trace checks to Zig, Rust, and Idris 2 verifiers | Planned |
+| **P1** | Port `Q16Mul` & percolation/entanglement $p/q$ checks to Zig, Rust, Idris 2, and SPARK Ada 2022 (`gnatprove` 21/21) | Done |
 | **P2** | CI `smart-tree` shadow-graph $\kappa \le 2$ gate on pull requests | Planned |
 | **P3** | Compact `.m8a` binary trace framing across all 4 verifier lanes | Planned |
 

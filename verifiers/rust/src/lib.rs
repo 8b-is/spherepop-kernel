@@ -1,8 +1,12 @@
-//! Independent SpherePOP Term, Rule & Trace Verifier in Pure Dependency-Free Rust
-//! Implements SPEC.md Sections 2, 4, and 8 (including self-contained FIPS 180-4 SHA-256)
-//! so that trace verification shares zero code with the Go reducer.
+//! Independent SpherePOP Term, Rule, Trace & UltraGraph Verifier in Pure Dependency-Free Rust
+//! Implements SPEC.md Sections 2, 4, and 8 (self-contained FIPS 180-4 SHA-256)
+//! plus P0/P1 Zero-Float p/q Law (`Ratio`, `Q16_16`), Molloy–Reed percolation gate,
+//! Rung 0 Bonobo Resonance (3/2 -> +1 trit), and Shadow Entanglement Coupling.
 
 #![forbid(unsafe_code)]
+#![deny(clippy::float_arithmetic)]
+
+use core::cmp::Ordering;
 
 const K256: [u32; 64] = [
     0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
@@ -222,6 +226,173 @@ pub fn verify_trace_chain(
     Ok(())
 }
 
+// ============================================================================
+// Zero-Float p/q Law: Canonical Reduced Rationals, Q16.16 & UltraGraph Gates
+// ============================================================================
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Ratio {
+    pub p: u64,
+    pub q: u64,
+}
+
+pub const fn gcd64(mut a: u64, mut b: u64) -> u64 {
+    while b != 0 {
+        let r = a % b;
+        a = b;
+        b = r;
+    }
+    a
+}
+
+impl Ratio {
+    pub const fn new(p: u64, q: u64) -> Option<Self> {
+        if q == 0 {
+            return None;
+        }
+        if p == 0 {
+            return Some(Self { p: 0, q: 1 });
+        }
+        let g = gcd64(p, q);
+        Some(Self { p: p / g, q: q / g })
+    }
+
+    pub const fn must(p: u64, q: u64) -> Self {
+        match Self::new(p, q) {
+            Some(r) => r,
+            None => panic!("Ratio::must called with q == 0"),
+        }
+    }
+
+    pub fn cmp_exact(self, other: Self) -> Ordering {
+        let lhs = (self.p as u128) * (other.q as u128);
+        let rhs = (other.p as u128) * (self.q as u128);
+        lhs.cmp(&rhs)
+    }
+
+    /// Solar Phylogenetic Octad Rung 0 Bonobo Target Resonance (p/q == 3/2).
+    pub const fn is_bonobo_resonance(self) -> bool {
+        self.p == 3 && self.q == 2
+    }
+}
+
+/// 32-bit signed Q16.16 fixed-point scalar in Z/(2^32 Z).
+pub type Q16 = i32;
+pub const Q16_SHIFT: u32 = 16;
+pub const Q16_ONE: Q16 = 1 << Q16_SHIFT;
+
+#[inline]
+pub const fn q16_add(a: Q16, b: Q16) -> Q16 {
+    a.wrapping_add(b)
+}
+
+#[inline]
+pub const fn q16_sub(a: Q16, b: Q16) -> Q16 {
+    a.wrapping_sub(b)
+}
+
+#[inline]
+pub const fn q16_mul(a: Q16, b: Q16) -> Q16 {
+    (((a as i64) * (b as i64)) >> Q16_SHIFT) as Q16
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum PercolationRegime {
+    Subcritical,
+    Critical,
+    Supercritical,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct PercolationReport {
+    pub kappa: Ratio,
+    pub mean_degree: Ratio,
+    pub resonance_trit: i8,
+    pub regime: PercolationRegime,
+    pub transitive_risk: bool,
+}
+
+/// Computes exact reduced Molloy–Reed kappa = (sum d_v^2) / (sum d_v) in O(|V| + |E|).
+pub fn molloy_reed_kappa(vertices: usize, edges: &[(usize, usize)]) -> Result<PercolationReport, &'static str> {
+    for &(u, v) in edges {
+        if u >= vertices || v >= vertices || u == v {
+            return Err("invalid shadow graph edge");
+        }
+    }
+    if vertices == 0 || edges.is_empty() {
+        return Ok(PercolationReport {
+            kappa: Ratio { p: 0, q: 1 },
+            mean_degree: Ratio { p: 0, q: 1 },
+            resonance_trit: 0,
+            regime: PercolationRegime::Subcritical,
+            transitive_risk: false,
+        });
+    }
+
+    let mut unique: Vec<(usize, usize)> = edges
+        .iter()
+        .map(|&(u, v)| if u < v { (u, v) } else { (v, u) })
+        .collect();
+    unique.sort_unstable();
+    unique.dedup();
+
+    let mut deg = vec![0u64; vertices];
+    for &(u, v) in &unique {
+        deg[u] += 1;
+        deg[v] += 1;
+    }
+
+    let mut sum_k = 0u64;
+    let mut sum_k2 = 0u64;
+    for &d in &deg {
+        sum_k += d;
+        sum_k2 += d * d;
+    }
+
+    let mean_degree = Ratio::must(sum_k, vertices as u64);
+    let kappa = if sum_k == 0 {
+        Ratio { p: 0, q: 1 }
+    } else {
+        Ratio::must(sum_k2, sum_k)
+    };
+
+    let crit = Ratio { p: 2, q: 1 };
+    let (regime, transitive_risk, resonance_trit) = match kappa.cmp_exact(crit) {
+        Ordering::Less => (
+            PercolationRegime::Subcritical,
+            false,
+            if kappa.is_bonobo_resonance() { 1 } else { 0 },
+        ),
+        Ordering::Equal => (PercolationRegime::Critical, false, 0),
+        Ordering::Greater => (PercolationRegime::Supercritical, true, -1),
+    };
+
+    Ok(PercolationReport {
+        kappa,
+        mean_degree,
+        resonance_trit,
+        regime,
+        transitive_risk,
+    })
+}
+
+pub fn check_collapse_gate(vertices: usize, edges: &[(usize, usize)]) -> Result<PercolationReport, &'static str> {
+    let rep = molloy_reed_kappa(vertices, edges)?;
+    if rep.transitive_risk {
+        return Err("ErrPercolationRisk");
+    }
+    Ok(rep)
+}
+
+/// Computes exact reduced Shadow Entanglement Coupling P_C = |dT - dR| / (dT + dR).
+pub const fn shadow_entanglement_ratio(forward_deg: u64, reverse_deg: u64) -> Ratio {
+    if forward_deg == 0 && reverse_deg == 0 {
+        return Ratio { p: 0, q: 1 };
+    }
+    let diff = forward_deg.abs_diff(reverse_deg);
+    Ratio::must(diff, forward_deg + reverse_deg)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -283,7 +454,6 @@ mod tests {
         )
         .is_ok());
 
-        // Negative control: tampered link must be rejected
         let mut tampered = steps.clone();
         tampered[0].link =
             "0000000000000000000000000000000000000000000000000000000000000000".to_string();
@@ -295,5 +465,30 @@ mod tests {
             "5c8dd5ef186dece361588fd37c45305dc52b15094f41ed920b836c0e1abb1109"
         )
         .is_err());
+    }
+
+    #[test]
+    fn verify_p0_ultragraph_conformance_vectors() {
+        // percolation-001: P3 path graph -> kappa = 3/2 (Rung 0 Bonobo resonance, trit = +1, permitted)
+        let rep1 = check_collapse_gate(3, &[(0, 1), (1, 2)]).expect("subcritical P3 permitted");
+        assert_eq!(rep1.kappa, Ratio { p: 3, q: 2 });
+        assert!(rep1.kappa.is_bonobo_resonance());
+        assert_eq!(rep1.resonance_trit, 1);
+        assert_eq!(rep1.regime, PercolationRegime::Subcritical);
+
+        // percolation-002: K4 complete graph -> kappa = 3/1 > 2/1 -> ErrPercolationRisk
+        let k4_edges = [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)];
+        let rep2 = molloy_reed_kappa(4, &k4_edges).unwrap();
+        assert_eq!(rep2.kappa, Ratio { p: 3, q: 1 });
+        assert_eq!(rep2.resonance_trit, -1);
+        assert_eq!(rep2.regime, PercolationRegime::Supercritical);
+        assert_eq!(check_collapse_gate(4, &k4_edges), Err("ErrPercolationRisk"));
+
+        // unitary-001: |24 - 1| / (24 + 1) = 23/25
+        assert_eq!(shadow_entanglement_ratio(24, 1), Ratio { p: 23, q: 25 });
+
+        // zero-float-001: 0x00018000 * 0x00020000 = 0x00030000 (196608)
+        assert_eq!(q16_mul(0x0001_8000, 0x0002_0000), 0x0003_0000);
+        assert_eq!(0x0003_0000, 196_608);
     }
 }

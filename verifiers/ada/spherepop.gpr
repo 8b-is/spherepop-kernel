@@ -1,0 +1,12 @@
+project Spherepop is
+  for Source_Dirs use (".");
+  for Object_Dir use "obj";
+
+  package Compiler is
+    for Default_Switches ("Ada") use ("-gnat2022", "-gnata", "-O2", "-gnatn");
+  end Compiler;
+
+  package Prove is
+    for Proof_Switches ("Ada") use ("--level=2", "--report=all");
+  end Prove;
+end Spherepop;

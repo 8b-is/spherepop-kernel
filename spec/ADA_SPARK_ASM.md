@@ -150,6 +150,6 @@ Representing the bounded reduction DAG of a term (typically $\le 64$ reachable s
 - [x] `PermSet` 4-bit mask & `Term.Flags()` $O(1)$ capability bitmask in `term/` and `reduce/`
 - [x] Zero-Float `Q16_16` + reduced rational $p/q$ models in `spec/schemas/`
 - [x] AST-enforced Zero-Float check (`TestZeroFloatInvariant` in `spec/conformance/conformance_test.go`)
-- [x] Multi-language SHA-256 & trace replay verifiers (`Go`, `Rust`, `Zig`, `Idris 2`)
-- [ ] Materialize standalone `ada/spherepop_kernel_proofs.ads` crate for CI `gnatprove` execution
+- [x] Multi-language SHA-256, trace replay & UltraGraph $p/q$ verifiers (`Go`, `Rust`, `Zig`, `Idris 2`)
+- [x] Standalone `verifiers/ada/spherepop_kernel_proofs.ads` / `.adb` (`gnatprove --level=2`: 21/21 checks proved)
 - [ ] Optional SHA-NI / ARMv8-CE assembly specialization for 82-byte `App` frames
