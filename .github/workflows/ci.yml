@@ -15,10 +15,11 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version: '1.22'
-      - name: Vet & Test Go Packages
+          go-version-file: 'go.mod'
+      - name: Vet & Test Go Packages (Kernel + P0 Spec & Conformance)
         run: |
           go vet ./...
+          go test -v ./spec/...
           go test -v ./...
       - name: Build CLI & Verify Trace Replay
         run: |

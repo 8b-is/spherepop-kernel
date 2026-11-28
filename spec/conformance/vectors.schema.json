@@ -1,72 +1,187 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://standardgalactic.github.io/spherepop-kernel/spec/conformance/vectors.schema.json",
-  "title": "Spherepop Conformance Test Vector",
-  "description": "Machine-readable conformance vectors for spherepop kernel implementations.",
+  "title": "Spherepop Conformance Test Vector Set",
+  "description": "Machine-readable conformance vectors for Spherepop kernel and UltraGraph extensions.",
   "type": "object",
-  "required": ["vector_id", "description", "config", "start_term", "fuel", "strategy", "expected"],
+  "required": ["vectors", "ultragraph_vectors"],
   "properties": {
-    "vector_id": {
-      "type": "string",
-      "pattern": "^[a-z0-9-]+$",
-      "description": "Stable identifier (e.g., pop-001, bind-003, compose-001)"
+    "vectors": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/BaseVector" }
     },
-    "description": {
-      "type": "string",
-      "description": "Human-readable description of what this vector tests"
-    },
-    "config": { "$ref": "../schemas/config.json" },
-    "start_term": {
-      "type": "string",
-      "description": "Start term in concrete syntax"
-    },
-    "fuel": {
-      "type": "integer",
-      "minimum": 0
-    },
-    "strategy": {
-      "type": "string",
-      "enum": ["lo", "ro", "li", "ri"]
-    },
-    "expected": {
+    "ultragraph_vectors": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/UltraGraphVector" }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "Ratio": {
       "type": "object",
-      "required": ["outcome"],
+      "required": ["p", "q"],
+      "properties": {
+        "p": { "type": "integer", "minimum": 0 },
+        "q": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "ExpectedOutcome": {
+      "type": "object",
+      "required": ["outcome", "steps"],
       "properties": {
         "outcome": {
           "type": "string",
-          "enum": ["normal_form", "exhausted", "error"],
-          "description": "Expected reduction outcome"
+          "enum": ["normal_form", "exhausted", "error"]
         },
         "normal_form": {
           "type": "string",
-          "description": "Expected normal form term (if outcome=normal_form)"
+          "description": "Expected normal form term (required when outcome=normal_form)"
         },
         "normal_form_digest": {
           "type": "string",
           "pattern": "^[a-f0-9]{64}$",
-          "description": "Expected normal form digest"
+          "description": "Expected normal form Merkle digest (spherepop-term/1)"
         },
         "steps": {
           "type": "integer",
           "minimum": 0,
-          "description": "Expected number of steps taken"
+          "description": "Expected number of reduction steps taken"
         },
         "error_code": {
           "type": "string",
-          "enum": ["ErrUnknownLabel", "ErrPermissionDenied", "ErrFuelExhausted", "ErrSyntax"],
-          "description": "Expected error code (if outcome=error)"
+          "enum": ["ErrUnknownLabel", "ErrPermissionDenied", "ErrFuelExhausted", "ErrSyntax", "ErrPercolationRisk"],
+          "description": "Expected error code (required when outcome=error)"
         }
       },
       "additionalProperties": false,
-      "if": { "properties": { "outcome": { "const": "normal_form" } } },
-      "then": { "required": ["normal_form", "normal_form_digest", "steps"] },
-      "else": { "required": ["steps"] }
+      "allOf": [
+        {
+          "if": { "properties": { "outcome": { "const": "normal_form" } } },
+          "then": { "required": ["normal_form", "normal_form_digest", "steps"] }
+        },
+        {
+          "if": { "properties": { "outcome": { "const": "error" } } },
+          "then": { "required": ["error_code", "steps"] }
+        }
+      ]
     },
-    "trace": {
+    "BaseVector": {
       "type": "object",
-      "description": "Expected trace document (optional, for trace verification testing)",
-      "$ref": "../schemas/trace.json"
+      "required": ["vector_id", "description", "config", "start_term", "fuel", "strategy", "expected"],
+      "properties": {
+        "vector_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "description": {
+          "type": "string"
+        },
+        "config": { "$ref": "../schemas/config.json" },
+        "start_term": {
+          "type": "string"
+        },
+        "fuel": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "strategy": {
+          "type": "string",
+          "enum": ["lo", "ro", "li", "ri"]
+        },
+        "expected": { "$ref": "#/$defs/ExpectedOutcome" },
+        "trace": { "$ref": "../schemas/trace.json" }
+      },
+      "additionalProperties": false
+    },
+    "UltraGraphVector": {
+      "type": "object",
+      "required": ["vector_id", "description", "config", "start_term", "fuel", "strategy", "expected"],
+      "properties": {
+        "vector_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "description": {
+          "type": "string"
+        },
+        "config": { "$ref": "../schemas/config.json" },
+        "start_term": {
+          "type": "string"
+        },
+        "fuel": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "strategy": {
+          "type": "string",
+          "enum": ["lo", "ro", "li", "ri"]
+        },
+        "expected": { "$ref": "#/$defs/ExpectedOutcome" },
+        "percolation_check": {
+          "type": "object",
+          "required": ["vertices", "edges", "kappa_ratio", "regime", "permitted"],
+          "properties": {
+            "vertices": { "type": "integer", "minimum": 0 },
+            "edges": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": { "type": "integer", "minimum": 0 },
+                "minItems": 2,
+                "maxItems": 2
+              }
+            },
+            "kappa_ratio": { "$ref": "#/$defs/Ratio" },
+            "resonance_trit": { "type": "integer", "enum": [-1, 0, 1] },
+            "regime": { "type": "string", "enum": ["subcritical", "critical", "supercritical"] },
+            "permitted": { "type": "boolean" }
+          },
+          "additionalProperties": false
+        },
+        "lod_compression": {
+          "type": "object",
+          "required": ["adjacency", "epsilon_ratio", "super_nodes", "steiner_hub"],
+          "properties": {
+            "adjacency": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": { "type": "integer", "minimum": 0 }
+              }
+            },
+            "epsilon_ratio": { "$ref": "#/$defs/Ratio" },
+            "super_nodes": { "type": "integer", "minimum": 1 },
+            "steiner_hub": { "type": "string", "pattern": "^cid:[a-z0-9]+$" }
+          },
+          "additionalProperties": false
+        },
+        "unitary_check": {
+          "type": "object",
+          "required": ["delta_t_q16", "half_step", "forward_degree", "reverse_degree", "entanglement_ratio"],
+          "properties": {
+            "delta_t_q16": { "type": "integer" },
+            "half_step": { "type": "integer", "enum": [1, 2] },
+            "forward_degree": { "type": "integer", "minimum": 0 },
+            "reverse_degree": { "type": "integer", "minimum": 0 },
+            "entanglement_ratio": { "$ref": "#/$defs/Ratio" }
+          },
+          "additionalProperties": false
+        },
+        "q16_check": {
+          "type": "object",
+          "required": ["lhs_q16", "rhs_q16", "product_q16"],
+          "properties": {
+            "lhs_q16": { "type": "integer" },
+            "rhs_q16": { "type": "integer" },
+            "product_q16": { "type": "integer" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
     }
-  },
-  "additionalProperties": false
+  }
 }

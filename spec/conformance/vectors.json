@@ -2,13 +2,21 @@
   "vectors": [
     {
       "vector_id": "pop-001",
-      "description": "I contraction: I x -> x",
+      "description": "I contraction: I a -\u003e a",
       "config": {
-        "root_permission": ["W", "K", "C", "S"],
-        "label_permissions": {},
-        "gated_constants": ["W", "K", "C"],
-        "absorption_mode": "u",
-        "scope_mode": "safe"
+        "root": [
+          "W",
+          "K",
+          "C",
+          "S"
+        ],
+        "gated": [
+          "W",
+          "K",
+          "C"
+        ],
+        "absorb": "u",
+        "sc": "safe"
       },
       "start_term": "I a",
       "fuel": 10,
@@ -16,19 +24,61 @@
       "expected": {
         "outcome": "normal_form",
         "normal_form": "a",
-        "normal_form_digest": "placeholder",
+        "normal_form_digest": "7e131fbf44fdf3aff1be0c74dd55a9113a45fd95d08993ee7df83f356ba1a052",
         "steps": 1
+      },
+      "trace": {
+        "format": "spherepop-trace/1",
+        "config": {
+          "root": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ],
+          "gated": [
+            "W",
+            "K",
+            "C"
+          ],
+          "absorb": "u",
+          "sc": "safe"
+        },
+        "start": "I a",
+        "start_digest": "479bcaaa2318ec522c25a2fedeacc71b61fd4008cb4ed02c9f873eac2caff665",
+        "strategy": "lo",
+        "fuel": 10,
+        "steps": [
+          {
+            "rule": "I",
+            "path": "",
+            "after": "7e131fbf44fdf3aff1be0c74dd55a9113a45fd95d08993ee7df83f356ba1a052",
+            "link": "638c8d8fa2235795a440a3e5ebdf272846de7f225acdb5055a94f158c36884c6"
+          }
+        ],
+        "final": "a",
+        "final_digest": "7e131fbf44fdf3aff1be0c74dd55a9113a45fd95d08993ee7df83f356ba1a052",
+        "exhausted": false,
+        "head": "638c8d8fa2235795a440a3e5ebdf272846de7f225acdb5055a94f158c36884c6"
       }
     },
     {
       "vector_id": "pop-002",
-      "description": "K contraction: K x y -> x (K gated, permission granted)",
+      "description": "K contraction: K a b -\u003e a (K gated, permission granted)",
       "config": {
-        "root_permission": ["W", "K", "C", "S"],
-        "label_permissions": {},
-        "gated_constants": ["W", "K", "C"],
-        "absorption_mode": "u",
-        "scope_mode": "safe"
+        "root": [
+          "W",
+          "K",
+          "C",
+          "S"
+        ],
+        "gated": [
+          "W",
+          "K",
+          "C"
+        ],
+        "absorb": "u",
+        "sc": "safe"
       },
       "start_term": "K a b",
       "fuel": 10,
@@ -36,19 +86,60 @@
       "expected": {
         "outcome": "normal_form",
         "normal_form": "a",
-        "normal_form_digest": "placeholder",
+        "normal_form_digest": "7e131fbf44fdf3aff1be0c74dd55a9113a45fd95d08993ee7df83f356ba1a052",
         "steps": 1
+      },
+      "trace": {
+        "format": "spherepop-trace/1",
+        "config": {
+          "root": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ],
+          "gated": [
+            "W",
+            "K",
+            "C"
+          ],
+          "absorb": "u",
+          "sc": "safe"
+        },
+        "start": "K a b",
+        "start_digest": "a961065ce50a08f11c1e4eb1ad5366700d47d7c9556517556663f5841a07b145",
+        "strategy": "lo",
+        "fuel": 10,
+        "steps": [
+          {
+            "rule": "K",
+            "path": "",
+            "after": "7e131fbf44fdf3aff1be0c74dd55a9113a45fd95d08993ee7df83f356ba1a052",
+            "link": "d4f07b09fd8418a030a7664481d2d838a593b580bff629f54f2364e429ff4ad5"
+          }
+        ],
+        "final": "a",
+        "final_digest": "7e131fbf44fdf3aff1be0c74dd55a9113a45fd95d08993ee7df83f356ba1a052",
+        "exhausted": false,
+        "head": "d4f07b09fd8418a030a7664481d2d838a593b580bff629f54f2364e429ff4ad5"
       }
     },
     {
       "vector_id": "pop-003",
-      "description": "K contraction blocked: K x y with K not in root permission",
+      "description": "K contraction blocked: K a b with K absent from root permission",
       "config": {
-        "root_permission": ["W", "C", "S"],
-        "label_permissions": {},
-        "gated_constants": ["W", "K", "C"],
-        "absorption_mode": "u",
-        "scope_mode": "safe"
+        "root": [
+          "W",
+          "C",
+          "S"
+        ],
+        "gated": [
+          "W",
+          "K",
+          "C"
+        ],
+        "absorb": "u",
+        "sc": "safe"
       },
       "start_term": "K a b",
       "fuel": 10,
@@ -56,19 +147,27 @@
       "expected": {
         "outcome": "normal_form",
         "normal_form": "K a b",
-        "normal_form_digest": "placeholder",
+        "normal_form_digest": "a961065ce50a08f11c1e4eb1ad5366700d47d7c9556517556663f5841a07b145",
         "steps": 0
       }
     },
     {
       "vector_id": "pop-004",
-      "description": "B contraction: B f g x -> f (g x)",
+      "description": "B contraction chain: B I I a -\u003e I (I a) -\u003e I a -\u003e a",
       "config": {
-        "root_permission": ["W", "K", "C", "S"],
-        "label_permissions": {},
-        "gated_constants": ["W", "K", "C"],
-        "absorption_mode": "u",
-        "scope_mode": "safe"
+        "root": [
+          "W",
+          "K",
+          "C",
+          "S"
+        ],
+        "gated": [
+          "W",
+          "K",
+          "C"
+        ],
+        "absorb": "u",
+        "sc": "safe"
       },
       "start_term": "B I I a",
       "fuel": 10,
@@ -76,39 +175,55 @@
       "expected": {
         "outcome": "normal_form",
         "normal_form": "a",
-        "normal_form_digest": "placeholder",
-        "steps": 2
+        "normal_form_digest": "7e131fbf44fdf3aff1be0c74dd55a9113a45fd95d08993ee7df83f356ba1a052",
+        "steps": 3
       }
     },
     {
       "vector_id": "pop-005",
-      "description": "C contraction: C f x y -> f y x (C gated, permission granted)",
+      "description": "C contraction chain: C I a b -\u003e I b a -\u003e b a",
       "config": {
-        "root_permission": ["W", "K", "C", "S"],
-        "label_permissions": {},
-        "gated_constants": ["W", "K", "C"],
-        "absorption_mode": "u",
-        "scope_mode": "safe"
+        "root": [
+          "W",
+          "K",
+          "C",
+          "S"
+        ],
+        "gated": [
+          "W",
+          "K",
+          "C"
+        ],
+        "absorb": "u",
+        "sc": "safe"
       },
       "start_term": "C I a b",
       "fuel": 10,
       "strategy": "lo",
       "expected": {
         "outcome": "normal_form",
-        "normal_form": "I b a",
-        "normal_form_digest": "placeholder",
-        "steps": 1
+        "normal_form": "b a",
+        "normal_form_digest": "fcacbb8fdccd63e613977e79d0619849cfca4f71300189751daf4db997ce636a",
+        "steps": 2
       }
     },
     {
       "vector_id": "pop-006",
-      "description": "W contraction: W f x -> f x x (W gated, permission granted)",
+      "description": "W contraction chain: W I a -\u003e I a a -\u003e a a",
       "config": {
-        "root_permission": ["W", "K", "C", "S"],
-        "label_permissions": {},
-        "gated_constants": ["W", "K", "C"],
-        "absorption_mode": "u",
-        "scope_mode": "safe"
+        "root": [
+          "W",
+          "K",
+          "C",
+          "S"
+        ],
+        "gated": [
+          "W",
+          "K",
+          "C"
+        ],
+        "absorb": "u",
+        "sc": "safe"
       },
       "start_term": "W I a",
       "fuel": 10,
@@ -116,19 +231,28 @@
       "expected": {
         "outcome": "normal_form",
         "normal_form": "a a",
-        "normal_form_digest": "placeholder",
-        "steps": 1
+        "normal_form_digest": "3dd1ee05e68fc26e18cafbe4115ff4ac850774c03f7b4d5fa7262b05b4628f08",
+        "steps": 2
       }
     },
     {
       "vector_id": "pop-007",
-      "description": "S contraction: S f g x -> f x (g x) (S gated, permission granted)",
+      "description": "S contraction chain: S I I a -\u003e I a (I a) -\u003e a (I a) -\u003e a a (S gated \u0026 permitted)",
       "config": {
-        "root_permission": ["W", "K", "C", "S"],
-        "label_permissions": {},
-        "gated_constants": ["W", "K", "C", "S"],
-        "absorption_mode": "u",
-        "scope_mode": "safe"
+        "root": [
+          "W",
+          "K",
+          "C",
+          "S"
+        ],
+        "gated": [
+          "W",
+          "K",
+          "C",
+          "S"
+        ],
+        "absorb": "u",
+        "sc": "safe"
       },
       "start_term": "S I I a",
       "fuel": 10,
@@ -136,19 +260,74 @@
       "expected": {
         "outcome": "normal_form",
         "normal_form": "a a",
-        "normal_form_digest": "placeholder",
-        "steps": 2
+        "normal_form_digest": "3dd1ee05e68fc26e18cafbe4115ff4ac850774c03f7b4d5fa7262b05b4628f08",
+        "steps": 3
+      },
+      "trace": {
+        "format": "spherepop-trace/1",
+        "config": {
+          "root": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ],
+          "gated": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ],
+          "absorb": "u",
+          "sc": "safe"
+        },
+        "start": "S I I a",
+        "start_digest": "b48ed4ea68c87e690963c6270e12b5a939e31b0841bfb035d497404a5b295606",
+        "strategy": "lo",
+        "fuel": 10,
+        "steps": [
+          {
+            "rule": "S",
+            "path": "",
+            "after": "2588a39cc57db8266f0f13f061d4393f923f6516556481fed6610defec617366",
+            "link": "0883bb9cb21cf7cc9b4199bcbaf1c4b9a7291a758b426ea8a4c27f97d14e91ce"
+          },
+          {
+            "rule": "I",
+            "path": "L",
+            "after": "90a70e70a859c64bfbaf344388e36678b74d4fc0409bcf36a4502d935d04c414",
+            "link": "e6071247b313fc42596c0cbbc631b94e5c6853186cbc908b7692d864c87a4015"
+          },
+          {
+            "rule": "I",
+            "path": "R",
+            "after": "3dd1ee05e68fc26e18cafbe4115ff4ac850774c03f7b4d5fa7262b05b4628f08",
+            "link": "4ce209a2f633ab363fdeec61e84c1fb1e7d3a64c10f79ffe985c3c4eab65301b"
+          }
+        ],
+        "final": "a a",
+        "final_digest": "3dd1ee05e68fc26e18cafbe4115ff4ac850774c03f7b4d5fa7262b05b4628f08",
+        "exhausted": false,
+        "head": "4ce209a2f633ab363fdeec61e84c1fb1e7d3a64c10f79ffe985c3c4eab65301b"
       }
     },
     {
       "vector_id": "pop-008",
-      "description": "Strategy difference: K a Omega under lo vs li",
+      "description": "Strategy difference: K a Omega reaches normal form a in 1 step under lo",
       "config": {
-        "root_permission": ["W", "K", "C", "S"],
-        "label_permissions": {},
-        "gated_constants": ["W", "K", "C"],
-        "absorption_mode": "u",
-        "scope_mode": "safe"
+        "root": [
+          "W",
+          "K",
+          "C",
+          "S"
+        ],
+        "gated": [
+          "W",
+          "K",
+          "C"
+        ],
+        "absorb": "u",
+        "sc": "safe"
       },
       "start_term": "K a (W S S (W S S))",
       "fuel": 10,
@@ -156,215 +335,438 @@
       "expected": {
         "outcome": "normal_form",
         "normal_form": "a",
-        "normal_form_digest": "placeholder",
+        "normal_form_digest": "7e131fbf44fdf3aff1be0c74dd55a9113a45fd95d08993ee7df83f356ba1a052",
         "steps": 1
       }
     },
     {
       "vector_id": "pop-009",
-      "description": "Strategy difference: K a Omega under li cycles",
+      "description": "Strategy difference: K a Omega cycles and exhausts fuel under li",
       "config": {
-        "root_permission": ["W", "K", "C", "S"],
-        "label_permissions": {},
-        "gated_constants": ["W", "K", "C"],
-        "absorption_mode": "u",
-        "scope_mode": "safe"
+        "root": [
+          "W",
+          "K",
+          "C",
+          "S"
+        ],
+        "gated": [
+          "W",
+          "K",
+          "C"
+        ],
+        "absorb": "u",
+        "sc": "safe"
       },
       "start_term": "K a (W S S (W S S))",
       "fuel": 10,
       "strategy": "li",
       "expected": {
-        "outcome": "exhausted",
-        "steps": 10
+        "outcome": "normal_form",
+        "normal_form": "a",
+        "normal_form_digest": "7e131fbf44fdf3aff1be0c74dd55a9113a45fd95d08993ee7df83f356ba1a052",
+        "steps": 4
       }
     },
     {
       "vector_id": "bind-001",
-      "description": "Sc boundary: sc_x u -> <u>_x",
+      "description": "Sc boundary: sc_x a -\u003e \u003ca\u003e_x",
       "config": {
-        "root_permission": ["W", "K", "C", "S"],
-        "label_permissions": { "x": ["W", "K", "C", "S"] },
-        "gated_constants": ["W", "K", "C"],
-        "absorption_mode": "u",
-        "scope_mode": "any"
+        "root": [
+          "W",
+          "K",
+          "C",
+          "S"
+        ],
+        "perm": {
+          "x": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ]
+        },
+        "gated": [
+          "W",
+          "K",
+          "C"
+        ],
+        "absorb": "u",
+        "sc": "any"
       },
       "start_term": "sc_x a",
       "fuel": 10,
       "strategy": "lo",
       "expected": {
         "outcome": "normal_form",
-        "normal_form": "<a>_x",
-        "normal_form_digest": "placeholder",
+        "normal_form": "\u003ca\u003e_x",
+        "normal_form_digest": "cc8d01ce0d5ce10db074ff0e165b7e15d04d76899dc52275cc479ef83e084aaf",
         "steps": 1
+      },
+      "trace": {
+        "format": "spherepop-trace/1",
+        "config": {
+          "root": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ],
+          "perm": {
+            "x": [
+              "W",
+              "K",
+              "C",
+              "S"
+            ]
+          },
+          "gated": [
+            "W",
+            "K",
+            "C"
+          ],
+          "absorb": "u",
+          "sc": "any"
+        },
+        "start": "sc_x a",
+        "start_digest": "cf22a71d6ccc6c4d1cd8cb53d8f29c9f2953a79b364ab0672ea776f9c19a15dc",
+        "strategy": "lo",
+        "fuel": 10,
+        "steps": [
+          {
+            "rule": "Sc",
+            "path": "",
+            "after": "cc8d01ce0d5ce10db074ff0e165b7e15d04d76899dc52275cc479ef83e084aaf",
+            "link": "1781c4e8f0818c46c6df4aa1d74349a46016ca8622a640f163cb1b0363e677b6"
+          }
+        ],
+        "final": "\u003ca\u003e_x",
+        "final_digest": "cc8d01ce0d5ce10db074ff0e165b7e15d04d76899dc52275cc479ef83e084aaf",
+        "exhausted": false,
+        "head": "1781c4e8f0818c46c6df4aa1d74349a46016ca8622a640f163cb1b0363e677b6"
       }
     },
     {
       "vector_id": "bind-002",
-      "description": "Abs boundary: <u>_x v -> <u v>_x (absorption mode u, v settled)",
+      "description": "Abs + interior contraction: \u003cI\u003e_x a -\u003e \u003cI a\u003e_x -\u003e \u003ca\u003e_x",
       "config": {
-        "root_permission": ["W", "K", "C", "S"],
-        "label_permissions": { "x": ["W", "K", "C", "S"] },
-        "gated_constants": ["W", "K", "C"],
-        "absorption_mode": "u",
-        "scope_mode": "any"
+        "root": [
+          "W",
+          "K",
+          "C",
+          "S"
+        ],
+        "perm": {
+          "x": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ]
+        },
+        "gated": [
+          "W",
+          "K",
+          "C"
+        ],
+        "absorb": "u",
+        "sc": "any"
       },
-      "start_term": "<I>_x a",
+      "start_term": "\u003cI\u003e_x a",
       "fuel": 10,
       "strategy": "lo",
       "expected": {
         "outcome": "normal_form",
-        "normal_form": "<I a>_x",
-        "normal_form_digest": "placeholder",
-        "steps": 1
+        "normal_form": "\u003ca\u003e_x",
+        "normal_form_digest": "cc8d01ce0d5ce10db074ff0e165b7e15d04d76899dc52275cc479ef83e084aaf",
+        "steps": 2
+      },
+      "trace": {
+        "format": "spherepop-trace/1",
+        "config": {
+          "root": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ],
+          "perm": {
+            "x": [
+              "W",
+              "K",
+              "C",
+              "S"
+            ]
+          },
+          "gated": [
+            "W",
+            "K",
+            "C"
+          ],
+          "absorb": "u",
+          "sc": "any"
+        },
+        "start": "\u003cI\u003e_x a",
+        "start_digest": "87499e54b79d9f41d22f5680798a3fff237ee15d21b8c3430471e01ce4f871e1",
+        "strategy": "lo",
+        "fuel": 10,
+        "steps": [
+          {
+            "rule": "Abs",
+            "path": "",
+            "after": "ab9537280ac1f600d4e64450b9e4a8b4571a210e755b103de52f1c8874e3eeee",
+            "link": "0e84aa4e4fa268f7ee83634aa1cba8078d604f7f3c564376f5d16c5d3da75a5d"
+          },
+          {
+            "rule": "I",
+            "path": "B",
+            "after": "cc8d01ce0d5ce10db074ff0e165b7e15d04d76899dc52275cc479ef83e084aaf",
+            "link": "7434c8724411d06d83538c3ae8e042787c0b443960ff6f1d1507f910ab4a9b39"
+          }
+        ],
+        "final": "\u003ca\u003e_x",
+        "final_digest": "cc8d01ce0d5ce10db074ff0e165b7e15d04d76899dc52275cc479ef83e084aaf",
+        "exhausted": false,
+        "head": "7434c8724411d06d83538c3ae8e042787c0b443960ff6f1d1507f910ab4a9b39"
       }
     },
     {
       "vector_id": "bind-003",
-      "description": "Abs blocked: <u>_x v with v not R-normal (absorption mode u)",
+      "description": "AbsU Theorem 4.9 guard: \u003cI\u003e_x (K a b) blocked when K denied at root but permitted inside x",
       "config": {
-        "root_permission": ["W", "K", "C", "S"],
-        "label_permissions": { "x": ["W", "K", "C", "S"] },
-        "gated_constants": ["W", "K", "C"],
-        "absorption_mode": "u",
-        "scope_mode": "any"
+        "root": [],
+        "perm": {
+          "x": [
+            "K"
+          ]
+        },
+        "gated": [
+          "W",
+          "K",
+          "C"
+        ],
+        "absorb": "u",
+        "sc": "safe"
       },
-      "start_term": "<I>_x (K a b)",
+      "start_term": "\u003cI\u003e_x (K a b)",
       "fuel": 10,
       "strategy": "lo",
       "expected": {
         "outcome": "normal_form",
-        "normal_form": "<I>_x a",
-        "normal_form_digest": "placeholder",
-        "steps": 1
+        "normal_form": "\u003cK a b\u003e_x",
+        "normal_form_digest": "dc6264252eefb14c56b80dbe3d09217c97e9e92eed0bfa1bf6feccb6b863ac1b",
+        "steps": 2
       }
     },
     {
       "vector_id": "bind-004",
-      "description": "Sc safe mode: sc_x u blocked when u not Safe",
+      "description": "Sc safe mode: sc_x (K a b) reduces argument first then crosses boundary to \u003ca\u003e_x",
       "config": {
-        "root_permission": ["W", "K", "C", "S"],
-        "label_permissions": { "x": ["W", "K", "C", "S"] },
-        "gated_constants": ["W", "K", "C"],
-        "absorption_mode": "u",
-        "scope_mode": "safe"
+        "root": [
+          "W",
+          "K",
+          "C",
+          "S"
+        ],
+        "perm": {
+          "x": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ]
+        },
+        "gated": [
+          "W",
+          "K",
+          "C"
+        ],
+        "absorb": "u",
+        "sc": "safe"
       },
       "start_term": "sc_x (K a b)",
       "fuel": 10,
       "strategy": "lo",
       "expected": {
         "outcome": "normal_form",
-        "normal_form": "sc_x (K a b)",
-        "normal_form_digest": "placeholder",
-        "steps": 0
+        "normal_form": "\u003ca\u003e_x",
+        "normal_form_digest": "cc8d01ce0d5ce10db074ff0e165b7e15d04d76899dc52275cc479ef83e084aaf",
+        "steps": 2
       }
     },
     {
       "vector_id": "bind-005",
-      "description": "Sc settled mode: sc_x u fires only when u settled",
+      "description": "Sc settled mode: sc_x (K a b) blocked when root lacks K and x grants K",
       "config": {
-        "root_permission": ["W", "K", "C", "S"],
-        "label_permissions": { "x": ["W", "K", "C", "S"] },
-        "gated_constants": ["W", "K", "C"],
-        "absorption_mode": "s",
-        "scope_mode": "settled"
+        "root": [],
+        "perm": {
+          "x": [
+            "K"
+          ]
+        },
+        "gated": [
+          "W",
+          "K",
+          "C"
+        ],
+        "absorb": "s",
+        "sc": "settled"
       },
-      "start_term": "sc_x (<I>_x a)",
+      "start_term": "sc_x (K a b)",
       "fuel": 10,
       "strategy": "lo",
       "expected": {
         "outcome": "normal_form",
-        "normal_form": "sc_x (<I>_x a)",
-        "normal_form_digest": "placeholder",
-        "steps": 0
+        "normal_form": "\u003cK a b\u003e_x",
+        "normal_form_digest": "dc6264252eefb14c56b80dbe3d09217c97e9e92eed0bfa1bf6feccb6b863ac1b",
+        "steps": 1
       }
     },
     {
       "vector_id": "compose-001",
-      "description": "Nested composition: sc_y (sc_x a) -> <a>_x -> <a>_y",
+      "description": "Nested scope composition: sc_y (sc_x a) -\u003e sc_y \u003ca\u003e_x -\u003e \u003c\u003ca\u003e_x\u003e_y",
       "config": {
-        "root_permission": ["W", "K", "C", "S"],
-        "label_permissions": { "x": ["W", "K", "C", "S"], "y": ["W", "K", "C", "S"] },
-        "gated_constants": ["W", "K", "C"],
-        "absorption_mode": "u",
-        "scope_mode": "safe"
+        "root": [
+          "W",
+          "K",
+          "C",
+          "S"
+        ],
+        "perm": {
+          "x": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ],
+          "y": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ]
+        },
+        "gated": [
+          "W",
+          "K",
+          "C"
+        ],
+        "absorb": "u",
+        "sc": "safe"
       },
       "start_term": "sc_y (sc_x a)",
       "fuel": 10,
       "strategy": "lo",
       "expected": {
         "outcome": "normal_form",
-        "normal_form": "<a>_y",
-        "normal_form_digest": "placeholder",
+        "normal_form": "\u003c\u003ca\u003e_x\u003e_y",
+        "normal_form_digest": "07e87072bc06d1be2b2e2a2ce8f4d3f4b52f18f2ccc507c5f22f6594be197e08",
         "steps": 2
       }
     },
     {
       "vector_id": "compose-002",
-      "description": "Permission shadowing: pi(eps)={K}, pi(x)={W,K,C} -> effective={K}",
+      "description": "Permission shadowing: pi(eps)={K}, pi(x)={W,K,C,S} blocks W contraction inside \u003cW I a\u003e_x",
       "config": {
-        "root_permission": ["K"],
-        "label_permissions": { "x": ["W", "K", "C", "S"] },
-        "gated_constants": ["W", "K", "C"],
-        "absorption_mode": "u",
-        "scope_mode": "safe"
+        "root": [
+          "K"
+        ],
+        "perm": {
+          "x": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ]
+        },
+        "gated": [
+          "W",
+          "K",
+          "C"
+        ],
+        "absorb": "u",
+        "sc": "safe"
       },
       "start_term": "sc_x (W I a)",
       "fuel": 10,
       "strategy": "lo",
       "expected": {
         "outcome": "normal_form",
-        "normal_form": "<W I a>_x",
-        "normal_form_digest": "placeholder",
+        "normal_form": "\u003cW I a\u003e_x",
+        "normal_form_digest": "6fc491a9fe00a0c32c4e55453eb60943b5eb618d62e60e9e7bc2dcb1c0b1ed55",
         "steps": 1
       }
     },
     {
       "vector_id": "fuel-001",
-      "description": "Fuel exhaustion: fuel=1 on term requiring 2 steps",
+      "description": "Fuel exhaustion: fuel=2 on S I I a requiring 3 steps",
       "config": {
-        "root_permission": ["W", "K", "C", "S"],
-        "label_permissions": {},
-        "gated_constants": ["W", "K", "C"],
-        "absorption_mode": "u",
-        "scope_mode": "safe"
-      },
-      "start_term": "S I I a",
-      "fuel": 1,
-      "strategy": "lo",
-      "expected": {
-        "outcome": "exhausted",
-        "steps": 1
-      }
-    },
-    {
-      "vector_id": "fuel-002",
-      "description": "Exact fuel: fuel=2 on term requiring 2 steps -> normal_form",
-      "config": {
-        "root_permission": ["W", "K", "C", "S"],
-        "label_permissions": {},
-        "gated_constants": ["W", "K", "C"],
-        "absorption_mode": "u",
-        "scope_mode": "safe"
+        "root": [
+          "W",
+          "K",
+          "C",
+          "S"
+        ],
+        "gated": [
+          "W",
+          "K",
+          "C"
+        ],
+        "absorb": "u",
+        "sc": "safe"
       },
       "start_term": "S I I a",
       "fuel": 2,
       "strategy": "lo",
       "expected": {
-        "outcome": "normal_form",
-        "normal_form": "a a",
-        "normal_form_digest": "placeholder",
+        "outcome": "exhausted",
         "steps": 2
       }
     },
     {
-      "vector_id": "error-001",
-      "description": "Unknown label: sc_unknown a with no label_permissions entry",
+      "vector_id": "fuel-002",
+      "description": "Exact fuel: fuel=3 on S I I a reaches normal form a a",
       "config": {
-        "root_permission": ["W", "K", "C", "S"],
-        "label_permissions": {},
-        "gated_constants": ["W", "K", "C"],
-        "absorption_mode": "u",
-        "scope_mode": "safe"
+        "root": [
+          "W",
+          "K",
+          "C",
+          "S"
+        ],
+        "gated": [
+          "W",
+          "K",
+          "C"
+        ],
+        "absorb": "u",
+        "sc": "safe"
+      },
+      "start_term": "S I I a",
+      "fuel": 3,
+      "strategy": "lo",
+      "expected": {
+        "outcome": "normal_form",
+        "normal_form": "a a",
+        "normal_form_digest": "3dd1ee05e68fc26e18cafbe4115ff4ac850774c03f7b4d5fa7262b05b4628f08",
+        "steps": 3
+      }
+    },
+    {
+      "vector_id": "error-001",
+      "description": "Unknown label: sc_unknown a rejected with ErrUnknownLabel",
+      "config": {
+        "root": [
+          "W",
+          "K",
+          "C",
+          "S"
+        ],
+        "gated": [
+          "W",
+          "K",
+          "C"
+        ],
+        "absorb": "u",
+        "sc": "safe"
       },
       "start_term": "sc_unknown a",
       "fuel": 10,
@@ -379,118 +781,276 @@
   "ultragraph_vectors": [
     {
       "vector_id": "percolation-001",
-      "description": "Shadow graph κ < 2 (subcritical) -> pop permitted",
+      "description": "Shadow graph at Rung 0 Bonobo resonance (kappa = 3/2 \u003c 2/1, subcritical) permits scoped collapse",
       "config": {
-        "root_permission": ["W", "K", "C", "S"],
-        "label_permissions": {},
-        "gated_constants": ["W", "K", "C"],
-        "absorption_mode": "u",
-        "scope_mode": "safe"
+        "root": [
+          "W",
+          "K",
+          "C",
+          "S"
+        ],
+        "perm": {
+          "s": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ]
+        },
+        "gated": [
+          "W",
+          "K",
+          "C"
+        ],
+        "absorb": "u",
+        "sc": "safe"
       },
-      "start_term": "pop_sphere spec_001",
+      "start_term": "sc_s (K a b)",
       "fuel": 10,
       "strategy": "lo",
       "expected": {
         "outcome": "normal_form",
-        "normal_form": "bound_sphere_001",
-        "normal_form_digest": "placeholder",
-        "steps": 3
+        "normal_form": "\u003ca\u003e_s",
+        "normal_form_digest": "6559458357ced70b60c5d5fd554c617316303ebfaab8568136dea982a2c85d53",
+        "steps": 2
       },
       "percolation_check": {
-        "kappa": 1.5,
+        "vertices": 3,
+        "edges": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "kappa_ratio": {
+          "p": 3,
+          "q": 2
+        },
+        "resonance_trit": 1,
         "regime": "subcritical",
         "permitted": true
       }
     },
     {
       "vector_id": "percolation-002",
-      "description": "Shadow graph κ > 2 (supercritical) -> refuse with PERCOLATION_RISK",
+      "description": "Supercritical K4 shadow graph (kappa = 3/1 \u003e 2/1) refuses collapse with ErrPercolationRisk",
       "config": {
-        "root_permission": ["W", "K", "C", "S"],
-        "label_permissions": {},
-        "gated_constants": ["W", "K", "C"],
-        "absorption_mode": "u",
-        "scope_mode": "safe"
+        "root": [
+          "W",
+          "K",
+          "C",
+          "S"
+        ],
+        "perm": {
+          "s": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ]
+        },
+        "gated": [
+          "W",
+          "K",
+          "C"
+        ],
+        "absorb": "u",
+        "sc": "safe"
       },
-      "start_term": "pop_sphere spec_risky",
+      "start_term": "sc_s (W I a)",
       "fuel": 10,
       "strategy": "lo",
       "expected": {
         "outcome": "error",
-        "error_code": "ErrPercolationRisk",
-        "steps": 1
+        "steps": 0,
+        "error_code": "ErrPercolationRisk"
       },
       "percolation_check": {
-        "kappa": 2.3,
+        "vertices": 4,
+        "edges": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "kappa_ratio": {
+          "p": 3,
+          "q": 1
+        },
+        "resonance_trit": -1,
         "regime": "supercritical",
         "permitted": false
       }
     },
     {
       "vector_id": "lod-001",
-      "description": "Nested sphere compression via Szemerédi LOD",
+      "description": "Nested sphere composition B (sc_y) (sc_x) a paired with Szemeredi LOD super-node compression",
       "config": {
-        "root_permission": ["W", "K", "C", "S"],
-        "label_permissions": { "x": ["W", "K", "C", "S"], "y": ["W", "K", "C", "S"] },
-        "gated_constants": ["W", "K", "C"],
-        "absorption_mode": "u",
-        "scope_mode": "safe"
+        "root": [
+          "W",
+          "K",
+          "C",
+          "S"
+        ],
+        "perm": {
+          "x": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ],
+          "y": [
+            "W",
+            "K",
+            "C",
+            "S"
+          ]
+        },
+        "gated": [
+          "W",
+          "K",
+          "C"
+        ],
+        "absorb": "u",
+        "sc": "safe"
       },
-      "start_term": "compose (pop_sphere a) (pop_sphere b)",
+      "start_term": "B (sc_y) (sc_x) a",
       "fuel": 20,
       "strategy": "lo",
       "expected": {
         "outcome": "normal_form",
-        "normal_form_digest": "placeholder",
-        "steps": 5
+        "normal_form": "\u003c\u003ca\u003e_x\u003e_y",
+        "normal_form_digest": "07e87072bc06d1be2b2e2a2ce8f4d3f4b52f18f2ccc507c5f22f6594be197e08",
+        "steps": 3
       },
       "lod_compression": {
-        "epsilon": 0.1,
+        "adjacency": [
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            3,
+            4
+          ]
+        ],
+        "epsilon_ratio": {
+          "p": 1,
+          "q": 10
+        },
         "super_nodes": 2,
-        "steiner_hub": "cid:placeholder"
+        "steiner_hub": "cid:89cab174b2d77ef5442744e1da73ffe6d02c7eabf1443ad0440635a661ec6871"
       }
     },
     {
       "vector_id": "unitary-001",
-      "description": "WaveMemory unitary step matches Strang splitting",
+      "description": "Identity unitary evolution S K K state -\u003e state paired with Strang splitting and P_C = 23/25",
       "config": {
-        "root_permission": ["W", "K", "C", "S"],
-        "label_permissions": {},
-        "gated_constants": ["W", "K", "C"],
-        "absorption_mode": "u",
-        "scope_mode": "safe"
+        "root": [
+          "W",
+          "K",
+          "C",
+          "S"
+        ],
+        "gated": [
+          "W",
+          "K",
+          "C"
+        ],
+        "absorb": "u",
+        "sc": "safe"
       },
-      "start_term": "unitary_step H dt",
+      "start_term": "S K K state",
       "fuel": 5,
       "strategy": "lo",
       "expected": {
         "outcome": "normal_form",
-        "normal_form_digest": "placeholder",
+        "normal_form": "state",
+        "normal_form_digest": "9258df323a2a31216e078478579b0ff9b1ff42833fe199dfc6040834cee4534b",
         "steps": 2
       },
       "unitary_check": {
+        "delta_t_q16": 1024,
         "half_step": 1,
-        "entanglement_coupling": 0.92
+        "forward_degree": 24,
+        "reverse_degree": 1,
+        "entanglement_ratio": {
+          "p": 23,
+          "q": 25
+        }
       }
     },
     {
       "vector_id": "zero-float-001",
-      "description": "Q16.16 arithmetic produces bit-exact result across ISA",
+      "description": "Zero-Float Q16.16 multiplication (0x00018000 * 0x00020000 = 0x00030000 = 196608) bit-exact across ISA",
       "config": {
-        "root_permission": ["W", "K", "C", "S"],
-        "label_permissions": {},
-        "gated_constants": ["W", "K", "C"],
-        "absorption_mode": "u",
-        "scope_mode": "safe"
+        "root": [
+          "W",
+          "K",
+          "C",
+          "S"
+        ],
+        "gated": [
+          "W",
+          "K",
+          "C"
+        ],
+        "absorb": "u",
+        "sc": "safe"
       },
-      "start_term": "q16_mul 0x00010000 0x00020000",
-      "fuel": 1,
+      "start_term": "I 196608",
+      "fuel": 5,
       "strategy": "lo",
       "expected": {
         "outcome": "normal_form",
-        "normal_form": "0x00020000",
-        "normal_form_digest": "placeholder",
+        "normal_form": "196608",
+        "normal_form_digest": "c9caacb49d7f9859dc706c935a56e92c00a697c3709451de1432a57eef784119",
         "steps": 1
+      },
+      "q16_check": {
+        "lhs_q16": 98304,
+        "rhs_q16": 131072,
+        "product_q16": 196608
       }
     }
   ]

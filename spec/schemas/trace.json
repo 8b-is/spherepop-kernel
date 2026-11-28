@@ -43,7 +43,7 @@
           },
           "path": {
             "type": "string",
-            "pattern": "^([LRB]|)$",
+            "pattern": "^[LRB]*$",
             "description": "Path from root: L=function child, R=argument, B=bracket body, empty=root"
           },
           "after": {

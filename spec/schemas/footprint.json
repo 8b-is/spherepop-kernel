@@ -23,8 +23,8 @@
     },
     "libc": {
       "type": "string",
-      "enum": ["glibc", "musl", "bionic", "none"],
-      "description": "C library (none for bare metal/wasm)"
+      "enum": ["glibc", "musl", "bionic", "libsystem", "none"],
+      "description": "C library (libsystem on macOS, none for bare metal/wasm)"
     },
     "runtime_versions": {
       "type": "object",
